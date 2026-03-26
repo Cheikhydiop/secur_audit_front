@@ -329,23 +329,23 @@ export default function ActionsPage() {
 
   return (
     <div className="p-4 md:p-10 space-y-10 w-full animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Cahier d'Actions</h1>
-          <p className="text-muted-foreground font-bold mt-1 uppercase tracking-widest text-[11px] flex items-center gap-2">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="text-center md:text-left">
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">Cahier d'Actions</h1>
+          <p className="text-muted-foreground font-bold mt-1 uppercase tracking-widest text-[9px] md:text-[11px] flex items-center justify-center md:justify-start gap-2">
             <Activity className="w-3.5 h-3.5 text-sonatel-orange" />
-            Pilotage des remédiations de sécurité DG/SECU
+            Pilotage des remédiations DG/SECU
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="h-12 px-6 rounded-2xl font-black uppercase text-xs tracking-widest border-2 gap-2 border-gray-200 shadow-sm">
+        <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
+          <Button variant="outline" className="flex-1 md:flex-none h-11 md:h-12 px-4 md:px-6 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest border-2 gap-2 border-gray-200 shadow-sm">
             <Download className="w-4 h-4 text-sonatel-orange" /> Export
           </Button>
           <Button
             onClick={() => setShowAddAction(true)}
-            className="h-12 px-6 rounded-2xl bg-sonatel-orange hover:bg-orange-600 text-white font-black uppercase text-xs tracking-widest shadow-lg shadow-orange-500/20 gap-2"
+            className="flex-1 md:flex-none h-11 md:h-12 px-4 md:px-6 rounded-2xl bg-sonatel-orange hover:bg-orange-600 text-white font-black uppercase text-[10px] md:text-xs tracking-widest shadow-lg shadow-orange-500/20 gap-2"
           >
-            Nouvelle Action
+            Action
           </Button>
         </div>
       </div>
@@ -426,21 +426,21 @@ export default function ActionsPage() {
       </Dialog>
 
       {/* Summary Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {[
-          { label: "Plans d'actions", value: summary.total, icon: ClipboardCheck, color: "text-gray-900", bg: "bg-gray-50" },
+          { label: "Actions", value: summary.total, icon: ClipboardCheck, color: "text-gray-900", bg: "bg-gray-50" },
           { label: "En Retard", value: summary.enRetard, icon: AlertTriangle, color: "text-red-600", bg: "bg-red-50" },
-          { label: "En exécution", value: summary.enCours, icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
-          { label: "Taux de Clôture", value: `${Math.round((summary.cloture / summary.total) * 100 || 0)}%`, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
+          { label: "En cours", value: summary.enCours, icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
+          { label: "Taux Clôture", value: `${Math.round((summary.cloture / summary.total) * 100 || 0)}%`, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
         ].map((item, i) => (
           <Card key={i} className={`border-2 border-transparent hover:border-sonatel-orange/20 transition-all rounded-3xl shadow-sm ${item.bg}`}>
-            <CardContent className="p-6 flex items-center justify-between">
+            <CardContent className="p-4 md:p-6 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-3xl font-black text-gray-900 tracking-tighter">{item.value}</p>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.1em]">{item.label}</p>
+                <p className="text-xl md:text-3xl font-black text-gray-900 tracking-tighter">{item.value}</p>
+                <p className="text-[9px] md:text-[10px] font-black text-muted-foreground uppercase tracking-widest">{item.label}</p>
               </div>
-              <div className={`p-4 rounded-2xl bg-white shadow-sm`}>
-                <item.icon className={`w-6 h-6 ${item.color}`} />
+              <div className={`p-2.5 md:p-4 rounded-xl md:rounded-2xl bg-white shadow-sm shrink-0`}>
+                <item.icon className={`w-4 h-4 md:w-6 md:h-6 ${item.color}`} />
               </div>
             </CardContent>
           </Card>

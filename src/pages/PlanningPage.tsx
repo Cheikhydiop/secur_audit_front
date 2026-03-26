@@ -622,59 +622,51 @@ export default function PlanningPage() {
 
     return (
         <div className="p-4 md:p-10 space-y-10 w-full animate-in fade-in duration-500 pb-32">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-3">
-                        <CalendarIcon className="w-8 h-8 text-sonatel-orange" />
-                        Planning de visite {currentMonth.getFullYear()}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="text-center md:text-left">
+                    <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight flex items-center justify-center md:justify-start gap-3">
+                        <CalendarIcon className="w-6 h-6 md:w-8 md:h-8 text-sonatel-orange" />
+                        Planning {currentMonth.getFullYear()}
                     </h1>
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mt-1">
-                        Programmation et suivi des audits de sécurité DG/SECU
+                    <p className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                        Audits de sécurité DG/SECU
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
                     {isAdmin && (
                         <>
                             <Button
                                 variant="outline"
                                 onClick={() => setIsImportModalOpen(true)}
-                                className="h-14 px-8 rounded-2xl font-black uppercase text-xs tracking-widest border-2 gap-2 border-gray-100 bg-white hover:bg-gray-50 text-gray-600"
+                                className="h-11 md:h-14 px-4 md:px-8 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest border-2 gap-2 border-gray-100 bg-white"
                             >
-                                <FileSpreadsheet className="w-5 h-5 text-sonatel-orange" /> Importer
-                            </Button>
-                            <Button
-                                variant="outline"
-                                onClick={() => setIsRenewModalOpen(true)}
-                                className="h-14 px-8 rounded-2xl font-black uppercase text-xs tracking-widest border-2 gap-2 border-gray-100 bg-white hover:bg-gray-50 text-gray-600"
-                            >
-                                <LayoutGrid className="w-5 h-5 text-sonatel-orange" /> Reconduire Planning
+                                <FileSpreadsheet className="w-4 h-4 md:w-5 md:h-5 text-sonatel-orange" /> <span className="hidden sm:inline">Importer</span>
                             </Button>
                         </>
                     )}
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="h-14 px-8 rounded-2xl font-black uppercase text-xs tracking-widest border-2 gap-2 border-gray-100 bg-white hover:bg-gray-50 text-gray-600">
-                                <Download className="w-5 h-5 text-sonatel-orange" /> Exporter
+                            <Button variant="outline" className="h-11 md:h-14 px-4 md:px-8 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest border-2 gap-2 border-gray-100 bg-white">
+                                <Download className="w-4 h-4 md:w-5 md:h-5 text-sonatel-orange" /> <span className="hidden sm:inline">Exporter</span>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="rounded-2xl border-none shadow-2xl p-2 bg-white">
-                            <DropdownMenuItem onClick={exportToCSV} className="rounded-xl p-3 font-bold hover:bg-orange-50 cursor-pointer gap-3">
-                                <FileSpreadsheet className="w-5 h-5 text-emerald-600" /> Format Excel (CSV)
+                            <DropdownMenuItem onClick={exportToCSV} className="rounded-xl p-3 font-bold hover:bg-orange-50 cursor-pointer gap-3 text-xs">
+                                <FileSpreadsheet className="w-5 h-5 text-emerald-600" /> Excel (CSV)
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={exportToJSON} className="rounded-xl p-3 font-bold hover:bg-orange-50 cursor-pointer gap-3">
-                                <FileJson className="w-5 h-5 text-sonatel-orange" /> Format JSON
+                            <DropdownMenuItem onClick={exportToJSON} className="rounded-xl p-3 font-bold hover:bg-orange-50 cursor-pointer gap-3 text-xs">
+                                <FileJson className="w-5 h-5 text-sonatel-orange" /> JSON
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
 
-                    {/* Seuls les admins peuvent créer un planning */}
                     {isAdmin && (
                         <Button
                             onClick={handleOpenAddModal}
-                            className="h-14 px-8 rounded-2xl bg-sonatel-orange hover:bg-orange-600 text-white font-black uppercase text-xs tracking-widest shadow-lg shadow-orange-500/20 gap-3"
+                            className="h-11 md:h-14 px-4 md:px-8 rounded-2xl bg-sonatel-orange hover:bg-orange-600 text-white font-black uppercase text-[10px] md:text-xs tracking-widest shadow-lg shadow-orange-500/20 gap-2"
                         >
-                            <Plus className="w-5 h-5" /> Planifier Inspection
+                            <Plus className="w-4 h-4 md:w-5 md:h-5" /> <span>Planifier</span>
                         </Button>
                     )}
                 </div>
@@ -744,13 +736,13 @@ export default function PlanningPage() {
 
             {/* Statistiques */}
             {stats && (
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <Card className="bg-orange-50 border-orange-100 rounded-2xl"><CardContent className="p-4 text-center"><p className="text-3xl font-black text-sonatel-orange">{stats.total}</p><p className="text-[10px] font-black text-orange-400 uppercase">Total</p></CardContent></Card>
-                    <Card className="bg-orange-50 border-orange-100 rounded-2xl"><CardContent className="p-4 text-center"><p className="text-3xl font-black text-sonatel-orange">{stats.planifies}</p><p className="text-[10px] font-black text-orange-400 uppercase">Planifiés</p></CardContent></Card>
-                    <Card className="bg-amber-50 border-amber-100 rounded-2xl"><CardContent className="p-4 text-center"><p className="text-3xl font-black text-amber-600">{stats.enCours}</p><p className="text-[10px] font-black text-amber-400 uppercase">En cours</p></CardContent></Card>
-                    <Card className="bg-emerald-50 border-emerald-100 rounded-2xl"><CardContent className="p-4 text-center"><p className="text-3xl font-black text-emerald-600">{stats.termines}</p><p className="text-[10px] font-black text-emerald-400 uppercase">Terminés</p></CardContent></Card>
-                    <Card className="bg-orange-50 border-orange-100 rounded-2xl"><CardContent className="p-4 text-center"><p className="text-3xl font-black text-sonatel-orange">{stats.anticipes}</p><p className="text-[10px] font-black text-orange-400 uppercase">Anticipés</p></CardContent></Card>
-                    <Card className="bg-red-50 border-red-100 rounded-2xl"><CardContent className="p-4 text-center"><p className="text-3xl font-black text-red-600">{stats.enRetard}</p><p className="text-[10px] font-black text-red-400 uppercase">En retard</p></CardContent></Card>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+                    <Card className="bg-orange-50 border-orange-100 rounded-2xl"><CardContent className="p-3 md:p-4 text-center"><p className="text-xl md:text-3xl font-black text-sonatel-orange">{stats.total}</p><p className="text-[9px] md:text-[10px] font-black text-orange-400 uppercase">Total</p></CardContent></Card>
+                    <Card className="bg-orange-50 border-orange-100 rounded-2xl"><CardContent className="p-3 md:p-4 text-center"><p className="text-xl md:text-3xl font-black text-sonatel-orange">{stats.planifies}</p><p className="text-[9px] md:text-[10px] font-black text-orange-400 uppercase">A Faire</p></CardContent></Card>
+                    <Card className="bg-amber-50 border-amber-100 rounded-2xl"><CardContent className="p-3 md:p-4 text-center"><p className="text-xl md:text-3xl font-black text-amber-600">{stats.enCours}</p><p className="text-[9px] md:text-[10px] font-black text-amber-400 uppercase">En cours</p></CardContent></Card>
+                    <Card className="bg-emerald-50 border-emerald-100 rounded-2xl"><CardContent className="p-3 md:p-4 text-center"><p className="text-xl md:text-3xl font-black text-emerald-600">{stats.termines}</p><p className="text-[9px] md:text-[10px] font-black text-emerald-400 uppercase">Terminés</p></CardContent></Card>
+                    <Card className="bg-orange-50 border-orange-100 rounded-2xl"><CardContent className="p-3 md:p-4 text-center"><p className="text-xl md:text-3xl font-black text-sonatel-orange">{stats.anticipes}</p><p className="text-[9px] md:text-[10px] font-black text-orange-400 uppercase">Anticipés</p></CardContent></Card>
+                    <Card className="bg-red-50 border-red-100 rounded-2xl"><CardContent className="p-3 md:p-4 text-center"><p className="text-xl md:text-3xl font-black text-red-600">{stats.enRetard}</p><p className="text-[9px] md:text-[10px] font-black text-red-400 uppercase">Retard</p></CardContent></Card>
                 </div>
             )}
 
@@ -958,95 +950,89 @@ export default function PlanningPage() {
                 </div>
             ) : (
                 /* Calendar View */
-                <Card className="border-2 border-gray-100 bg-white rounded-[3rem] shadow-sm overflow-hidden">
-                    <CardHeader className="p-8 border-b border-gray-50 flex flex-row items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}>
-                                <ChevronLeftIcon className="w-5 h-5" />
+                <Card className="border-2 border-gray-100 bg-white rounded-[2rem] md:rounded-[3rem] shadow-sm overflow-hidden">
+                    <CardHeader className="p-4 md:p-8 border-b border-gray-50 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-2 md:gap-4">
+                            <Button variant="outline" size="icon" className="h-9 w-9 md:h-10 md:w-10 rounded-xl" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}>
+                                <ChevronLeftIcon className="w-4 h-4 md:w-5 md:h-5" />
                             </Button>
-                            <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tight min-w-[200px] text-center">
+                            <h3 className="text-lg md:text-2xl font-black text-gray-900 uppercase tracking-tight min-w-[150px] md:min-w-[200px] text-center">
                                 {currentMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
                             </h3>
-                            <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}>
-                                <ChevronRightIcon className="w-5 h-5" />
+                            <Button variant="outline" size="icon" className="h-9 w-9 md:h-10 md:w-10 rounded-xl" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}>
+                                <ChevronRightIcon className="w-4 h-4 md:w-5 md:h-5" />
                             </Button>
                         </div>
-                        <div className="flex flex-wrap gap-4">
-                            {[{ label: 'CPS Management', color: 'bg-orange-500' }, { label: 'SUR Sûreté', color: 'bg-emerald-500' }, { label: 'SEC Sécurité', color: 'bg-slate-600' }].map(e => (
-                                <div key={e.label} className="flex items-center gap-2">
-                                    <div className={`w-3 h-3 rounded-full ${e.color}`} />
-                                    <span className="text-[10px] font-black uppercase text-gray-400 font-mono tracking-tighter">{e.label}</span>
+                        <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+                            {[{ label: 'CPS', color: 'bg-orange-500' }, { label: 'SUR', color: 'bg-emerald-500' }, { label: 'SEC', color: 'bg-slate-600' }].map(e => (
+                                <div key={e.label} className="flex items-center gap-1.5">
+                                    <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${e.color}`} />
+                                    <span className="text-[8px] md:text-[10px] font-black uppercase text-gray-400 tracking-tighter">{e.label}</span>
                                 </div>
                             ))}
                         </div>
                     </CardHeader>
-                    <CardContent className="p-4 grid grid-cols-7 gap-2 min-h-[400px]">
-                        {Array.from({ length: 31 }).map((_, i) => {
-                            const day = i + 1;
-                            const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                            const daySchedules = filtered.filter(s => s.date === dateStr);
-                            return (
-                                <div
-                                    key={day}
-                                    onClick={() => {
-                                        if (!isAdmin) return; // seul l'admin peut créer depuis le calendrier
-                                        setEditingSchedule(null);
-                                        setFormData({ siteId: "", inspecteurId: "", entite: "", date: dateStr, type: "Audit Périodique", site: "", inspecteur: "" });
-                                        setIsModalOpen(true);
-                                    }}
-                                    className={`border border-gray-100 rounded-2xl p-2 min-h-[110px] bg-white transition-all
-                                        ${isAdmin ? 'hover:bg-orange-50/20 hover:border-sonatel-orange/10 hover:shadow-lg cursor-pointer' : 'cursor-default'}
-                                        group`}
-                                >
-                                    <span className="text-xs font-black text-gray-400 group-hover:text-sonatel-orange">{day}</span>
-                                    <div className="space-y-1 mt-1">
-                                        {daySchedules.map(ds => {
-                                            const isLockedCal = isInspecteur && !ds.belongsToUserEntite;
-                                            const entityColor = isLockedCal ? 'bg-gray-50 border-gray-200 border-l-4 border-l-gray-400 shadow-none' :
-                                                ds.entite === 'CPS' ? 'bg-orange-500' :
-                                                    ds.entite === 'SUR' ? 'bg-emerald-500' : 'bg-slate-600';
-                                            const textColor = isLockedCal ? 'text-gray-600' : 'text-white';
-                                            const iconColor = isLockedCal ? 'text-gray-400' : 'text-white/80';
-                                            return (
-                                                <div
-                                                    key={ds.id}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        if (isLockedCal) {
-                                                            toast.info("Accès en lecture seule : cette mission appartient à une autre entité.");
-                                                            return;
-                                                        }
-                                                        setEditingSchedule(ds);
-                                                        setFormData({ site: ds.site, siteId: ds.siteId, inspecteur: ds.inspecteur, inspecteurId: ds.inspecteurId, entite: ds.entite, date: ds.date, type: ds.type });
-                                                        setIsModalOpen(true);
-                                                    }}
-                                                    className={`${entityColor} ${textColor} p-2 rounded-xl font-bold border transition-all cursor-pointer flex flex-col gap-1.5 group relative overflow-hidden
-                                                        ${isLockedCal ? 'hover:bg-gray-200' : 'shadow-lg border-white/30 hover:scale-[1.03] hover:shadow-xl'}`}
-                                                >
-                                                    {isLockedCal && (
-                                                        <div className="flex items-center gap-1.5 mb-1 px-1.5 py-0.5 bg-gray-200/50 rounded-md w-fit">
-                                                            <Lock className="w-2.5 h-2.5 text-gray-500" />
-                                                            <span className="text-[8px] font-black uppercase tracking-widest text-gray-600">Lecture seule</span>
+                    <div className="overflow-x-auto custom-scrollbar">
+                        <CardContent className="p-2 md:p-4 grid grid-cols-7 gap-1 md:gap-2 min-w-[700px] md:min-w-0 min-h-[400px]">
+                            {/* Les jours de la semaine */}
+                            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(d => (
+                                <div key={d} className="text-center py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">{d}</div>
+                            ))}
+                            {Array.from({ length: 31 }).map((_, i) => {
+                                const day = i + 1;
+                                const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                                const daySchedules = filtered.filter(s => s.date === dateStr);
+                                return (
+                                    <div
+                                        key={day}
+                                        onClick={() => {
+                                            if (!isAdmin) return;
+                                            setEditingSchedule(null);
+                                            setFormData({ siteId: "", inspecteurId: "", entite: "", date: dateStr, type: "Audit Périodique", site: "", inspecteur: "" });
+                                            setIsModalOpen(true);
+                                        }}
+                                        className={`border border-gray-100 rounded-xl md:rounded-2xl p-1 md:p-2 min-h-[80px] md:min-h-[110px] bg-white transition-all
+                                            ${isAdmin ? 'hover:bg-orange-50/20 hover:border-sonatel-orange/10 hover:shadow-lg cursor-pointer' : 'cursor-default'}
+                                            group`}
+                                    >
+                                        <span className="text-[10px] md:text-xs font-black text-gray-400 group-hover:text-sonatel-orange">{day}</span>
+                                        <div className="space-y-1 mt-1">
+                                            {daySchedules.map(ds => {
+                                                const isLockedCal = isInspecteur && !ds.belongsToUserEntite;
+                                                const entityColor = isLockedCal ? 'bg-gray-50 border-gray-200 border-l-2 md:border-l-4 border-l-gray-400 shadow-none' :
+                                                    ds.entite === 'CPS' ? 'bg-orange-500' :
+                                                        ds.entite === 'SUR' ? 'bg-emerald-500' : 'bg-slate-600';
+                                                const textColor = isLockedCal ? 'text-gray-600' : 'text-white';
+                                                const iconColor = isLockedCal ? 'text-gray-400' : 'text-white/80';
+                                                return (
+                                                    <div
+                                                        key={ds.id}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (isLockedCal) {
+                                                                toast.info("Accès en lecture seule.");
+                                                                return;
+                                                            }
+                                                            setEditingSchedule(ds);
+                                                            setFormData({ site: ds.site, siteId: ds.siteId, inspecteur: ds.inspecteur, inspecteurId: ds.inspecteurId, entite: ds.entite, date: ds.date, type: ds.type });
+                                                            setIsModalOpen(true);
+                                                        }}
+                                                        className={`${entityColor} ${textColor} p-1 md:p-2 rounded-lg md:rounded-xl font-bold border transition-all cursor-pointer flex flex-col gap-1 group relative overflow-hidden
+                                                            ${isLockedCal ? 'hover:bg-gray-200' : 'shadow-lg border-white/30 hover:scale-[1.03]'}`}
+                                                    >
+                                                        <div className="flex items-start gap-0.5 md:gap-1">
+                                                            <MapPin className={`w-2 h-2 md:w-3 md:h-3 mt-0.5 shrink-0 ${iconColor}`} />
+                                                            <div className={`text-[8px] md:text-[11px] leading-tight font-black uppercase break-words line-clamp-1 md:line-clamp-2 ${isLockedCal ? 'text-gray-700' : 'text-white'}`}>{ds.site}</div>
                                                         </div>
-                                                    )}
-                                                    <div className="flex items-start gap-1">
-                                                        <MapPin className={`w-3 h-3 mt-0.5 shrink-0 ${iconColor}`} />
-                                                        <div className={`text-[11px] leading-tight font-black uppercase break-words line-clamp-2 ${isLockedCal ? 'text-gray-700' : 'text-white'}`}>{ds.site}</div>
                                                     </div>
-                                                    <div className={`text-[9px] opacity-95 flex items-center gap-1.5 border-t pt-1.5 mt-0.5 ${isLockedCal ? 'border-gray-200' : 'border-white/20'}`}>
-                                                        <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${isLockedCal ? 'bg-gray-200' : 'bg-white/20'}`}>
-                                                            <User className={`w-2 h-2 ${iconColor}`} />
-                                                        </div>
-                                                        <span className={`truncate font-black normal-case ${isLockedCal ? 'text-gray-500' : 'text-white'}`}>{ds.inspecteur}</span>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-                    </CardContent>
+                                );
+                            })}
+                        </CardContent>
+                    </div>
                 </Card>
             )}
 
