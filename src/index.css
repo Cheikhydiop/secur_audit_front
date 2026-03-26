@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 50% 98%;
+    --foreground: 0 0% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
+
+    --primary: 34 90% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 34 90% 95%;
+    --secondary-foreground: 34 90% 30%;
+
+    --muted: 30 10% 95%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 34 80% 92%;
+    --accent-foreground: 34 90% 25%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 140 60% 44%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 45 100% 51%;
+    --warning-foreground: 0 0% 15%;
+
+    --border: 30 15% 90%;
+    --input: 30 15% 90%;
+    --ring: 34 90% 52%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 40%;
+    --sidebar-primary: 34 90% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 34 80% 95%;
+    --sidebar-accent-foreground: 34 90% 30%;
+    --sidebar-border: 30 15% 92%;
+    --sidebar-ring: 34 90% 52%;
+  }
+
+  .dark {
+    --background: 0 0% 8%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 34 90% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 34 30% 18%;
+    --secondary-foreground: 34 90% 80%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 34 30% 20%;
+    --accent-foreground: 34 90% 80%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 34 90% 52%;
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 60%;
+    --sidebar-primary: 34 90% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 34 30% 15%;
+    --sidebar-accent-foreground: 34 90% 80%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 34 90% 52%;
+  }
+}
+
+html {
+  font-size: 16px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased text-body1;
+    font-family: 'Poppins', 'Inter', 'Helvetica', 'Arial', sans-serif;
+    scrollbar-gutter: stable;
+  }
+
+  h1 {
+    @apply text-h1;
+  }
+
+  h2 {
+    @apply text-h2;
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  h4 {
+    @apply text-h4;
+  }
+
+  h5 {
+    @apply text-h5;
+  }
+
+  h6 {
+    @apply text-h6;
+  }
+
+  button {
+    @apply font-button;
+  }
+}
+
+@layer utilities {
+  .gradient-sonatel {
+    background: linear-gradient(135deg, hsl(34 90% 52%), hsl(34 90% 62%));
+  }
+
+  .gradient-sonatel-dark {
+    background: linear-gradient(135deg, hsl(34 90% 40%), hsl(34 90% 52%));
+  }
+
+  .shadow-sonatel {
+    box-shadow: 0 4px 20px -4px hsl(34 90% 52% / 0.25);
+  }
+
+  .scrollbar-stable {
+    scrollbar-gutter: stable;
+  }
+
+  @keyframes progress-stripe {
+    from {
+      background-position: 1rem 0;
+    }
+
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  .animate-progress-stripe {
+    animation: progress-stripe 1s linear infinite;
+  }
+
+  @keyframes wiggle {
+
+    0%,
+    100% {
+      transform: rotate(-3deg);
+    }
+
+    50% {
+      transform: rotate(3deg);
+    }
+  }
+
+  .animate-wiggle {
+    animation: wiggle 0.3s ease-in-out infinite;
+  }
+}
+
+@layer components {
+  .sonatel-menu-item {
+    @apply flex items-center py-4 px-6 text-[19px] font-bold text-sonatel-text-gray hover:bg-sonatel-light-bg hover:text-sonatel-orange transition-all duration-200;
+  }
+
+  .sonatel-menu-item.active {
+    @apply bg-sonatel-light-bg border-l-4 border-sonatel-orange text-sonatel-orange shadow-sm;
+  }
+
+  .sonatel-submenu-item {
+    @apply flex items-center py-2.5 px-12 text-base font-bold text-sonatel-text-gray hover:text-sonatel-orange transition-colors;
+  }
+}
+
+/* 📥 Optimisation Impression Rapports PDF */
+@media print {
+
+  nav,
+  .fixed,
+  .no-print,
+  button,
+  [role="tablist"],
+  .shadow-sm {
+    display: none !important;
+  }
+
+  body,
+  .bg-background {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .lg\:col-span-2,
+  .lg\:col-span-3,
+  .lg\:grid-cols-3 {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .Card,
+  .CardContent,
+  .p-8,
+  .p-12 {
+    padding: 1rem !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  h1 {
+    font-size: 24pt !important;
+  }
+
+  h3 {
+    font-size: 18pt !important;
+  }
+
+  /* Forcer l'impression des couleurs de fond (badges/scores) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+}

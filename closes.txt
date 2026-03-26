@@ -1,0 +1,160 @@
+596:          </div>
+608:          </div>
+609:        </div>
+620:            </div>
+624:          </div>
+627:              <div className="text-3xl font-black text-gray-900 tabular-nums leading-none">{stats.percent}%</div>
+628:              <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Conformité Globale</div>
+629:            </div>
+635:            </div>
+636:          </div>
+637:        </div>
+649:              </div>
+651:                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{meta.label}</div>
+652:                <div className="text-sm font-bold text-gray-900">{meta.value}</div>
+653:              </div>
+654:            </div>
+656:        </div>
+662:          </div>
+668:          </div>
+669:        </div>
+670:      </div>
+702:                    </div>
+713:                  </div>
+750:                                    {isLoadingSites && <div className="p-4 text-center text-xs text-gray-400 font-bold">Chargement...</div>}
+767:                                          </div>
+786:                        </div>
+787:                      </div>
+789:                  </div>
+790:                </div>
+797:                    </div>
+800:                  </div>
+815:                      </div>
+816:                    </div>
+830:                      </div>
+831:                    </div>
+845:                      </div>
+846:                    </div>
+847:                  </div>
+848:                </div>
+855:                    </div>
+858:                  </div>
+864:                      </div>
+875:                      </div>
+876:                    </div>
+877:                  </div>
+878:                </div>
+885:                  </div>
+891:                  </div>
+892:                </div>
+909:                  </div>
+956:                            </div>
+962:                              </div>
+969:                                </div>
+973:                              </div>
+974:                            </div>
+978:                    </div>
+979:                  </div>
+986:                    </div>
+993:                  </div>
+994:                </div>
+995:              </div>
+1009:                        </div>
+1010:                      </div>
+1018:                        </div>
+1023:                        </div>
+1024:                      </div>
+1025:                    </div>
+1032:                        </div>
+1033:                      </div>
+1058:                      </div>
+1059:                    </div>
+1060:                  </div>
+1061:                </div>
+1099:                          </div>
+1126:                                    </div>
+1142:                                  </div>
+1152:                                      </div>
+1154:                                  </div>
+1155:                                </div>
+1178:                                  </div>
+1191:                                      </div>
+1192:                                    </div>
+1217:                                          </div>
+1231:                                              </div>
+1232:                                            </div>
+1241:                                            </div>
+1242:                                          </div>
+1255:                                          </div>
+1269:                                            </div>
+1281:                                            </div>
+1282:                                          </div>
+1283:                                        </div>
+1284:                                      </div>
+1295:                                  </div>
+1306:                                  </div>
+1307:                                </div>
+1308:                              </div>
+1311:                        </div>
+1315:                </div>
+1316:              </div>
+1317:            </div>
+1328:                    </div>
+1330:                  </div>
+1335:                      </div>
+1336:                      <div className="text-xs font-bold text-gray-700 leading-relaxed">{nc.observation || "Aucune observation détaillée."}</div>
+1337:                    </div>
+1341:                        <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Responsable</div>
+1342:                        <div className="text-xs font-black text-gray-900">{nc.assignee || "À définir"}</div>
+1343:                      </div>
+1345:                        <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Échéance</div>
+1346:                        <div className="text-xs font-black text-gray-900">{nc.dueDate || "Indéfini"}</div>
+1347:                      </div>
+1348:                    </div>
+1353:                      </div>
+1355:                        <div className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">Action Corrective recommandée</div>
+1356:                        <div className="text-xs font-black text-emerald-900 leading-relaxed">{nc.recommendation || "En attente de plan d'action précis."}</div>
+1357:                      </div>
+1358:                    </div>
+1365:                  </div>
+1369:                  </div>
+1370:                </div>
+1372:            </div>
+1381:                </div>
+1385:              </div>
+1399:                          </div>
+1400:                        </div>
+1401:                      </div>
+1408:                    </div>
+1410:                  </div>
+1412:              </div>
+1413:            </div>
+1423:                </div>
+1431:                  </div>
+1432:                </div>
+1433:              </div>
+1453:                    </div>
+1454:                  </div>
+1456:              </div>
+1460:      </div>
+1499:        </div>
+1500:      </div>
+1509:              </div>
+1520:                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Score Global</div>
+1526:                </div>
+1527:              </div>
+1529:                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Alertes Majeures</div>
+1532:                </div>
+1533:              </div>
+1534:            </div>
+1549:                      </div>
+1554:                        </div>
+1558:                        </div>
+1562:                        </div>
+1563:                      </div>
+1564:                    </div>
+1566:                </div>
+1567:              </div>
+1575:            </div>
+1593:          </div>
+1596:    </div >

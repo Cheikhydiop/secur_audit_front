@@ -1,0 +1,14 @@
+566:      <div className="fixed top-0 left-0 w-full h-[800px] bg-[radial-gradient(circle_at_top_right,rgba(255,102,0,0.02),transparent_70%)] -z-10 pointer-events-none" />
+567:      <div className="fixed top-0 left-0 w-full h-full bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_0%,#FDFDFD_100%)] -z-10 pointer-events-none" />
+712:                    <div className="h-px flex-1 bg-gray-100" />
+785:                          <div className="absolute inset-0 rounded-2xl ring-2 ring-sonatel-orange/10 opacity-0 group-focus-within/field:opacity-100 pointer-events-none transition-opacity" />
+799:                    <div className="h-px flex-1 bg-gray-100" />
+857:                    <div className="h-px flex-1 bg-gray-100" />
+913:                    <div className="absolute left-[27px] top-6 bottom-6 w-0.5 bg-gray-100 rounded-full" />
+1001:                  <div className="absolute top-0 right-0 w-64 h-64 bg-sonatel-orange/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-sonatel-orange/10 transition-colors duration-700" />
+1016:                          <div className="h-1 w-8 bg-gray-100 rounded-full" />
+1021:                          <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+1066:                  <div className="absolute left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full hidden md:block" />
+1418:              <div className="absolute top-0 right-0 w-64 h-64 bg-sonatel-orange/5 rounded-full blur-3xl -mr-20 -mt-20" />
+1429:                    <div className="w-2 h-2 rounded-full bg-sonatel-orange" />
+1587:                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

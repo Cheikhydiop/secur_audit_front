@@ -1,0 +1,105 @@
+295:    <div className="min-h-screen bg-[#FDFDFD] pb-32 relative overflow-hidden font-sans">
+297:      <div className="absolute top-0 left-0 w-full h-[800px] bg-[radial-gradient(circle_at_top_right,rgba(255,102,0,0.02),transparent_70%)] -z-10" />
+298:      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_0%,#FDFDFD_100%)] -z-10" />
+301:      <div className="sticky top-0 z-[100] bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-3 flex items-center justify-between">
+302:        <div className="flex items-center gap-6">
+303:          <div className="flex items-center gap-3">
+304:            <div className="w-8 h-8 rounded-lg bg-sonatel-orange flex items-center justify-center shadow-lg shadow-sonatel-orange/20">
+307:            <div>
+312:          <div className="h-6 w-px bg-gray-100" />
+313:          <div className="flex items-center gap-4">
+314:            <div className="flex flex-col">
+316:              <div className="flex items-center gap-2">
+317:                <div className="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+318:                  <div
+329:        <div className="flex items-center gap-6">
+330:          <div className="text-right">
+340:      <div className="max-w-[1400px] mx-auto px-8 space-y-12 pt-8">
+342:        <div className="relative group">
+343:          <div className="absolute -inset-1 bg-gradient-to-r from-sonatel-orange/10 to-transparent rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+348:              <div className="grid grid-cols-1 lg:grid-cols-12 border-b border-gray-50">
+349:                <div className="lg:col-span-3 p-10 border-r border-gray-50 flex flex-col justify-center bg-gray-50/10">
+350:                  <div className="flex items-center gap-3 mb-4">
+351:                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sonatel-orange to-orange-400 flex items-center justify-center shadow-xl shadow-orange-500/20">
+354:                    <div>
+361:                <div className="lg:col-span-6 p-10 flex flex-col justify-center">
+362:                  <div className="space-y-1">
+373:                <div className="lg:col-span-3 p-10 border-l border-gray-50 bg-gray-50/5 flex flex-col justify-center">
+374:                  <div className="space-y-4">
+375:                    <div>
+377:                      <div className="flex items-center gap-2">
+387:                    <div>
+389:                      <div className="flex items-center gap-2">
+399:              <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-50 border-b border-gray-50">
+406:                  <div key={item.label} className="p-8 hover:bg-gray-50/30 transition-colors group">
+423:              <div className="grid grid-cols-1 lg:grid-cols-3 divide-x divide-gray-50">
+424:                <div className="p-8">
+433:                <div className="p-8">
+442:                <div className="p-8">
+459:        <div className="relative mb-12 select-none">
+460:          <div className="absolute top-[20px] left-0 w-full h-[1px] bg-gray-100" />
+461:          <div className="flex justify-between relative px-2">
+470:                <div key={r.id} className="flex flex-col items-center">
+494:        <div className="flex flex-col lg:flex-row items-stretch gap-px bg-gray-100 rounded-3xl overflow-hidden shadow-sm border border-gray-200 mb-12">
+495:          <div className="flex-1 bg-white p-8 flex items-center gap-8">
+496:            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-700 ${currentRubrique.color.replace('text-', 'bg-')}/10`}>
+499:            <div className="space-y-1">
+500:              <div className="flex items-center gap-3">
+502:                <div className="w-1 h-1 rounded-full bg-gray-300" />
+509:          <div className="w-px bg-gray-100" />
+511:          <div className="lg:w-[350px] bg-white p-8 flex items-center justify-between">
+512:            <div className="space-y-1">
+521:            <div className="relative w-14 h-14">
+532:              <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black">
+540:        <div className="space-y-4">
+555:                <div className={`absolute top-0 left-0 w-1 h-full transition-all duration-500 opacity-60 ${ans.status === "conforme" ? "bg-emerald-500" :
+561:                  <div className="flex flex-col xl:flex-row divide-y xl:divide-y-0 xl:divide-x divide-gray-50">
+563:                    <div className="flex-1 p-8 space-y-6">
+564:                      <div className="flex items-center gap-4">
+581:                    <div className="xl:w-[480px] p-8 bg-gray-50/30 flex flex-col gap-8">
+583:                      <div className="flex items-center gap-3">
+603:                      <div className="space-y-4">
+604:                        <div className="relative group/obs">
+615:                          <div className="p-6 bg-red-50/30 rounded-[2rem] border border-red-100/50 space-y-6 animate-in slide-in-from-top-4 duration-500">
+620:                            <div className="space-y-4">
+627:                              <div className="grid grid-cols-2 gap-3">
+628:                                <div className="space-y-1.5">
+638:                                <div className="space-y-1.5">
+653:                        <div className="flex gap-2 pt-2">
+678:        <div className="flex items-center gap-5 mb-10">
+679:          <div className="w-14 h-14 rounded-2xl bg-gray-900 flex items-center justify-center shadow-xl shadow-gray-200">
+682:          <div>
+688:        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+690:            <div key={i} className="space-y-4 group">
+691:              <div className="flex items-center justify-between px-1">
+714:      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-full max-w-[1400px] px-8">
+715:        <div className="bg-gray-900/95 backdrop-blur-2xl border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.4)] p-4 rounded-[2.5rem] flex items-center justify-between">
+728:          <div className="flex items-center gap-3">
+729:            <div className="hidden lg:flex items-center gap-2 px-6 h-10 rounded-full border border-white/10 bg-white/5">
+730:              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+762:          <div className="flex flex-col lg:flex-row h-[85vh]">
+764:            <div className="lg:w-[320px] bg-gray-950 p-12 text-white flex flex-col justify-between">
+765:              <div>
+766:                <div className="w-14 h-14 rounded-2xl bg-sonatel-orange flex items-center justify-center mb-10 shadow-2xl shadow-sonatel-orange/40">
+770:                <div className="h-1 w-12 bg-sonatel-orange rounded-full mb-8" />
+776:              <div className="space-y-6 pt-10 border-t border-white/5">
+777:                <div className="flex items-center gap-4">
+778:                  <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+781:                  <div>
+790:            <div className="flex-1 p-12 overflow-y-auto bg-gray-50/20">
+791:              <div className="flex flex-col gap-10">
+793:                <div className="grid grid-cols-2 gap-6">
+794:                  <div className="p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
+796:                    <div className="flex items-baseline gap-2 mt-4">
+801:                  <div className="p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
+803:                    <div className="flex items-baseline gap-2 mt-4">
+812:                  <div className="space-y-4">
+815:                      <div className="h-px flex-1 bg-gray-100" />
+817:                    <div className="space-y-3">
+819:                        <div key={idx} className="bg-white p-6 border border-gray-100 rounded-3xl flex items-center justify-between shadow-sm">
+820:                          <div className="flex gap-4">
+821:                            <div className={`w-1.5 h-10 rounded-full ${nc.criticality === "Critique" ? "bg-red-500" : "bg-sonatel-orange"}`} />
+822:                            <div>
+842:                <div className="mt-10 pt-10 border-t border-gray-100 flex items-center justify-between">
+843:                  <div className="flex items-start gap-4 max-w-sm">
+849:                  <div className="flex gap-3">
