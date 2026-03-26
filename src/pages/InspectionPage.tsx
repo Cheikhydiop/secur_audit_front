@@ -1559,7 +1559,7 @@ export default function InspectionPage() {
                 {/* Right Column: Active Content */}
                 <div className="flex-1 space-y-12 min-w-0 pb-32" >
                   {/* Mobile-optimized Question Header with Sticky Rubriques */}
-                  <div className="sticky top-0 z-20 bg-gray-50/95 backdrop-blur-sm -mx-4 px-4 py-3 border-b border-gray-200 lg:static lg:bg-transparent lg:border-none lg:p-0 lg:m-0">
+                  <div className="sticky top-16 lg:top-20 z-10 bg-gray-50/95 backdrop-blur-sm -mx-4 px-4 py-3 border-b border-gray-200 lg:static lg:bg-transparent lg:border-none lg:p-0 lg:m-0">
                     <div className="flex items-center justify-between mb-2 lg:mb-8">
                       <div className="flex items-center gap-2 md:gap-4 min-w-0">
                         <div className={`p-2 md:p-4 rounded-xl md:rounded-[1.5rem] bg-white shadow-sm md:shadow-lg md:ring-1 ring-gray-100 ${currentRubrique.color}`}>
@@ -1586,8 +1586,8 @@ export default function InspectionPage() {
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
                           className={`flex-none px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border-2 ${currentRubriqueIdx === idx
-                              ? "bg-sonatel-orange text-white border-sonatel-orange shadow-md"
-                              : "bg-white text-gray-400 border-gray-100"
+                            ? "bg-sonatel-orange text-white border-sonatel-orange shadow-md"
+                            : "bg-white text-gray-400 border-gray-100"
                             }`}
                         >
                           {rubrique.label}
@@ -1650,7 +1650,7 @@ export default function InspectionPage() {
                                 }`}
                             >
 
-                              <CardContent className="p-8">
+                              <CardContent className="p-4 md:p-8">
                                 <div className="flex flex-col lg:flex-row gap-10">
                                   {/* Left: Question Header */}
                                   <div className="flex-1 space-y-5">
@@ -1696,9 +1696,9 @@ export default function InspectionPage() {
                                   </div>
 
                                   {/* Right: Actions & Status Selection */}
-                                  <div className="lg:w-[420px] shrink-0 space-y-8">
+                                  <div className="lg:w-[420px] shrink-0 space-y-4 md:space-y-8">
                                     {/* Choice Buttons */}
-                                    <div className="grid grid-cols-3 gap-4 p-2 bg-gray-50 rounded-[2rem] border border-gray-100/50 shadow-inner">
+                                    <div className="grid grid-cols-3 gap-2 md:gap-4 p-2 bg-gray-50 rounded-2xl md:rounded-[2rem] border border-gray-100/50 shadow-inner">
                                       {[
                                         { id: "conforme", label: "OUI", color: "bg-emerald-500", icon: Check },
                                         { id: "non-conforme", label: "NON", color: "bg-destructive", icon: AlertCircle },
@@ -2061,9 +2061,9 @@ export default function InspectionPage() {
 
       {/* Summary Modal - Highly Professional Design */}
       <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent className="max-w-[800px] w-[95vw] rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden bg-white">
-          <div className="flex flex-col max-h-[85vh]">
-            <DialogHeader className="p-8 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <DialogContent className="max-w-[800px] w-[95vw] rounded-2xl md:rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden bg-white">
+          <div className="flex flex-col max-h-[90vh]">
+            <DialogHeader className="p-4 md:p-8 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between shrink-0 gap-4">
               <div className="flex items-center gap-5">
                 <div className="w-14 h-14 rounded-[1.75rem] bg-sonatel-orange/10 flex items-center justify-center text-sonatel-orange">
                   <ClipboardCheck className="w-7 h-7" />
@@ -2084,10 +2084,10 @@ export default function InspectionPage() {
             </DialogHeader>
 
             {/* Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 md:space-y-8 custom-scrollbar">
               {/* Key Stats Bar */}
-              <div className="grid grid-cols-2 gap-5">
-                <div className="p-6 bg-gradient-to-br from-gray-50 to-white rounded-[2.5rem] border-2 border-gray-100/50 shadow-inner flex items-center justify-between">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                <div className="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-white rounded-2xl md:rounded-[2.5rem] border-2 border-gray-100/50 shadow-inner flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Score Qualité</div>
                     <div className="flex items-baseline gap-1">
@@ -2207,15 +2207,15 @@ export default function InspectionPage() {
           navigate('/dashboard');
         }
       }}>
-        <DialogContent className="max-w-[500px] rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden bg-white">
-          <div className="p-10 text-center space-y-8">
-            <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-[2rem] flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10">
-              <CheckCircle2 className="w-12 h-12" />
+        <DialogContent className="max-w-[500px] w-[92%] rounded-2xl md:rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden bg-white">
+          <div className="p-6 md:p-10 text-center space-y-6 md:space-y-8">
+            <div className="w-16 h-16 md:w-24 md:h-24 bg-emerald-100 text-emerald-600 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10">
+              <CheckCircle2 className="w-8 h-8 md:w-12 md:h-12" />
             </div>
 
             <div className="space-y-3">
-              <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Soumission réussi !</h2>
-              <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">L'audit du site <span className="text-sonatel-orange">{submittedData?.siteName}</span> a été enregistré.</p>
+              <h2 className="text-xl md:text-2xl font-black text-gray-900 uppercase tracking-tight">Soumission réussi !</h2>
+              <p className="text-[11px] md:text-sm font-bold text-gray-400 uppercase tracking-widest leading-relaxed">L'audit du site <span className="text-sonatel-orange">{submittedData?.siteName}</span> a été enregistré.</p>
             </div>
 
             <div className="bg-gray-50 p-6 rounded-[2rem] border border-gray-100">
