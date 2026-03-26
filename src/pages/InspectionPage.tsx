@@ -992,70 +992,72 @@ export default function InspectionPage() {
       <div className="fixed top-0 left-0 w-full h-full bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_0%,#FDFDFD_100%)] -z-10 pointer-events-none" />
 
       {/* Header inspired by SmartOp 360 */}
-      <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-5 md:py-8 space-y-5 md:space-y-8 animate-in fade-in duration-700">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
-          <div className="flex flex-wrap items-center gap-2 md:gap-4">
+      <div className="bg-white border-b border-gray-200 px-3 md:px-8 py-4 md:py-8 space-y-4 md:space-y-8 animate-in fade-in duration-700">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6">
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="h-8 md:h-10 rounded-xl border-gray-200 hover:bg-gray-50 flex items-center gap-2 font-bold px-3 md:px-4 text-[10px] md:text-xs"
+              className="h-8 rounded-xl border-gray-200 hover:bg-gray-50 flex items-center gap-2 font-bold px-3 text-[10px]"
               onClick={() => navigate(-1)}
             >
-              <ArrowLeft className="w-3.5 h-3.5 md:w-4 md:h-4" /> Retour
+              <ArrowLeft className="w-3.5 h-3.5" /> <span className="hidden xs:inline">Retour</span>
             </Button>
-            <Breadcrumb className="scale-90 md:scale-100 origin-left">
-              <BreadcrumbList className="flex-nowrap overflow-x-auto no-scrollbar max-w-[50vw]">
-                <BreadcrumbItem className="shrink-0">
-                  <BreadcrumbLink onClick={() => navigate('/dashboard')} className="cursor-pointer">Tableau de bord</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="shrink-0" />
-                <BreadcrumbItem className="shrink-0">
-                  <BreadcrumbLink onClick={() => navigate('/inspection')} className="cursor-pointer capitalize">Inspection</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="shrink-0" />
-                <BreadcrumbItem className="shrink-0">
-                  <BreadcrumbPage className="font-bold text-gray-900 truncate max-w-[80px] md:max-w-none">{siteName || "Nouvelle inspection"}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <div className="hidden sm:block">
+              <Breadcrumb className="scale-90 md:scale-100 origin-left">
+                <BreadcrumbList className="flex-nowrap overflow-x-auto no-scrollbar max-w-[50vw]">
+                  <BreadcrumbItem className="shrink-0">
+                    <BreadcrumbLink onClick={() => navigate('/dashboard')} className="cursor-pointer">Tableau de bord</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="shrink-0" />
+                  <BreadcrumbItem className="shrink-0">
+                    <BreadcrumbLink onClick={() => navigate('/inspection')} className="cursor-pointer capitalize">Inspection</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="shrink-0" />
+                  <BreadcrumbItem className="shrink-0">
+                    <BreadcrumbPage className="font-bold text-gray-900 truncate max-w-[120px]">{siteName || "Nouvelle"}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
           </div>
-          <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-2 md:gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
               onClick={resetInspection}
-              className="flex-1 md:flex-none h-10 md:h-11 rounded-xl md:rounded-2xl border-gray-200 text-[10px] font-black uppercase tracking-wider gap-1.5 md:gap-2 px-3 md:px-6 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all font-black"
+              className="w-full sm:w-auto h-9 md:h-11 rounded-lg md:rounded-2xl border-gray-200 text-[10px] font-black uppercase tracking-wider gap-2 px-6 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all"
             >
-              <RotateCcw className="w-3.5 h-3.5" /> Réinitialiser
+              <RotateCcw className="w-4 h-4" /> Réinitialiser
             </Button>
-            <Button className="flex-1 md:flex-none h-10 md:h-11 bg-sonatel-orange hover:bg-orange-600 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-wider text-[10px] gap-2 md:gap-3 px-4 md:px-8 shadow-lg shadow-orange-500/20 font-black">
-              <Save className="w-3.5 h-3.5" /> Enregistrer brouillon
+            <Button className="w-full sm:w-auto h-9 md:h-11 bg-sonatel-orange hover:bg-orange-600 text-white rounded-lg md:rounded-2xl font-black uppercase tracking-wider text-[10px] gap-2 px-8 shadow-lg shadow-orange-500/20">
+              <Save className="w-4 h-4" /> Enregistrer brouillon
             </Button>
           </div>
         </div>
 
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-8">
           <div className="space-y-2 md:space-y-3">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-xl md:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight">
                 {siteName || "Inspection de site"}
               </h1>
-              <Badge className="bg-orange-100 text-orange-600 border-none font-black text-[9px] md:text-[10px] uppercase tracking-widest px-3 md:px-4 py-1 md:py-1.5 rounded-full">
+              <Badge className="bg-orange-100 text-orange-600 border-none font-black text-[9px] md:text-[10px] uppercase tracking-widest px-3 md:px-4 py-1 rounded-full">
                 En cours
               </Badge>
             </div>
-            <p className="text-gray-500 font-medium text-sm md:text-lg max-w-2xl leading-relaxed">
-              Audit de contrôle des infrastructures critiques et conformité des dispositifs de sécurité.
+            <p className="text-gray-400 font-bold text-xs md:text-lg max-w-2xl leading-relaxed uppercase tracking-tighter">
+              AUDIT DE CONTRÔLE — INFRASTRUCTURES & SÉCURITÉ
             </p>
           </div>
-          <div className="flex items-center lg:items-end gap-3 md:gap-6 bg-gray-50/50 p-4 md:p-6 rounded-2xl md:rounded-[2.5rem] border border-gray-100 w-full lg:w-auto overflow-hidden">
+          <div className="flex items-center lg:items-end gap-3 md:gap-6 bg-gray-50/50 p-3 md:p-6 rounded-2xl md:rounded-[2.5rem] border border-gray-100 w-full lg:w-auto">
             <div className="flex-1 lg:text-right space-y-0.5 md:space-y-1">
-              <div className="text-2xl md:text-3xl font-black text-gray-900 tabular-nums leading-none">{stats.percent}%</div>
-              <div className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] md:tracking-[0.2em] whitespace-nowrap">Conformité Globale</div>
+              <div className="text-xl md:text-3xl font-black text-gray-900 tabular-nums leading-none">{stats.percent}%</div>
+              <div className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] md:tracking-[0.2em]">Conformité</div>
             </div>
-            <div className="w-10 h-10 md:w-14 md:h-14 relative shrink-0">
-              <svg className="w-full h-full transform -rotate-90">
-                <circle cx="20 md:28" cy="20 md:28" r="16 md:24" stroke="currentColor" strokeWidth="4 md:5" fill="transparent" className="text-gray-200" />
-                <circle cx="20 md:28" cy="20 md:28" r="16 md:24" stroke="currentColor" strokeWidth="4 md:5" fill="transparent" strokeDasharray={2 * Math.PI * (window.innerWidth < 768 ? 16 : 24)} strokeDashoffset={2 * Math.PI * (window.innerWidth < 768 ? 16 : 24) * (1 - stats.percent / 100)} strokeLinecap="round" className="text-sonatel-orange transition-all duration-1000" />
+            <div className="w-8 h-8 md:w-14 md:h-14 relative shrink-0">
+              <svg className="w-full h-full transform -rotate-90 scale-90 md:scale-100">
+                <circle cx="16 md:28" cy="16 md:28" r="14 md:24" stroke="currentColor" strokeWidth="4 md:5" fill="transparent" className="text-gray-200" />
+                <circle cx="16 md:28" cy="16 md:28" r="14 md:24" stroke="currentColor" strokeWidth="4 md:5" fill="transparent" strokeDasharray={2 * Math.PI * (window.innerWidth < 768 ? 14 : 24)} strokeDashoffset={2 * Math.PI * (window.innerWidth < 768 ? 14 : 24) * (1 - stats.percent / 100)} strokeLinecap="round" className="text-sonatel-orange transition-all duration-1000" />
               </svg>
             </div>
           </div>
@@ -1100,7 +1102,7 @@ export default function InspectionPage() {
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-6 md:mt-8">
+      <div className="max-w-[1600px] mx-auto px-3 md:px-8 mt-5 md:mt-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="bg-white border border-gray-200 p-1 rounded-xl md:rounded-2xl h-11 md:h-14 flex items-center justify-start gap-1 md:gap-2 w-full overflow-x-auto overflow-y-hidden no-scrollbar">
             <TabsTrigger value="overview" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
