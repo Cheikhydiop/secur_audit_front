@@ -16,12 +16,12 @@ export function useOnlineStatus() {
 
         try {
             // Simple ping to the API URL
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://thundering-laura-ndigueul-80527457.koyeb.app/api/health';
+            const apiUrl = import.meta.env.VITE_API_URL || 'https://thundering-laura-ndigueul-80527457.koyeb.app/api';
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-            // Check auth/status or something lightweight
-            const response = await fetch(`${apiUrl}/auth/status`, {
+            // Check /auth/login - lightweight & public route to test reachability
+            const response = await fetch(`${apiUrl}/auth/login`, {
                 method: 'HEAD',
                 signal: controller.signal
             }).catch(() => null);

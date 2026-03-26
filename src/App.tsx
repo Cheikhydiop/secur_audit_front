@@ -13,25 +13,47 @@ import { SocketProvider } from "./contexts/SocketContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { PWABanner } from "./components/PWABanner";
 
-const DashboardPage = lazy(() => import("./pages/DashboardPage"));
-const InspectionPage = lazy(() => import("./pages/InspectionPage"));
-const ActionsPage = lazy(() => import("./pages/ActionsPage"));
-const HistoriquePage = lazy(() => import("./pages/HistoriquePage"));
-const ParametresPage = lazy(() => import("./pages/ParametresPage"));
-const PlanningPage = lazy(() => import("./pages/PlanningPage"));
-const LogsPage = lazy(() => import("./pages/LogsPage"));
-const GestionUtilisateursPage = lazy(() => import("./pages/GestionUtilisateursPage"));
-const ActivateAccountPage = lazy(() => import("./pages/ActivateAccountPage"));
-const DeviceVerification = lazy(() => import("./pages/DeviceVerification"));
-const EmailVerification = lazy(() => import("./pages/EmailVerification"));
-const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
-const QuestionnaireBuilderPage = lazy(() => import("./pages/QuestionnaireBuilderPage"));
-const AdminInspectionsPage = lazy(() => import("./pages/AdminInspectionsPage"));
-const HelpPage = lazy(() => import("./pages/Help"));
-const ForcePasswordChange = lazy(() => import("./pages/ForcePasswordChange"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const SitesPage = lazy(() => import("./pages/SitesPage"));
-const DetailSite = lazy(() => import("./pages/DetailSite"));
+// 🛡️ Utilitaire pour gérer les ChunkLoadError (fichiers JS qui ont changé de hash après un déploiement)
+const lazyWithRetry = (componentImport: () => Promise<any>) =>
+  lazy(async () => {
+    const pageHasAlreadyBeenForceRefreshed = JSON.parse(
+      window.localStorage.getItem("page-has-been-force-refreshed") || "false"
+    );
+
+    try {
+      const component = await componentImport();
+      window.localStorage.setItem("page-has-been-force-refreshed", "false");
+      return component;
+    } catch (error) {
+      if (!pageHasAlreadyBeenForceRefreshed) {
+        // Temps de mise à jour détecté, on force le reload
+        window.localStorage.setItem("page-has-been-force-refreshed", "true");
+        return window.location.reload();
+      }
+      // Si on a déjà reload et que ça échoue encore, on lance l'erreur
+      throw error;
+    }
+  });
+
+const DashboardPage = lazyWithRetry(() => import("./pages/DashboardPage"));
+const InspectionPage = lazyWithRetry(() => import("./pages/InspectionPage"));
+const ActionsPage = lazyWithRetry(() => import("./pages/ActionsPage"));
+const HistoriquePage = lazyWithRetry(() => import("./pages/HistoriquePage"));
+const ParametresPage = lazyWithRetry(() => import("./pages/ParametresPage"));
+const PlanningPage = lazyWithRetry(() => import("./pages/PlanningPage"));
+const LogsPage = lazyWithRetry(() => import("./pages/LogsPage"));
+const GestionUtilisateursPage = lazyWithRetry(() => import("./pages/GestionUtilisateursPage"));
+const ActivateAccountPage = lazyWithRetry(() => import("./pages/ActivateAccountPage"));
+const DeviceVerification = lazyWithRetry(() => import("./pages/DeviceVerification"));
+const EmailVerification = lazyWithRetry(() => import("./pages/EmailVerification"));
+const NotificationsPage = lazyWithRetry(() => import("./pages/NotificationsPage"));
+const QuestionnaireBuilderPage = lazyWithRetry(() => import("./pages/QuestionnaireBuilderPage"));
+const AdminInspectionsPage = lazyWithRetry(() => import("./pages/AdminInspectionsPage"));
+const HelpPage = lazyWithRetry(() => import("./pages/Help"));
+const ForcePasswordChange = lazyWithRetry(() => import("./pages/ForcePasswordChange"));
+const NotFound = lazyWithRetry(() => import("./pages/NotFound"));
+const SitesPage = lazyWithRetry(() => import("./pages/SitesPage"));
+const DetailSite = lazyWithRetry(() => import("./pages/DetailSite"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
