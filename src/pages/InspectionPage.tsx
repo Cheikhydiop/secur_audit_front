@@ -1459,11 +1459,11 @@ export default function InspectionPage() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col lg:flex-row gap-12 items-start">
+              <div className="flex flex-col md:flex-row gap-6 lg:gap-12 items-start px-1 md:px-0">
 
-                {/* Left Column: Vertical Timeline Navigation (Sticky) */}
-                <div className="lg:w-[320px] shrink-0 sticky top-[4.5rem] self-start space-y-8 max-h-[calc(100vh-5rem)] overflow-y-auto" >
-                  <div className="bg-white/80 backdrop-blur-xl border border-gray-100 rounded-[3rem] p-8 shadow-[0_40px_100px_rgba(0,0,0,0.02)] space-y-8">
+                {/* Left Column: Vertical Timeline Navigation (Sticky) - Visible on Tablet & Desktop */}
+                <div className="hidden md:block md:w-[260px] lg:w-[320px] shrink-0 sticky top-[4.5rem] self-start space-y-6 lg:space-y-8 max-h-[calc(100vh-5rem)] overflow-y-auto no-scrollbar" >
+                  <div className="bg-white/80 backdrop-blur-xl border border-gray-100 rounded-3xl lg:rounded-[3rem] p-5 lg:p-8 shadow-[0_40px_100px_rgba(0,0,0,0.02)] space-y-6 lg:space-y-8">
                     <div className="space-y-1">
                       <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest px-2 group flex items-center gap-2">
                         <ListChecks className="w-5 h-5 text-sonatel-orange" />
@@ -1559,9 +1559,9 @@ export default function InspectionPage() {
                 </div>
 
                 {/* Right Column: Active Content */}
-                <div className="flex-1 space-y-12 min-w-0 pb-32" >
-                  {/* Mobile-optimized Question Header with Sticky Rubriques */}
-                  <div className="sticky top-16 lg:top-20 z-10 bg-gray-50/95 backdrop-blur-sm -mx-4 px-4 py-3 border-b border-gray-200 lg:static lg:bg-transparent lg:border-none lg:p-0 lg:m-0">
+                <div className="flex-1 space-y-8 md:space-y-12 min-w-0 pb-32" >
+                  {/* Mobile-optimized Question Header - Hidden on Tablet/Desktop as Sidebar is visible */}
+                  <div className="sticky top-16 md:static z-10 bg-gray-50/95 backdrop-blur-sm -mx-4 px-4 py-3 border-b border-gray-200 md:bg-transparent md:border-none md:p-0 md:m-0 md:hidden">
                     <div className="flex items-center justify-between mb-2 lg:mb-8">
                       <div className="flex items-center gap-2 md:gap-4 min-w-0">
                         <div className={`p-2 md:p-4 rounded-xl md:rounded-[1.5rem] bg-white shadow-sm md:shadow-lg md:ring-1 ring-gray-100 ${currentRubrique.color}`}>
@@ -1579,7 +1579,7 @@ export default function InspectionPage() {
                       </Badge>
                     </div>
 
-                    <div className="flex lg:hidden overflow-x-auto gap-2 pb-1 no-scrollbar">
+                    <div className="flex overflow-x-auto gap-2 pb-1 no-scrollbar">
                       {activeRubriques.map((rubrique, idx) => (
                         <button
                           key={rubrique.id}
