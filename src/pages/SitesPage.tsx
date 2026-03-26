@@ -317,18 +317,18 @@ const SitesPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-gray-900 flex items-center gap-3">
-            <span className="w-2 h-8 bg-orange-500 rounded-full"></span>
+          <h1 className="text-2xl md:text-4xl font-black tracking-tight text-gray-900 flex items-center gap-3 leading-tight">
+            <span className="w-1.5 md:w-2 h-6 md:h-8 bg-orange-500 rounded-full shrink-0"></span>
             Gestion des Sites
           </h1>
-          <p className="text-base text-gray-500 mt-1 ml-5 font-bold">
-            Gérez et surveillez vos installations en temps réel
+          <p className="text-sm md:text-base text-gray-500 mt-1 md:ml-5 font-bold">
+            Gérez et surveillez vos installations
           </p>
         </div>
 
         <Button
           onClick={openCreateModal}
-          className="bg-orange-500 hover:bg-orange-600 text-white"
+          className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white font-black uppercase text-xs tracking-widest h-11 md:h-10 rounded-xl"
         >
           <Plus className="h-4 w-4 mr-2" />
           Nouveau Site
@@ -336,14 +336,14 @@ const SitesPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap shadow-sm">
-        <div className="flex items-center gap-4 flex-1 flex-wrap">
+      <div className="bg-white rounded-xl p-3 md:p-4 flex items-center justify-between gap-3 md:gap-4 flex-wrap shadow-sm">
+        <div className="flex items-center gap-3 md:gap-4 flex-1 flex-wrap w-full">
           {/* Search */}
-          <div className="relative min-w-[200px] flex-1 md:flex-none">
+          <div className="relative w-full md:flex-1 md:min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Rechercher par nom..."
-              className="pl-10"
+              className="pl-10 h-10 md:h-9 border-2 border-gray-100 rounded-xl font-bold"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -424,10 +424,10 @@ const SitesPage: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="flex gap-4 text-base text-gray-500">
-        <span>{totalItems} site{totalItems !== 1 ? 's' : ''} au total</span>
-        {regionFilter && regionFilter !== "all" && <span>• Filtré par: {regionFilter}</span>}
-        {statusFilter && statusFilter !== "all" && <span>• Statut: {statusFilter}</span>}
+      <div className="flex flex-wrap gap-2 md:gap-4 text-xs md:text-base text-gray-500 font-bold px-1">
+        <Badge variant="outline" className="border-gray-200 text-gray-400 font-black">{totalItems} site{totalItems !== 1 ? 's' : ''}</Badge>
+        {regionFilter && regionFilter !== "all" && <Badge className="bg-orange-50 text-sonatel-orange border-sonatel-orange/20 font-black uppercase text-[10px]">{regionFilter}</Badge>}
+        {statusFilter && statusFilter !== "all" && <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 font-black uppercase text-[10px]">{statusFilter}</Badge>}
       </div>
 
       {/* Sites List - Grid view always rendered, map hidden/shown via CSS */}

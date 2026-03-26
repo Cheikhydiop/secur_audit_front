@@ -1558,67 +1558,41 @@ export default function InspectionPage() {
 
                 {/* Right Column: Active Content */}
                 <div className="flex-1 space-y-12 min-w-0 pb-32" >
-                  {/* Current Header - Premium Glass Design */}
-                  <div className="bg-white/60 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-white/50 shadow-[0_20px_60px_rgba(0,0,0,0.03)] animate-in fade-in slide-in-from-bottom-6 duration-700 relative overflow-hidden group" >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-sonatel-orange/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-sonatel-orange/10 transition-colors duration-700" />
-
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 relative z-10">
-                      <div className="flex items-center gap-8">
-                        <div className={`p-6 rounded-[2rem] bg-gradient-to-br from-white to-gray-50 shadow-[0_10px_30px_rgba(0,0,0,0.05)] border border-white relative`}>
-                          <currentRubrique.icon className={`w-10 h-10 ${currentRubrique.color}`} />
-                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-sonatel-orange rounded-full border-2 border-white flex items-center justify-center text-[10px] font-black text-white shadow-lg">
-                            {currentRubriqueIdx + 1}
-                          </div>
+                  {/* Mobile-optimized Question Header with Sticky Rubriques */}
+                  <div className="sticky top-0 z-20 bg-gray-50/95 backdrop-blur-sm -mx-4 px-4 py-3 border-b border-gray-200 lg:static lg:bg-transparent lg:border-none lg:p-0 lg:m-0">
+                    <div className="flex items-center justify-between mb-2 lg:mb-8">
+                      <div className="flex items-center gap-2 md:gap-4 min-w-0">
+                        <div className={`p-2 md:p-4 rounded-xl md:rounded-[1.5rem] bg-white shadow-sm md:shadow-lg md:ring-1 ring-gray-100 ${currentRubrique.color}`}>
+                          <currentRubrique.icon className="h-4 w-4 md:h-8 md:w-8" />
                         </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-4">
-                            <Badge className="bg-sonatel-orange/10 text-sonatel-orange border-none font-black text-[10px] uppercase px-4 py-1.5 rounded-full tracking-widest">
-                              Rubrique {currentRubriqueIdx + 1} sur {activeRubriques.length}
-                            </Badge>
-                            <div className="h-1 w-8 bg-gray-100 rounded-full" />
-                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest animate-pulse">Saisie en cours</span>
-                          </div>
-                          <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-none uppercase">{currentRubrique.label}</h2>
-                          <div className="text-sm font-bold text-gray-400 flex items-center gap-2 uppercase tracking-[0.1em]">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                            {questions.length} points de contrôle stratégiques
-                          </div>
+                        <div className="min-w-0">
+                          <h2 className="text-sm md:text-3xl font-black text-gray-900 uppercase tracking-tight truncate">
+                            {currentRubrique.label}
+                          </h2>
+                          <p className="hidden md:block text-[12px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Section {currentRubriqueIdx + 1} sur {activeRubriques.length}</p>
                         </div>
                       </div>
+                      <Badge className="lg:hidden bg-orange-50 text-sonatel-orange border-orange-100 font-bold text-[10px] shrink-0">
+                        {currentRubriqueIdx + 1}/{activeRubriques.length}
+                      </Badge>
+                    </div>
 
-                      <div className="flex items-center gap-6 bg-white/50 p-6 rounded-[2rem] border border-white shadow-sm ring-1 ring-black/5">
-                        <div className="text-right space-y-1">
-                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">La progression</p>
-                          <div className="text-3xl font-black text-gray-900 tabular-nums">
-                            {Math.round((questions.filter((_, idx) => answers[`${currentRubrique.id}-${idx}`]?.status).length / questions.length) * 100)}%
-                          </div>
-                        </div>
-                        <div className="w-16 h-16 relative">
-                          <svg className="w-16 h-16 transform -rotate-90 drop-shadow-sm">
-                            <circle
-                              cx="32"
-                              cy="32"
-                              r="28"
-                              stroke="currentColor"
-                              strokeWidth="6"
-                              fill="transparent"
-                              className="text-gray-100"
-                            />
-                            <circle
-                              cx="32"
-                              cy="32"
-                              r="28"
-                              stroke="currentColor"
-                              strokeWidth="6"
-                              fill="transparent"
-                              strokeDasharray={2 * Math.PI * 28}
-                              strokeDashoffset={2 * Math.PI * 28 * (1 - (questions.filter((_, idx) => answers[`${currentRubrique.id}-${idx}`]?.status).length / questions.length))}
-                              strokeLinecap="round"
-                              className="text-sonatel-orange transition-all duration-1000 ease-in-out"
-                            />
-                          </svg>
-                        </div>
-                      </div>
+                    <div className="flex lg:hidden overflow-x-auto gap-2 pb-1 no-scrollbar">
+                      {activeRubriques.map((rubrique, idx) => (
+                        <button
+                          key={rubrique.id}
+                          onClick={() => {
+                            setCurrentRubriqueIdx(idx);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`flex-none px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border-2 ${currentRubriqueIdx === idx
+                              ? "bg-sonatel-orange text-white border-sonatel-orange shadow-md"
+                              : "bg-white text-gray-400 border-gray-100"
+                            }`}
+                        >
+                          {rubrique.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
 
@@ -2160,6 +2134,14 @@ export default function InspectionPage() {
                           </Badge>
                         </div>
                         <div className="flex items-center gap-5 pt-3 border-t border-gray-50">
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 md:w-3 md:h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
+                            <span className="text-[10px] md:text-[11px] font-bold text-gray-600 uppercase">Conforme</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 md:w-3 md:h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                            <span className="text-[10px] md:text-[11px] font-bold text-gray-600 uppercase">Non-Conforme</span>
+                          </div>
                           <div className="flex items-center gap-1.5">
                             <User className="w-3 h-3 text-gray-300" />
                             <span className="text-[9px] font-black text-gray-500 uppercase">{nc.assignee || "—"}</span>

@@ -660,33 +660,32 @@ const DetailSite: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-4 md:px-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/sites')}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/sites')} className="shrink-0 h-9 w-9">
               <ChevronLeft className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="text-3xl font-black text-gray-900 leading-tight">{currentSite.nom}</h1>
-              <div className="flex items-center gap-4 text-base text-gray-500 mt-2">
+            <div className="min-w-0">
+              <h1 className="text-xl md:text-3xl font-black text-gray-900 leading-tight truncate">{currentSite.nom}</h1>
+              <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-base text-gray-500 mt-1 md:mt-2">
                 <span className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />{currentSite.zone}
+                  <MapPin className="h-3.5 w-3.5" />{currentSite.zone}
                 </span>
-                <span>•</span>
-                <span>{currentSite.code}</span>
-                <span>•</span>
-                <Badge variant="outline">{currentSite.type}</Badge>
+                <span className="hidden md:inline">•</span>
+                <span className="font-bold">{currentSite.code}</span>
+                <Badge variant="outline" className="text-[10px] md:text-xs">{currentSite.type}</Badge>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => setShowNewInspectionDialog(true)}>
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <Button variant="outline" onClick={() => setShowNewInspectionDialog(true)} className="flex-1 md:flex-none h-10 md:h-11 rounded-xl text-xs font-black uppercase tracking-widest">
               <Plus className="h-4 w-4 mr-2" />
-              Nouvelle inspection
+              Inspection
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" className="flex-1 md:flex-none h-10 md:h-11 rounded-xl text-xs font-black uppercase tracking-widest">
               <Download className="h-4 w-4 mr-2" />
-              Exporter
+              Export
             </Button>
           </div>
         </div>
@@ -694,51 +693,51 @@ const DetailSite: React.FC = () => {
 
       <div className="p-4 md:p-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-8">
+          <Card className="rounded-2xl border-2 border-gray-50 shadow-sm">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between group">
                 <div>
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Score moyen</p>
-                  <p className={`text-4xl font-black ${getScoreColor(averageScore)}`}>{averageScore}%</p>
+                  <p className="text-[9px] md:text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Score moyen</p>
+                  <p className={`text-2xl md:text-4xl font-black ${getScoreColor(averageScore)}`}>{averageScore}%</p>
                 </div>
-                <TrendingUp className="h-8 w-8 text-gray-300" />
+                <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-gray-300 group-hover:text-sonatel-orange transition-colors" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+          <Card className="rounded-2xl border-2 border-gray-50 shadow-sm">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between group">
                 <div>
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Inspections</p>
-                  <p className="text-4xl font-black text-gray-900">{totalInspections}</p>
+                  <p className="text-[9px] md:text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Inspections</p>
+                  <p className="text-2xl md:text-4xl font-black text-gray-900">{totalInspections}</p>
                 </div>
-                <FileText className="h-8 w-8 text-gray-300" />
+                <FileText className="h-6 w-6 md:h-8 md:w-8 text-gray-300 group-hover:text-sonatel-orange transition-colors" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+          <Card className="rounded-2xl border-2 border-gray-50 shadow-sm">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between group">
                 <div>
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Non-conformités</p>
-                  <p className="text-4xl font-black text-red-600">{nonConformites.length}</p>
+                  <p className="text-[9px] md:text-xs font-black text-gray-400 uppercase tracking-widest mb-1">NC Ouvertes</p>
+                  <p className="text-2xl md:text-4xl font-black text-red-600">{nonConformites.length}</p>
                 </div>
-                <AlertTriangle className="h-8 w-8 text-red-300" />
+                <AlertTriangle className="h-6 w-6 md:h-8 md:w-8 text-red-300 group-hover:text-red-500 transition-colors" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+          <Card className="rounded-2xl border-2 border-gray-50 shadow-sm">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between group">
                 <div>
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Actions</p>
-                  <p className="text-4xl font-black text-gray-900">{actionsTerminees}/{actions.length}</p>
+                  <p className="text-[9px] md:text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Actions</p>
+                  <p className="text-2xl md:text-4xl font-black text-gray-900">{actionsTerminees}/{actions.length}</p>
                 </div>
-                <Clock className="h-8 w-8 text-gray-300" />
+                <Clock className="h-6 w-6 md:h-8 md:w-8 text-gray-300 group-hover:text-sonatel-orange transition-colors" />
               </div>
             </CardContent>
           </Card>
@@ -763,17 +762,19 @@ const DetailSite: React.FC = () => {
         </Card>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-4 grid grid-cols-2 md:grid-cols-8">
-            <TabsTrigger value="overview">Aperçu</TabsTrigger>
-            <TabsTrigger value="map">Carte</TabsTrigger>
-            <TabsTrigger value="inspections">Historique</TabsTrigger>
-            <TabsTrigger value="questionnaire">Questionnaire</TabsTrigger>
-            <TabsTrigger value="nonconformites">Non-conformités</TabsTrigger>
-            <TabsTrigger value="actions">Actions</TabsTrigger>
-            <TabsTrigger value="proofs">Preuves</TabsTrigger>
-            <TabsTrigger value="analysis">Analyse</TabsTrigger>
-          </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="bg-white p-1 rounded-2xl shadow-sm border-2 border-gray-50 mb-6 overflow-x-auto overflow-y-hidden custom-scrollbar">
+            <TabsList className="bg-transparent h-auto p-0 flex flex-nowrap min-w-max">
+              <TabsTrigger value="overview" className="rounded-xl px-5 py-2.5 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white font-black text-[11px] uppercase tracking-wider transition-all whitespace-nowrap">Aperçu</TabsTrigger>
+              <TabsTrigger value="map" className="rounded-xl px-5 py-2.5 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white font-black text-[11px] uppercase tracking-wider transition-all whitespace-nowrap">Carte</TabsTrigger>
+              <TabsTrigger value="inspections" className="rounded-xl px-5 py-2.5 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white font-black text-[11px] uppercase tracking-wider transition-all whitespace-nowrap">Historique</TabsTrigger>
+              <TabsTrigger value="questionnaire" className="rounded-xl px-5 py-2.5 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white font-black text-[11px] uppercase tracking-wider transition-all whitespace-nowrap">Rapport</TabsTrigger>
+              <TabsTrigger value="nonconformites" className="rounded-xl px-5 py-2.5 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white font-black text-[11px] uppercase tracking-wider transition-all whitespace-nowrap">Non-conf.</TabsTrigger>
+              <TabsTrigger value="actions" className="rounded-xl px-5 py-2.5 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white font-black text-[11px] uppercase tracking-wider transition-all whitespace-nowrap">Actions</TabsTrigger>
+              <TabsTrigger value="proofs" className="rounded-xl px-5 py-2.5 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white font-black text-[11px] uppercase tracking-wider transition-all whitespace-nowrap">Preuves</TabsTrigger>
+              <TabsTrigger value="analysis" className="rounded-xl px-5 py-2.5 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white font-black text-[11px] uppercase tracking-wider transition-all whitespace-nowrap">Analyse</TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Overview Tab */}
           <TabsContent value="overview">
