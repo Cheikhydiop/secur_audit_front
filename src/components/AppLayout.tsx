@@ -171,23 +171,6 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <NavLink
-                  to="/help"
-                  className={`sonatel-menu-item rounded-xl ${location.pathname === "/help" ? "active" : ""}`}
-                >
-                  <FileQuestion key="sidebar-help" className={`h-6 w-6 ${collapsed ? "" : "mr-4"}`} />
-                  {!collapsed && <span>Aide & Support</span>}
-                </NavLink>
-              </TooltipTrigger>
-              {collapsed && (
-                <TooltipContent side="right" sideOffset={10} className="bg-gray-900 text-white px-4 py-2 rounded-lg shadow-xl">
-                  <p className="text-sm font-semibold">Aide & Support</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
                 <button
                   onClick={handleLogout}
                   className="sonatel-menu-item rounded-xl w-full text-left text-destructive hover:bg-destructive/5 hover:text-destructive"
@@ -226,38 +209,38 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         {/* Header / Navbar */}
-        <header className="sticky top-0 z-20 h-20 bg-white border-b border-gray-200 flex items-center justify-between px-6 transition-all duration-300 shadow-sm">
+        <header className="sticky top-0 z-20 h-16 md:h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6 transition-all duration-300 shadow-sm">
           {/* Mobile Menu Toggle */}
           <button
             className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setMobileMenuOpen(true)}
           >
             <Menu className="w-6 h-6 text-gray-600" />
           </button>
 
-          {/* Search Bar - Desktop */}
+          {/* Search Bar - Desktop Only */}
           <div className="hidden md:flex flex-1 max-w-md ml-4">
             <CommandPalette />
           </div>
 
+          <div className="flex-1 md:hidden flex justify-center">
+            <img src="/logo-sonatel.png" alt="Logo" className="h-8 w-auto" />
+          </div>
+
           {/* Action Icons & Profile */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-1 md:gap-4">
             <NotificationDropdown />
-            <button className="hidden sm:flex relative p-2.5 rounded-xl hover:bg-gray-100 transition-colors group">
-              <Mail className="w-5.5 h-5.5 text-gray-500 group-hover:text-sonatel-orange" />
-            </button>
 
+            <div className="h-6 w-[1px] bg-gray-200 mx-1 md:mx-2" />
 
-            <div className="h-8 w-[1px] bg-gray-200 mx-2 hidden sm:block" />
-
-            <div className="flex items-center gap-4 pl-4 cursor-pointer hover:opacity-80 transition-opacity border-l border-gray-100 h-10 ml-2">
-              <div className="text-right hidden lg:block">
-                <div className="text-[20px] font-black text-gray-900 leading-none"><span>{user?.name || "Utilisateur"}</span></div>
-                <div className="text-[16px] font-black text-sonatel-orange uppercase tracking-widest mt-1.5 opacity-90 leading-none">
-                  <span>DG/</span><span>{user?.role || "GUEST"}</span>
+            <div className="flex items-center gap-2 md:gap-4 pl-2 md:pl-4 cursor-pointer hover:opacity-80 transition-opacity">
+              <div className="text-right hidden sm:block">
+                <div className="text-sm md:text-[18px] font-black text-gray-900 leading-none"><span>{user?.name?.split(" ")[0]}</span></div>
+                <div className="text-[10px] md:text-[12px] font-bold text-sonatel-orange uppercase tracking-widest mt-0.5 opacity-90 leading-none">
+                  <span>{user?.role?.substring(0, 10)}</span>
                 </div>
               </div>
-              <div className="w-13 h-13 rounded-2xl bg-sonatel-orange shadow-lg shadow-orange-500/30 flex items-center justify-center text-white font-black text-lg border-2 border-white">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-sonatel-orange shadow-lg shadow-orange-500/20 flex items-center justify-center text-white font-black text-sm md:text-lg border-2 border-white">
                 <span>{getInitials(user?.name || "??")}</span>
               </div>
             </div>
@@ -266,31 +249,77 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
 
         {/* Bandeau hors-ligne */}
         {!isReachable && (
-          <div className="bg-red-600 text-white text-center text-xs font-bold py-1.5 px-4 z-50 flex items-center justify-center gap-2 animate-pulse">
-            <span className="h-2 w-2 rounded-full bg-white inline-block" />
-            <span>Serveur injoignable — Données locales utilisées</span>
+          <div className="bg-red-600 text-white text-center text-[10px] md:text-xs font-bold py-1 px-4 z-50 flex items-center justify-center gap-2 animate-pulse">
+            <span className="h-1.5 w-1.5 rounded-full bg-white inline-block" />
+            <span>Serveur injoignable</span>
           </div>
         )}
 
         {/* Page Content */}
         <main
           ref={scrollRef}
-          className="flex-1 overflow-y-auto p-4 md:p-8 bg-gray-50/50 scrollbar-stable"
+          className="flex-1 overflow-y-auto p-3 md:p-8 bg-gray-50/50 scrollbar-stable"
         >
           <ErrorBoundary resetKey={location.pathname}>
-            <Breadcrumbs />
+            <div className="mb-4">
+              <Breadcrumbs />
+            </div>
             {children || <Outlet />}
           </ErrorBoundary>
         </main>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
-      {mobileMenuOpen && (
+      {/* Mobile Sidebar - Drawer */}
+      <div
+        className={`fixed inset-0 z-50 md:hidden transition-opacity duration-300 ${mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      >
+        {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm transition-all"
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={() => setMobileMenuOpen(false)}
         />
-      )}
+
+        {/* Drawer Content */}
+        <aside
+          className={`absolute left-0 top-0 bottom-0 w-[280px] bg-white shadow-2xl transition-transform duration-300 ease-out flex flex-col ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <div className="p-6 border-b flex items-center justify-between">
+            <img src="/logo-sonatel.png" alt="Logo" className="h-12 w-auto" />
+            <button onClick={() => setMobileMenuOpen(false)} className="p-2 rounded-full hover:bg-gray-100">
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+          </div>
+
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {navItems
+              .filter(item => !item.role || (user && (item.role === user.role || (item.role === 'ADMIN' && user.role === 'SUPER_ADMIN'))))
+              .map((item) => {
+                const isActive = location.pathname.startsWith(item.to);
+                return (
+                  <NavLink
+                    key={`mobile-${item.to}`}
+                    to={item.to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center px-4 py-3 rounded-xl font-bold transition-all ${isActive ? "bg-sonatel-orange text-white" : "text-gray-600 hover:bg-orange-50"}`}
+                  >
+                    <item.icon className="w-5 h-5 mr-4" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+          </nav>
+
+          <div className="p-4 border-t space-y-2">
+            <button
+              onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
+              className="flex items-center w-full px-4 py-3 rounded-xl font-bold text-red-600 hover:bg-red-50 transition-all"
+            >
+              <LogOut className="w-5 h-5 mr-4" />
+              <span>Déconnexion</span>
+            </button>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

@@ -252,11 +252,11 @@ function KpiCard({ kpi, index }: KpiCardProps) {
 
         {/* Row 2: metric value */}
         <div>
-          <div className="text-h6 font-black text-gray-700 uppercase tracking-[0.10em] mb-0.5">{kpi.label}</div>
-          <div className={`text-5xl md:text-6xl font-black tracking-tighter ${theme.text} leading-none transition-all duration-300`}>
+          <div className="text-[10px] md:text-h6 font-black text-gray-700 uppercase tracking-[0.10em] mb-0.5">{kpi.label}</div>
+          <div className={`text-3xl md:text-6xl font-black tracking-tighter ${theme.text} leading-none transition-all duration-300`}>
             {displayValue}
           </div>
-          <div className="text-sm font-bold text-gray-600 mt-1 line-clamp-1">{kpi.sub}</div>
+          <div className="text-[10px] md:text-sm font-bold text-gray-600 mt-1 line-clamp-1">{kpi.sub}</div>
         </div>
 
         {/* Row 3: progress bar */}
@@ -1255,19 +1255,19 @@ export default function DashboardPage() {
   return (
     <div ref={dashboardRef} id="dashboard-page-container" className="p-4 md:p-6 lg:p-7 space-y-7 w-full overflow-hidden bg-[#F9FAFB]">
       {/* Header & Filters */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4 group">
-            <div className="w-16 h-16 rounded-[1.25rem] bg-gradient-to-br from-sonatel-orange to-orange-600 flex items-center justify-center shadow-2xl shadow-orange-200 shrink-0 transform group-hover:rotate-6 transition-transform duration-300">
-              <LayoutDashboard className="w-8 h-8 text-white" />
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 md:gap-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 w-full">
+          <div className="flex items-center gap-3 md:gap-4 group w-full">
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-[1.25rem] bg-gradient-to-br from-sonatel-orange to-orange-600 flex items-center justify-center shadow-xl md:shadow-2xl shadow-orange-200 shrink-0 transform group-hover:rotate-6 transition-transform duration-300">
+              <LayoutDashboard className="w-6 h-6 md:w-8 md:h-8 text-white" />
             </div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-gray-900 leading-none">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl md:text-5xl font-black tracking-tighter text-gray-900 leading-none truncate">
                 {user?.role === 'INSPECTEUR' ? "Mon Dashboard" : "Pilotage 360"}
               </h1>
-              <p className="text-[14px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1.5 flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isReachable ? 'bg-sonatel-orange animate-ping' : 'bg-red-500'}`} />
-                {isReachable ? 'CONFORMITÉ & SÉCURITÉ EN TEMPS RÉEL' : 'MODE HORS LIGNE (SERVEUR INDISPONIBLE)'}
+              <p className="text-[10px] md:text-[14px] font-black text-gray-400 uppercase tracking-[0.1em] md:tracking-[0.2em] mt-1 md:mt-1.5 flex items-center gap-2">
+                <span className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${isReachable ? 'bg-sonatel-orange animate-ping' : 'bg-red-500'}`} />
+                <span className="truncate">{isReachable ? 'SÉCURITÉ TEMPS RÉEL' : 'MODE HORS LIGNE'}</span>
               </p>
             </div>
           </div>
@@ -1416,8 +1416,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 bg-white p-2 rounded-2xl border-2 border-gray-100 shadow-sm">
-          <div className="flex items-center gap-2 px-3 border-r-2 border-gray-50">
+        <div className="flex flex-wrap items-center gap-2 bg-white p-2 rounded-2xl border-2 border-gray-100 shadow-sm w-full">
+          <div className="flex items-center gap-2 px-3 border-r-0 md:border-r-2 border-gray-50 v-full md:w-auto">
             <Calendar className="w-4 h-4 text-sonatel-orange" />
             <Select value={filters.periode} onValueChange={(v) => setFilters(f => ({ ...f, periode: v }))}>
               <SelectTrigger className="w-[130px] border-none bg-transparent font-black text-xs uppercase focus:ring-0">
@@ -1433,10 +1433,10 @@ export default function DashboardPage() {
             </Select>
           </div>
 
-          <div className="flex items-center gap-2 px-3 border-r-2 border-gray-50">
+          <div className="flex items-center gap-2 px-3 border-r-0 md:border-r-2 border-gray-50 w-full md:w-auto">
             <MapPin className="w-4 h-4 text-sonatel-orange" />
             <Select value={filters.region} onValueChange={(v) => setFilters(f => ({ ...f, region: v }))}>
-              <SelectTrigger className="w-[120px] border-none bg-transparent font-black text-xs uppercase focus:ring-0">
+              <SelectTrigger className="w-full md:w-[120px] border-none bg-transparent font-black text-xs uppercase focus:ring-0">
                 <SelectValue placeholder="Région" />
               </SelectTrigger>
               <SelectContent className="rounded-2xl border-2">
@@ -1448,10 +1448,10 @@ export default function DashboardPage() {
             </Select>
           </div>
 
-          <div className="flex items-center gap-2 px-3 border-r-2 border-gray-50">
+          <div className="flex items-center gap-2 px-3 border-r-0 md:border-r-2 border-gray-50 w-full md:w-auto">
             <Shield className="w-4 h-4 text-sonatel-orange" />
             <Select value={filters.typeSite} onValueChange={(v) => setFilters(f => ({ ...f, typeSite: v }))}>
-              <SelectTrigger className="w-[120px] border-none bg-transparent font-black text-xs uppercase focus:ring-0">
+              <SelectTrigger className="w-full md:w-[120px] border-none bg-transparent font-black text-xs uppercase focus:ring-0">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent className="rounded-2xl border-2">
