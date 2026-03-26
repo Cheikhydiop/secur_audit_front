@@ -549,12 +549,12 @@ const SitesPage: React.FC = () => {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-100">
                     <tr>
-                      <th className="text-left px-6 py-6 text-base font-black text-gray-400 uppercase tracking-widest">Site</th>
-                      <th className="text-left px-6 py-6 text-base font-black text-gray-400 uppercase tracking-widest">Code</th>
-                      <th className="text-left px-6 py-6 text-base font-black text-gray-400 uppercase tracking-widest">Région</th>
-                      <th className="text-left px-6 py-6 text-base font-black text-gray-400 uppercase tracking-widest">Bâtiments</th>
-                      <th className="text-left px-6 py-6 text-base font-black text-gray-400 uppercase tracking-widest">Statut</th>
-                      <th className="text-right px-6 py-6 text-base font-black text-gray-400 uppercase tracking-widest">Actions</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Site</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest md:table-cell">Code</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest md:table-cell">Région</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest md:table-cell">Bâtiments</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest md:table-cell">Statut</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
@@ -564,30 +564,30 @@ const SitesPage: React.FC = () => {
                         className="hover:bg-orange-50/50 cursor-pointer transition-colors"
                         onClick={() => navigateToSiteDetail(site.id)}
                       >
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-4">
-                            <div className="bg-orange-50 p-3 rounded-lg">
-                              <Building className="h-6 w-6 text-orange-500" />
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-orange-50 p-2 rounded-lg">
+                              <Building className="h-5 w-5 text-orange-500" />
                             </div>
-                            <span className="font-black text-2xl text-gray-900">{site.nom_site || site.nom}</span>
+                            <span className="font-black text-lg text-gray-900 leading-tight">{site.nom_site || site.nom}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-6">
-                          <span className="text-xl font-medium text-gray-600">{site.code || '-'}</span>
+                        <td className="px-6 py-4 hidden md:table-cell">
+                          <span className="text-sm font-medium text-gray-600">{site.code || '-'}</span>
                         </td>
-                        <td className="px-6 py-6">
+                        <td className="px-6 py-4 hidden md:table-cell">
                           <div className="flex items-center gap-2 text-gray-600">
-                            <MapPin className="h-5 w-5 text-gray-400" />
-                            <span className="text-xl">{site.regionName}</span>
+                            <MapPin className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm">{site.regionName}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-6">
-                          <span className="text-xl text-gray-600">{site.batiments?.length || 0}</span>
+                        <td className="px-6 py-4 hidden md:table-cell">
+                          <span className="text-sm text-gray-600">{site.batiments?.length || 0}</span>
                         </td>
-                        <td className="px-6 py-6">
+                        <td className="px-6 py-4 hidden md:table-cell">
                           <div className="flex items-center gap-2">
-                            <div className={`h-3 w-3 rounded-full ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                            <span className={`text-base font-bold uppercase ${site.status === 'actif' ? 'text-green-600' : 'text-red-600'}`}>
+                            <div className={`h-2.5 w-2.5 rounded-full ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                            <span className={`text-[11px] font-black uppercase ${site.status === 'actif' ? 'text-green-600' : 'text-red-600'}`}>
                               {site.status || 'actif'}
                             </span>
                           </div>

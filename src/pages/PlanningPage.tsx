@@ -621,7 +621,7 @@ export default function PlanningPage() {
     }
 
     return (
-        <div className="p-4 md:p-10 space-y-10 w-full animate-in fade-in duration-500 pb-32">
+        <div className="p-4 md:p-8 space-y-6 md:space-y-10 w-full animate-in fade-in duration-500 pb-32">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div className="text-center md:text-left">
                     <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight flex items-center justify-center md:justify-start gap-3">
@@ -761,7 +761,7 @@ export default function PlanningPage() {
                                         : 'border-gray-100 hover:border-sonatel-orange/30 hover:shadow-xl hover:shadow-orange-500/5'
                                     }`}
                             >
-                                <CardContent className="p-8">
+                                <CardContent className="p-4 md:p-8">
                                     <div className="flex justify-between items-start mb-6">
                                         <div className="flex items-center gap-4">
                                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner border
@@ -775,8 +775,8 @@ export default function PlanningPage() {
                                                 }
                                             </div>
                                             <div>
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <h3 className={`text-xl font-black uppercase tracking-tight transition-colors
+                                                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
+                                                    <h3 className={`text-lg md:text-xl font-black uppercase tracking-tight transition-colors
                                                         ${isLocked ? 'text-gray-400' : 'text-gray-900 group-hover:text-sonatel-orange'}`}>
                                                         {s.site}
                                                     </h3>
@@ -855,7 +855,7 @@ export default function PlanningPage() {
                                         )}
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-8 bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100/50">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 bg-gray-50/50 p-4 md:p-6 rounded-[2rem] border border-gray-100/50">
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center">
@@ -1039,7 +1039,7 @@ export default function PlanningPage() {
             {/* Modal Add/Edit — accessible uniquement si autorisé */}
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent className="max-w-2xl rounded-[3rem] p-0 border-none shadow-2xl overflow-hidden">
-                    <div className="p-10 space-y-8">
+                    <div className="p-5 md:p-10 space-y-6 md:space-y-8">
                         <DialogHeader>
                             <div className="w-16 h-16 rounded-[2rem] bg-sonatel-orange/10 flex items-center justify-center mb-6">
                                 <CalendarIcon className="text-sonatel-orange w-8 h-8" />
@@ -1319,7 +1319,7 @@ export default function PlanningPage() {
                         </div>
                     </div>
 
-                    <div className="p-12 pt-10 space-y-10">
+                    <div className="p-6 md:p-12 pt-6 md:pt-10 space-y-6 md:space-y-10">
                         <div className="grid grid-cols-2 gap-6">
                             <div className="p-8 bg-emerald-50/50 rounded-[2.5rem] border-2 border-emerald-100/50 flex flex-col items-center justify-center text-center translate-y-[-2rem] bg-white shadow-xl shadow-emerald-500/10 transition-transform">
                                 <span className="text-5xl font-black text-emerald-600 tracking-tighter tabular-nums">{importSummary?.count}</span>

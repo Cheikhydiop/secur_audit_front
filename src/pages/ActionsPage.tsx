@@ -328,7 +328,7 @@ export default function ActionsPage() {
   };
 
   return (
-    <div className="p-4 md:p-10 space-y-10 w-full animate-in fade-in duration-500">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-10 w-full animate-in fade-in duration-500">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="text-center md:text-left">
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">Cahier d'Actions</h1>
@@ -351,7 +351,7 @@ export default function ActionsPage() {
       </div>
 
       <Dialog open={showAddAction} onOpenChange={setShowAddAction}>
-        <DialogContent className="max-w-2xl rounded-[2rem] border-none p-10">
+        <DialogContent className="max-w-2xl rounded-[2rem] border-none p-5 md:p-10">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black text-gray-900 uppercase">Nouvelle Action Corrective</DialogTitle>
           </DialogHeader>
@@ -434,7 +434,7 @@ export default function ActionsPage() {
           { label: "Taux Clôture", value: `${Math.round((summary.cloture / summary.total) * 100 || 0)}%`, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
         ].map((item, i) => (
           <Card key={i} className={`border-2 border-transparent hover:border-sonatel-orange/20 transition-all rounded-3xl shadow-sm ${item.bg}`}>
-            <CardContent className="p-4 md:p-6 flex items-center justify-between">
+            <CardContent className="p-3 md:p-6 flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-xl md:text-3xl font-black text-gray-900 tracking-tighter">{item.value}</p>
                 <p className="text-[9px] md:text-[10px] font-black text-muted-foreground uppercase tracking-widest">{item.label}</p>
@@ -519,7 +519,7 @@ export default function ActionsPage() {
 
           return (
             <Card key={action.id} className="group border-2 border-gray-100 bg-white hover:border-sonatel-orange/30 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300 rounded-[2rem] overflow-hidden animate-in slide-in-from-bottom-4" style={{ animationDelay: `${i * 80}ms` }}>
-              <CardContent className="p-8">
+              <CardContent className="p-4 md:p-8">
                 <div className="flex flex-col lg:flex-row gap-8 lg:items-center">
                   {/* Left part */}
                   <div className="flex-1 space-y-6">
@@ -536,7 +536,7 @@ export default function ActionsPage() {
                     </div>
 
                     <div className="space-y-4">
-                      <h3 className="text-xl font-black text-gray-900 leading-tight group-hover:text-sonatel-orange transition-colors">
+                      <h3 className="text-lg md:text-xl font-black text-gray-900 leading-tight group-hover:text-sonatel-orange transition-colors">
                         {action.titre}
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

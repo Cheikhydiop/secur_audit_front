@@ -1597,9 +1597,9 @@ export default function InspectionPage() {
                   </div>
 
                   {/* Questions list with Vertical Path */}
-                  <div className="space-y-10 relative pl-12 lg:pl-16" >
+                  <div className="space-y-6 md:space-y-10 relative pl-10 md:pl-12 lg:pl-16" >
                     {/* Internal Path Line */}
-                    <div className="absolute left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full hidden md:block" />
+                    <div className="absolute left-[16px] md:left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full hidden md:block" />
 
                     {/* Active Path Filler */}
                     <div
@@ -1622,7 +1622,7 @@ export default function InspectionPage() {
                         return (
                           <div key={key} className={`relative group/q animate-in fade-in slide-in-from-left-4 duration-500`} style={{ animationDelay: `${i * 70}ms` }}>
                             {/* Timeline Node - Positioned on Path */}
-                            <div className={`absolute left-[-50px] lg:left-[-59px] top-6 w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-500 z-20 shadow-xl border-4 border-[#FDFDFD] ${isAnswered
+                            <div className={`absolute left-[-38px] md:left-[-50px] lg:left-[-59px] top-4 md:top-6 w-9 h-9 md:w-11 md:h-11 rounded-xl md:rounded-2xl flex items-center justify-center transition-all duration-500 z-20 shadow-xl border-4 border-[#FDFDFD] ${isAnswered
                               ? ans.status === "conforme"
                                 ? "bg-emerald-500 text-white"
                                 : ans.status === "non-conforme"
@@ -1707,13 +1707,13 @@ export default function InspectionPage() {
                                         <button
                                           key={opt.id}
                                           onClick={() => updateAnswer(key, { status: opt.id as any })}
-                                          className={`flex flex-col items-center justify-center gap-2 py-5 rounded-[1.5rem] transition-all duration-300 border-2 ${ans.status === opt.id
+                                          className={`flex flex-col items-center justify-center gap-1 md:gap-2 py-3 md:py-5 rounded-xl md:rounded-[1.5rem] transition-all duration-300 border-2 ${ans.status === opt.id
                                             ? `${opt.color} border-transparent text-white shadow-xl scale-[1.03] z-10`
                                             : "bg-white border-transparent text-gray-400 hover:border-sonatel-orange/20 hover:text-sonatel-orange hover:shadow-md"
                                             }`}
                                         >
-                                          <opt.icon className={`w-6 h-6 transition-transform ${ans.status === opt.id ? "scale-110" : "scale-100"}`} />
-                                          <span className="text-[10px] font-black tracking-[0.2em]">{opt.label}</span>
+                                          <opt.icon className={`w-5 h-5 md:w-6 md:h-6 transition-transform ${ans.status === opt.id ? "scale-110" : "scale-100"}`} />
+                                          <span className="text-[9px] md:text-[10px] font-black tracking-tight md:tracking-[0.2em]">{opt.label}</span>
                                         </button>
                                       ))}
                                     </div>
@@ -1896,7 +1896,7 @@ export default function InspectionPage() {
                       <div className="text-xs font-bold text-gray-700 leading-relaxed">{nc.observation || "Aucune observation détaillée."}</div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="p-4 bg-gray-50/50 rounded-2xl border border-gray-100">
                         <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Responsable</div>
                         <div className="text-xs font-black text-gray-900">{nc.assignee || "À définir"}</div>
@@ -1944,7 +1944,7 @@ export default function InspectionPage() {
                 </Badge>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                 {Object.entries(answers).flatMap(([key, ans]) => ans.photos || []).length > 0 ? (
                   Object.entries(answers).map(([key, ans]) =>
                     (ans.photos || []).map((photo, pIdx) => (
@@ -2029,9 +2029,9 @@ export default function InspectionPage() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             disabled={currentRubriqueIdx === 0}
-            className="rounded-2xl h-14 px-8 gap-3 border-none hover:bg-gray-100 text-gray-600 font-black uppercase text-[10px] tracking-widest"
+            className="rounded-xl md:rounded-2xl h-11 md:h-14 px-3 md:px-8 gap-2 md:gap-3 border-none hover:bg-gray-100 text-gray-600 font-black uppercase text-[10px] tracking-widest shrink-0"
           >
-            <ChevronLeft className="w-5 h-5" /> Précédent
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" /> <span className="hidden xs:inline">Précédent</span>
           </Button>
 
           <Button variant="ghost" className="hidden sm:flex rounded-2xl h-14 px-8 gap-3 text-gray-400 hover:text-sonatel-orange font-black uppercase tracking-widest text-[10px]">
@@ -2044,9 +2044,9 @@ export default function InspectionPage() {
                 setCurrentRubriqueIdx(currentRubriqueIdx + 1);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="rounded-2xl h-14 px-10 gap-3 bg-sonatel-orange hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 hover:scale-105 transition-all font-black uppercase text-[10px] tracking-widest"
+              className="rounded-xl md:rounded-2xl h-11 md:h-14 px-4 md:px-10 gap-2 md:gap-3 bg-sonatel-orange hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 hover:scale-105 transition-all font-black uppercase text-[10px] tracking-widest min-w-[100px]"
             >
-              Suivant <ChevronRight className="w-5 h-5" />
+              <span>{currentRubriqueIdx < activeRubriques.length - 1 ? "Suivant" : "Terminer"}</span> <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
           ) : (
             <Button
@@ -2133,21 +2133,21 @@ export default function InspectionPage() {
                             {nc.criticality}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-5 pt-3 border-t border-gray-50">
+                        <div className="flex flex-wrap items-center gap-y-3 gap-x-4 md:gap-5 pt-3 border-t border-gray-50">
                           <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 md:w-3 md:h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
-                            <span className="text-[10px] md:text-[11px] font-bold text-gray-600 uppercase">Conforme</span>
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                            <span className="text-[9px] font-bold text-gray-500 uppercase">Conforme</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 md:w-3 md:h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
-                            <span className="text-[10px] md:text-[11px] font-bold text-gray-600 uppercase">Non-Conforme</span>
+                            <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                            <span className="text-[9px] font-bold text-gray-500 uppercase">Non-Conforme</span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <User className="w-3 h-3 text-gray-300" />
-                            <span className="text-[9px] font-black text-gray-500 uppercase">{nc.assignee || "—"}</span>
+                            <User className="w-3 h-3 text-gray-400" />
+                            <span className="text-[9px] font-black text-gray-500 uppercase truncate max-w-[80px]">{nc.assignee || "—"}</span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <Calendar className="w-3 h-3 text-gray-300" />
+                            <Calendar className="w-3 h-3 text-gray-400" />
                             <span className="text-[9px] font-black text-gray-500 uppercase">{nc.dueDate || "—"}</span>
                           </div>
                         </div>

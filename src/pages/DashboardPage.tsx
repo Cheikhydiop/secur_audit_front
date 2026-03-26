@@ -252,8 +252,8 @@ function KpiCard({ kpi, index }: KpiCardProps) {
 
         {/* Row 2: metric value */}
         <div>
-          <div className="text-[10px] md:text-h6 font-black text-gray-700 uppercase tracking-[0.10em] mb-0.5">{kpi.label}</div>
-          <div className={`text-3xl md:text-6xl font-black tracking-tighter ${theme.text} leading-none transition-all duration-300`}>
+          <div className="text-[10px] md:text-sm font-black text-gray-700 uppercase tracking-[0.10em] mb-0.5">{kpi.label}</div>
+          <div className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter ${theme.text} leading-none transition-all duration-300`}>
             {displayValue}
           </div>
           <div className="text-[10px] md:text-sm font-bold text-gray-600 mt-1 line-clamp-1">{kpi.sub}</div>
@@ -1681,7 +1681,7 @@ export default function DashboardPage() {
               <CardHeader className="p-6 pb-2">
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-4xl font-black text-gray-900">Historique Conformité</CardTitle>
+                    <CardTitle className="text-xl md:text-4xl font-black text-gray-900">Historique Conformité</CardTitle>
                     <p className="text-[10px] text-gray-600 font-black uppercase tracking-wider">Tendance sur la période</p>
                   </div>
                   <TrendingUp className="w-5 h-5 text-sonatel-orange" />
@@ -1710,7 +1710,7 @@ export default function DashboardPage() {
               <CardHeader className="p-6 pb-2">
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-4xl font-black text-gray-900">Plans d'Actions</CardTitle>
+                    <CardTitle className="text-xl md:text-4xl font-black text-gray-900">Plans d'Actions</CardTitle>
                     <p className="text-xs text-gray-600 font-bold uppercase tracking-tighter">Répartition par statut</p>
                   </div>
                   <ListChecks className="w-5 h-5 text-sonatel-orange" />
@@ -1730,7 +1730,7 @@ export default function DashboardPage() {
               <CardHeader className="p-6 pb-2">
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-4xl font-black text-gray-900">
+                    <CardTitle className="text-xl md:text-4xl font-black text-gray-900">
                       {overviewSortMode === 'top' ? "Classement des Sites" : "Classement des Sites (Flop)"} - Conformité
                     </CardTitle>
                     <p className="text-sm text-muted-foreground font-bold uppercase tracking-tighter">
@@ -1757,7 +1757,7 @@ export default function DashboardPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-6 pt-2">
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex overflow-x-auto no-scrollbar gap-2 mb-4 scroll-smooth">
                   {availableFilters?.regions.map(region => (
                     <button
                       key={region}
@@ -1786,7 +1786,7 @@ export default function DashboardPage() {
               <CardHeader className="p-6 pb-2">
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-4xl font-black text-gray-900">Par Région</CardTitle>
+                    <CardTitle className="text-xl md:text-4xl font-black text-gray-900">Par Région</CardTitle>
                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-tighter">Moyenne par zone</p>
                   </div>
                   <MapPin className="w-5 h-5 text-sonatel-orange" />
@@ -1822,7 +1822,7 @@ export default function DashboardPage() {
               <CardHeader className="p-6 pb-2">
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-4xl font-black text-gray-900">Derniers Audits</CardTitle>
+                    <CardTitle className="text-xl md:text-4xl font-black text-gray-900">Derniers Audits</CardTitle>
                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-tighter">Flux d'activité récent</p>
                   </div>
                   <History className="w-5 h-5 text-sonatel-orange" />
@@ -1874,7 +1874,7 @@ export default function DashboardPage() {
               <CardHeader className="p-6 pb-2">
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-4xl font-black text-gray-900">Prochaines Missions</CardTitle>
+                    <CardTitle className="text-xl md:text-4xl font-black text-gray-900">Prochaines Missions</CardTitle>
                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-tighter">Planning prévisionnel</p>
                   </div>
                   <CalendarRange className="w-5 h-5 text-sonatel-orange" />

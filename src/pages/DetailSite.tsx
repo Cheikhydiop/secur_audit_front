@@ -678,13 +678,13 @@ const DetailSite: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <Button variant="outline" onClick={() => setShowNewInspectionDialog(true)} className="flex-1 md:flex-none h-10 md:h-11 rounded-xl text-xs font-black uppercase tracking-widest">
-              <Plus className="h-4 w-4 mr-2" />
+          <div className="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+            <Button variant="outline" onClick={() => setShowNewInspectionDialog(true)} className="flex-1 md:flex-none h-9 md:h-11 rounded-xl text-[10px] font-black uppercase tracking-widest px-3">
+              <Plus className="h-4 w-4 mr-1.5" />
               Inspection
             </Button>
-            <Button variant="outline" className="flex-1 md:flex-none h-10 md:h-11 rounded-xl text-xs font-black uppercase tracking-widest">
-              <Download className="h-4 w-4 mr-2" />
+            <Button variant="outline" className="flex-1 md:flex-none h-9 md:h-11 rounded-xl text-[10px] font-black uppercase tracking-widest px-3">
+              <Download className="h-4 w-4 mr-1.5" />
               Export
             </Button>
           </div>
@@ -789,20 +789,20 @@ const DetailSite: React.FC = () => {
                       Informations du site
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-8">
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-8">
-                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Nom du site</p><p className="font-bold text-gray-900 text-lg leading-tight">{currentSite.nom}</p></div>
-                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Code Identification</p><p className="font-bold text-gray-900 text-lg">{currentSite.code}</p></div>
-                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Typologie</p><p className="font-bold text-gray-900 text-lg">{currentSite.type}</p></div>
-                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Zone Opérationnelle</p><p className="font-bold text-gray-900 text-lg">{currentSite.zone}</p></div>
-                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Localisation GPS</p><p className="font-bold text-gray-900 text-lg">{currentSite.localisation}</p></div>
-                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Entité Responsable</p><p className="font-bold text-gray-900 text-lg">{currentSite.prestataire}</p></div>
-                      <div className="col-span-2 pt-4 border-t border-gray-50 flex items-center justify-between">
+                  <CardContent className="p-5 md:p-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-8 gap-y-6 md:gap-y-8">
+                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5">Nom du site</p><p className="font-bold text-gray-900 text-base md:text-lg leading-tight">{currentSite.nom}</p></div>
+                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5">Code Identification</p><p className="font-bold text-gray-900 text-base md:text-lg">{currentSite.code}</p></div>
+                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5">Typologie</p><p className="font-bold text-gray-900 text-base md:text-lg">{currentSite.type}</p></div>
+                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5">Zone Opérationnelle</p><p className="font-bold text-gray-900 text-base md:text-lg">{currentSite.zone}</p></div>
+                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5">Localisation GPS</p><p className="font-bold text-gray-900 text-base md:text-lg">{currentSite.localisation}</p></div>
+                      <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5">Entité Responsable</p><p className="font-bold text-gray-900 text-base md:text-lg">{currentSite.prestataire}</p></div>
+                      <div className="col-span-1 sm:col-span-2 pt-4 border-t border-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Statut Site</p>
                           <Badge className={`px-5 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest ${currentSite.status === 'actif' ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-400'}`}>{currentSite.status}</Badge>
                         </div>
-                        <div className="text-right">
+                        <div className="sm:text-right">
                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Dernier passage</p>
                           <p className="font-black text-gray-900">{lastInspection}</p>
                         </div>
@@ -1331,37 +1331,56 @@ const DetailSite: React.FC = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <Table>
-                    <TableHeader className="bg-gray-50/30">
-                      <TableRow className="border-b-2 border-gray-50 hover:bg-transparent">
-                        <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Description</TableHead>
-                        <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Criticité</TableHead>
-                        <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Recommandation</TableHead>
-                        <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Statut</TableHead>
-                        <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {nonConformites.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={5} className="py-20 text-center font-black text-gray-300 uppercase tracking-[0.2em]">Aucun défaut détecté</TableCell>
+                  <div className="hidden md:block">
+                    <Table>
+                      <TableHeader className="bg-gray-50/30">
+                        <TableRow className="border-b-2 border-gray-50 hover:bg-transparent">
+                          <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Description</TableHead>
+                          <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Criticité</TableHead>
+                          <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</TableHead>
                         </TableRow>
-                      ) : nonConformites.map((nc) => (
-                        <TableRow key={nc.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-all">
-                          <TableCell className="px-8 py-6 font-bold text-gray-900 max-w-md leading-relaxed">{nc.description}</TableCell>
-                          <TableCell className="py-6">{getNonConformiteCriticiteBadge(nc.criticite)}</TableCell>
-                          <TableCell className="py-6 font-medium text-gray-500 italic max-w-xs">{nc.recommendation}</TableCell>
-                          <TableCell className="py-6">{getNonConformiteStatutBadge(nc.statut)}</TableCell>
-                          <TableCell className="px-8 py-6 text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-gray-400 hover:text-sonatel-orange hover:bg-orange-50" title="Voir détails"><Eye className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-gray-400 hover:text-sonatel-orange hover:bg-orange-50" title="Télécharger"><Download className="h-4 w-4" /></Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {nonConformites.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={3} className="py-20 text-center font-black text-gray-300 uppercase tracking-[0.2em]">Aucun défaut détecté</TableCell>
+                          </TableRow>
+                        ) : nonConformites.map((nc) => (
+                          <TableRow key={nc.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-all">
+                            <TableCell className="px-8 py-6 font-bold text-gray-900 max-w-md leading-relaxed">{nc.description}</TableCell>
+                            <TableCell className="py-6">{getNonConformiteCriticiteBadge(nc.criticite)}</TableCell>
+                            <TableCell className="px-8 py-6 text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-gray-400 hover:text-sonatel-orange transition-colors"><Eye className="h-4 w-4" /></Button>
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-gray-400 hover:text-sonatel-orange transition-colors"><Download className="h-4 w-4" /></Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Mobile NC View */}
+                  <div className="md:hidden divide-y divide-gray-100">
+                    {nonConformites.length === 0 ? (
+                      <div className="p-12 text-center text-gray-300 font-black uppercase text-[10px] tracking-widest">Aucun défaut</div>
+                    ) : nonConformites.map((nc) => (
+                      <div key={`mob-nc-${nc.id}`} className="p-5 space-y-3">
+                        <div className="flex justify-between items-start gap-3">
+                          <p className="font-bold text-sm text-gray-900 leading-tight flex-1">{nc.description}</p>
+                          {getNonConformiteCriticiteBadge(nc.criticite)}
+                        </div>
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{nc.statut}</span>
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="sm" className="h-8 rounded-lg text-[10px] border-gray-100">Détails</Button>
+                            <Button variant="outline" size="sm" className="h-8 rounded-lg text-[10px] border-gray-100"><Download className="h-3 w-3" /></Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -1386,44 +1405,73 @@ const DetailSite: React.FC = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <Table>
-                    <TableHeader className="bg-gray-50/30">
-                      <TableRow className="border-b-2 border-gray-50 hover:bg-transparent">
-                        <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Description</TableHead>
-                        <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Responsable</TableHead>
-                        <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Échéance</TableHead>
-                        <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Priorité</TableHead>
-                        <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Statut</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {actions.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={5} className="py-20 text-center font-black text-gray-300 uppercase tracking-[0.2em]">Aucun plan d'action requis</TableCell>
+                  <div className="hidden lg:block overflow-x-auto">
+                    <Table>
+                      <TableHeader className="bg-gray-50/30">
+                        <TableRow className="border-b-2 border-gray-50 hover:bg-transparent">
+                          <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Description</TableHead>
+                          <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Responsable</TableHead>
+                          <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Échéance</TableHead>
+                          <TableHead className="py-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Priorité</TableHead>
+                          <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Statut</TableHead>
                         </TableRow>
-                      ) : actions.map((action) => (
-                        <TableRow key={action.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-all">
-                          <TableCell className="px-8 py-6 font-bold text-gray-900 max-w-md leading-relaxed">{action.description}</TableCell>
-                          <TableCell className="py-6">
-                            <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-black text-[10px] text-gray-500">
-                                {action.responsable.substring(0, 2).toUpperCase()}
+                      </TableHeader>
+                      <TableBody>
+                        {actions.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={5} className="py-20 text-center font-black text-gray-300 uppercase tracking-[0.2em]">Aucun plan d'action requis</TableCell>
+                          </TableRow>
+                        ) : actions.map((action) => (
+                          <TableRow key={action.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-all">
+                            <TableCell className="px-8 py-6 font-bold text-gray-900 max-w-md leading-relaxed">{action.description}</TableCell>
+                            <TableCell className="py-6">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-black text-[10px] text-gray-500">
+                                  {action.responsable.substring(0, 2).toUpperCase()}
+                                </div>
+                                <span className="font-bold text-gray-700">{action.responsable}</span>
                               </div>
-                              <span className="font-bold text-gray-700">{action.responsable}</span>
+                            </TableCell>
+                            <TableCell className="py-6">
+                              <div className="flex items-center gap-2 text-gray-500 font-bold">
+                                <Calendar className="w-3 h-3" />
+                                <span>{action.echeance}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="py-6">{getCriticiteBadge(action.criticite)}</TableCell>
+                            <TableCell className="px-8 py-6 text-right">{getActionStatusBadge(action.statut)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Mobile Actions View */}
+                  <div className="lg:hidden divide-y divide-gray-100">
+                    {actions.length === 0 ? (
+                      <div className="p-12 text-center text-gray-300 font-black uppercase text-[10px] tracking-widest font-bold">Aucune action requise</div>
+                    ) : actions.map((action) => (
+                      <div key={`mob-act-${action.id}`} className="p-5 space-y-4">
+                        <p className="font-bold text-sm text-gray-900 leading-tight">{action.description}</p>
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-black text-[8px] text-gray-500">
+                              {action.responsable.substring(0, 2).toUpperCase()}
                             </div>
-                          </TableCell>
-                          <TableCell className="py-6">
-                            <div className="flex items-center gap-2 text-gray-500 font-bold">
-                              <Calendar className="w-3 h-3" />
-                              <span>{action.echeance}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="py-6">{getCriticiteBadge(action.criticite)}</TableCell>
-                          <TableCell className="px-8 py-6 text-right">{getActionStatusBadge(action.statut)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                            <span className="text-[10px] font-bold text-gray-500">{action.responsable}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400">
+                            <Calendar className="w-3 h-3" />
+                            <span>{action.echeance}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {getCriticiteBadge(action.criticite)}
+                          {getActionStatusBadge(action.statut)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             )}
