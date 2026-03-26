@@ -1599,13 +1599,13 @@ export default function InspectionPage() {
                   </div>
 
                   {/* Questions list with Vertical Path */}
-                  <div className="space-y-6 md:space-y-10 relative pl-10 md:pl-12 lg:pl-16" >
+                  <div className="space-y-6 md:space-y-10 relative pl-8 md:pl-12 lg:pl-16" >
                     {/* Internal Path Line */}
-                    <div className="absolute left-[16px] md:left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full hidden md:block" />
+                    <div className="absolute left-[14px] md:left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full" />
 
                     {/* Active Path Filler */}
                     <div
-                      className="absolute left-[20px] lg:left-[27px] top-10 w-1 rounded-full bg-sonatel-orange transition-all duration-700 hidden md:block origin-top"
+                      className="absolute left-[14px] md:left-[20px] lg:left-[27px] top-10 w-1 rounded-full bg-sonatel-orange transition-all duration-700 md:block origin-top"
                       style={{ height: `${(questions.filter((_, idx) => answers[`${currentRubrique.id}-${idx}`]?.status).length / questions.length) * 100}%` }
                       }
                     />
@@ -1624,7 +1624,7 @@ export default function InspectionPage() {
                         return (
                           <div key={key} className={`relative group/q animate-in fade-in slide-in-from-left-4 duration-500`} style={{ animationDelay: `${i * 70}ms` }}>
                             {/* Timeline Node - Positioned on Path */}
-                            <div className={`absolute left-[-38px] md:left-[-50px] lg:left-[-59px] top-4 md:top-6 w-9 h-9 md:w-11 md:h-11 rounded-xl md:rounded-2xl flex items-center justify-center transition-all duration-500 z-20 shadow-xl border-4 border-[#FDFDFD] ${isAnswered
+                            <div className={`absolute left-[-32px] md:left-[-50px] lg:left-[-59px] top-4 md:top-6 w-8 h-8 md:w-11 md:h-11 rounded-xl md:rounded-2xl flex items-center justify-center transition-all duration-500 z-20 shadow-xl border-4 border-[#FDFDFD] ${isAnswered
                               ? ans.status === "conforme"
                                 ? "bg-emerald-500 text-white"
                                 : ans.status === "non-conforme"
@@ -1633,11 +1633,11 @@ export default function InspectionPage() {
                               : "bg-white text-gray-300 group-hover/q:bg-sonatel-orange/10 group-hover/q:text-sonatel-orange group-hover/q:scale-110 active:scale-95"
                               }`}>
                               {ans.status === "conforme" ? (
-                                <Check className="w-5 h-5 transition-all animate-in zoom-in" />
+                                <Check className="w-4 h-4 md:w-5 md:h-5 transition-all animate-in zoom-in" />
                               ) : ans.status === "non-conforme" ? (
-                                <AlertCircle className="w-5 h-5 transition-all animate-in zoom-in" />
+                                <AlertCircle className="w-4 h-4 md:w-5 md:h-5 transition-all animate-in zoom-in" />
                               ) : (
-                                <span className="text-[11px] font-black">{String(i + 1).padStart(2, '0')}</span>
+                                <span className="text-[10px] md:text-[11px] font-black">{String(i + 1).padStart(2, '0')}</span>
                               )}
                             </div>
 
@@ -1722,12 +1722,12 @@ export default function InspectionPage() {
 
                                     {/* Observations Area */}
                                     <div className="space-y-4">
-                                      <div className="relative group/obs transition-all duration-300 focus-within:-mx-10 focus-within:px-10">
+                                      <div className="relative group/obs transition-all duration-300 md:focus-within:-mx-10 md:focus-within:px-10">
                                         <Textarea
                                           placeholder="Notes et observations d'audit..."
                                           value={ans.observation}
                                           onChange={(e) => updateAnswer(key, { observation: e.target.value })}
-                                          className="w-full min-h-[80px] focus:min-h-[160px] rounded-[1.5rem] border-gray-100 bg-white focus:ring-sonatel-orange/10 focus:border-sonatel-orange transition-all duration-300 placeholder:text-gray-400 font-medium text-sm pt-5 px-6 shadow-sm resize-none"
+                                          className="w-full min-h-[80px] md:focus:min-h-[160px] rounded-[1.5rem] border-gray-100 bg-white focus:ring-sonatel-orange/10 focus:border-sonatel-orange transition-all duration-300 placeholder:text-gray-400 font-medium text-sm pt-5 px-6 shadow-sm resize-none"
                                         />
                                         <div className="absolute top-4 right-4 opacity-20 group-focus-within/obs:opacity-0 transition-opacity">
                                           <FileText className="w-5 h-5" />
