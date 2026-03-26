@@ -992,95 +992,95 @@ export default function InspectionPage() {
       <div className="fixed top-0 left-0 w-full h-full bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_0%,#FDFDFD_100%)] -z-10 pointer-events-none" />
 
       {/* Header inspired by SmartOp 360 */}
-      <div className="bg-white border-b border-gray-200 px-8 py-8 space-y-8 animate-in fade-in duration-700">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
+      <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-5 md:py-8 space-y-5 md:space-y-8 animate-in fade-in duration-700">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4">
             <Button
               variant="outline"
               size="sm"
-              className="h-10 rounded-xl border-gray-200 hover:bg-gray-50 flex items-center gap-2 font-bold px-4"
+              className="h-8 md:h-10 rounded-xl border-gray-200 hover:bg-gray-50 flex items-center gap-2 font-bold px-3 md:px-4 text-[10px] md:text-xs"
               onClick={() => navigate(-1)}
             >
-              <ArrowLeft className="w-4 h-4" /> Retour
+              <ArrowLeft className="w-3.5 h-3.5 md:w-4 md:h-4" /> Retour
             </Button>
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
+            <Breadcrumb className="scale-90 md:scale-100 origin-left">
+              <BreadcrumbList className="flex-nowrap overflow-x-auto no-scrollbar max-w-[50vw]">
+                <BreadcrumbItem className="shrink-0">
                   <BreadcrumbLink onClick={() => navigate('/dashboard')} className="cursor-pointer">Tableau de bord</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
+                <BreadcrumbSeparator className="shrink-0" />
+                <BreadcrumbItem className="shrink-0">
                   <BreadcrumbLink onClick={() => navigate('/inspection')} className="cursor-pointer capitalize">Inspection</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="font-bold text-gray-900">{siteName || "Nouvelle inspection"}</BreadcrumbPage>
+                <BreadcrumbSeparator className="shrink-0" />
+                <BreadcrumbItem className="shrink-0">
+                  <BreadcrumbPage className="font-bold text-gray-900 truncate max-w-[80px] md:max-w-none">{siteName || "Nouvelle inspection"}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
             <Button
               variant="outline"
               onClick={resetInspection}
-              className="h-11 rounded-2xl border-gray-200 text-xs font-black uppercase tracking-wider gap-2 px-6 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all"
+              className="flex-1 md:flex-none h-10 md:h-11 rounded-xl md:rounded-2xl border-gray-200 text-[10px] font-black uppercase tracking-wider gap-1.5 md:gap-2 px-3 md:px-6 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all font-black"
             >
-              <RotateCcw className="w-4 h-4" /> Réinitialiser
+              <RotateCcw className="w-3.5 h-3.5" /> Réinitialiser
             </Button>
-            <Button className="h-11 bg-sonatel-orange hover:bg-orange-600 text-white rounded-2xl font-black uppercase tracking-wider text-xs gap-3 px-8 shadow-lg shadow-orange-500/20">
-              <Save className="w-4 h-4" /> Enregistrer brouillon
+            <Button className="flex-1 md:flex-none h-10 md:h-11 bg-sonatel-orange hover:bg-orange-600 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-wider text-[10px] gap-2 md:gap-3 px-4 md:px-8 shadow-lg shadow-orange-500/20 font-black">
+              <Save className="w-3.5 h-3.5" /> Enregistrer brouillon
             </Button>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-          <div className="space-y-3">
-            <div className="flex items-center gap-4 flex-wrap">
-              <h1 className="text-4xl font-black text-gray-900 tracking-tight leading-none">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-8">
+          <div className="space-y-2 md:space-y-3">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight">
                 {siteName || "Inspection de site"}
               </h1>
-              <Badge className="bg-orange-100 text-orange-600 border-none font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full">
+              <Badge className="bg-orange-100 text-orange-600 border-none font-black text-[9px] md:text-[10px] uppercase tracking-widest px-3 md:px-4 py-1 md:py-1.5 rounded-full">
                 En cours
               </Badge>
             </div>
-            <p className="text-gray-500 font-medium text-lg max-w-2xl">
+            <p className="text-gray-500 font-medium text-sm md:text-lg max-w-2xl leading-relaxed">
               Audit de contrôle des infrastructures critiques et conformité des dispositifs de sécurité.
             </p>
           </div>
-          <div className="flex items-end gap-6 bg-gray-50/50 p-6 rounded-[2.5rem] border border-gray-100">
-            <div className="text-right space-y-1">
-              <div className="text-3xl font-black text-gray-900 tabular-nums leading-none">{stats.percent}%</div>
-              <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Conformité Globale</div>
+          <div className="flex items-center lg:items-end gap-3 md:gap-6 bg-gray-50/50 p-4 md:p-6 rounded-2xl md:rounded-[2.5rem] border border-gray-100 w-full lg:w-auto overflow-hidden">
+            <div className="flex-1 lg:text-right space-y-0.5 md:space-y-1">
+              <div className="text-2xl md:text-3xl font-black text-gray-900 tabular-nums leading-none">{stats.percent}%</div>
+              <div className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] md:tracking-[0.2em] whitespace-nowrap">Conformité Globale</div>
             </div>
-            <div className="w-14 h-14 relative">
+            <div className="w-10 h-10 md:w-14 md:h-14 relative shrink-0">
               <svg className="w-full h-full transform -rotate-90">
-                <circle cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="5" fill="transparent" className="text-gray-200" />
-                <circle cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="5" fill="transparent" strokeDasharray={2 * Math.PI * 24} strokeDashoffset={2 * Math.PI * 24 * (1 - stats.percent / 100)} strokeLinecap="round" className="text-sonatel-orange transition-all duration-1000" />
+                <circle cx="20 md:28" cy="20 md:28" r="16 md:24" stroke="currentColor" strokeWidth="4 md:5" fill="transparent" className="text-gray-200" />
+                <circle cx="20 md:28" cy="20 md:28" r="16 md:24" stroke="currentColor" strokeWidth="4 md:5" fill="transparent" strokeDasharray={2 * Math.PI * (window.innerWidth < 768 ? 16 : 24)} strokeDashoffset={2 * Math.PI * (window.innerWidth < 768 ? 16 : 24) * (1 - stats.percent / 100)} strokeLinecap="round" className="text-sonatel-orange transition-all duration-1000" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pt-4 border-t border-gray-100/50">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-10 pt-4 border-t border-gray-100/50">
           {[
             {
               icon: Calendar,
               label: "Date d'audit",
               value: searchParams.get("date")
-                ? new Date(searchParams.get("date")!).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
-                : new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+                ? new Date(searchParams.get("date")!).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
+                : new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
             },
             { icon: MapPin, label: "Zone / Localisation", value: siteZone || "Non définie" },
             { icon: Shield, label: "Type d'infrastructure", value: siteType || "A déterminer" },
             { icon: User, label: "Auditeur Responsable", value: author },
           ].map((meta, i) => (
-            <div key={i} className="flex items-center gap-4 group">
-              <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center group-hover:bg-sonatel-orange/10 group-hover:text-sonatel-orange transition-colors">
-                <meta.icon className="w-5 h-5 text-gray-400 group-hover:text-sonatel-orange transition-colors" />
+            <div key={i} className="flex items-center gap-3 md:gap-4 group">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-gray-50 flex items-center justify-center group-hover:bg-sonatel-orange/10 group-hover:text-sonatel-orange transition-colors shrink-0">
+                <meta.icon className="w-4 h-4 md:w-5 md:h-5 text-gray-400 group-hover:text-sonatel-orange transition-colors" />
               </div>
-              <div className="space-y-1">
-                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{meta.label}</div>
-                <div className="text-sm font-bold text-gray-900">{meta.value}</div>
+              <div className="space-y-0.5 min-w-0">
+                <div className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest">{meta.label}</div>
+                <div className="text-xs md:text-sm font-bold text-gray-900 truncate">{meta.value}</div>
               </div>
             </div>
           ))}
@@ -1100,30 +1100,30 @@ export default function InspectionPage() {
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-8 mt-8">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-6 md:mt-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="bg-white border border-gray-200 p-1 rounded-2xl h-14 flex items-center justify-start gap-2 w-full overflow-x-auto overflow-y-hidden scrollbar-hide">
-            <TabsTrigger value="overview" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all">
-              <LayoutDashboard className="w-4 h-4" /> Information générale
+          <TabsList className="bg-white border border-gray-200 p-1 rounded-xl md:rounded-2xl h-11 md:h-14 flex items-center justify-start gap-1 md:gap-2 w-full overflow-x-auto overflow-y-hidden no-scrollbar">
+            <TabsTrigger value="overview" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
+              <LayoutDashboard className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden xs:inline">Information générale</span><span className="xs:hidden">Infos</span>
             </TabsTrigger>
-            <TabsTrigger value="questionnaire" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all">
-              <BookOpen className="w-4 h-4" /> Questionnaire
+            <TabsTrigger value="questionnaire" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
+              <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" /> Questionnaire
             </TabsTrigger>
-            <TabsTrigger value="actions" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-xs lg:text-sm">
-              <CheckSquare className="w-4 h-4" /> Plan d'actions
-              {nonConformites.length > 0 && <Badge className="ml-2 bg-red-100 text-red-600 border-none font-black">{nonConformites.length}</Badge>}
+            <TabsTrigger value="actions" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
+              <CheckSquare className="w-3.5 h-3.5 md:w-4 md:h-4" /> Actions
+              {nonConformites.length > 0 && <Badge className="ml-1 md:ml-2 bg-red-100 text-red-600 border-none font-black px-1.5 h-4 text-[9px]">{nonConformites.length}</Badge>}
             </TabsTrigger>
-            <TabsTrigger value="photos" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all">
-              <FileImage className="w-4 h-4" /> Photos & Preuves
+            <TabsTrigger value="photos" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
+              <FileImage className="w-3.5 h-3.5 md:w-4 md:h-4" /> Photos
             </TabsTrigger>
-            <TabsTrigger value="resumee" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all">
-              <ClipboardCheck className="w-4 h-4" /> Résumé Global
+            <TabsTrigger value="resumee" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
+              <ClipboardCheck className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden xs:inline">Résumé Global</span><span className="xs:hidden">Résumé</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
-            <Card className="relative overflow-hidden bg-white rounded-[3rem] shadow-[0_20px_60px_rgba(0,0,0,0.05)] border-2 border-gray-100">
-              <CardContent className="p-10 space-y-12">
+            <Card className="relative overflow-hidden bg-white rounded-2xl md:rounded-[3rem] shadow-[0_20px_60px_rgba(0,0,0,0.05)] border-2 border-gray-100">
+              <CardContent className="p-4 md:p-10 space-y-8 md:space-y-12">
 
                 {/* Section: Paramètres du Site */}
                 <div className="space-y-6">
@@ -2008,7 +2008,7 @@ export default function InspectionPage() {
                           setConclusions(newCl);
                         }}
                         placeholder="Saisissez une orientation stratégique ou un risque résiduel majeur..."
-                        className="min-h-[160px] p-8 rounded-[2.5rem] border-2 border-gray-100 bg-gray-50/30 focus:bg-white focus:border-sonatel-orange focus:ring-4 focus:ring-sonatel-orange/5 shadow-inner transition-all font-bold text-sm leading-relaxed"
+                        className="min-h-[140px] md:min-h-[160px] p-4 md:p-8 rounded-2xl md:rounded-[2.5rem] border-2 border-gray-100 bg-gray-50/30 focus:bg-white focus:border-sonatel-orange focus:ring-4 focus:ring-sonatel-orange/5 shadow-inner transition-all font-medium text-sm leading-relaxed"
                       />
                     </div>
                   </div>
@@ -2020,8 +2020,8 @@ export default function InspectionPage() {
       </div>
 
       {/* Sticky Bottom Bar - Premium Floating */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] w-full max-w-[1400px] px-6">
-        <div className="bg-white/80 backdrop-blur-2xl border border-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-4 rounded-[2.5rem] flex justify-between items-center ring-1 ring-black/5">
+      <div className="fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-[60] w-full max-w-[1400px] px-3 md:px-6">
+        <div className="bg-white/90 backdrop-blur-2xl border border-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-2.5 md:p-4 rounded-2xl md:rounded-[2.5rem] flex justify-between items-center ring-1 ring-black/5">
           <Button
             variant="ghost"
             onClick={() => {
@@ -2207,8 +2207,8 @@ export default function InspectionPage() {
           navigate('/dashboard');
         }
       }}>
-        <DialogContent className="max-w-[500px] w-[92%] rounded-2xl md:rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden bg-white">
-          <div className="p-6 md:p-10 text-center space-y-6 md:space-y-8">
+        <DialogContent className="max-w-[500px] w-[92%] rounded-[2rem] md:rounded-[3rem] border-none shadow-2xl p-0 overflow-hidden bg-white">
+          <div className="p-5 md:p-10 text-center space-y-5 md:space-y-8">
             <div className="w-16 h-16 md:w-24 md:h-24 bg-emerald-100 text-emerald-600 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10">
               <CheckCircle2 className="w-8 h-8 md:w-12 md:h-12" />
             </div>
