@@ -14,6 +14,15 @@ export interface ActionPlan {
   evidenceNotes?: string;
   createdAt: string;
   updatedAt: string;
+  inspection?: {
+    site?: {
+      nom: string;
+      code: string;
+    };
+  };
+  responsable?: {
+    name: string;
+  };
 }
 
 export interface CreateActionData {
@@ -151,6 +160,10 @@ class ActionService extends BaseService {
 
   async addComment(actionId: string, content: string): Promise<ApiResponse<ActionComment>> {
     return this.post<ActionComment>(`/${actionId}/comments`, { content });
+  }
+
+  async sendUrgentAlert(id: string): Promise<ApiResponse<any>> {
+    return this.post<any>(`/${id}/send-urgent-alert`, {});
   }
 }
 

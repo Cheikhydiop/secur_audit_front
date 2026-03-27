@@ -103,14 +103,33 @@ html {
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  h1 { @apply text-h1; }
-  h2 { @apply text-h2; }
-  h3 { @apply text-h3; }
-  h4 { @apply text-h4; }
-  h5 { @apply text-h5; }
-  h6 { @apply text-h6; }
+  h1 {
+    @apply text-h1;
+  }
 
-  button { @apply font-button; }
+  h2 {
+    @apply text-h2;
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  h4 {
+    @apply text-h4;
+  }
+
+  h5 {
+    @apply text-h5;
+  }
+
+  h6 {
+    @apply text-h6;
+  }
+
+  button {
+    @apply font-button;
+  }
 
   /* ♿ Focus visible systématique pour navigation clavier */
   *:focus-visible {
@@ -192,8 +211,13 @@ html {
   }
 
   @keyframes progress-stripe {
-    from { background-position: 1rem 0; }
-    to { background-position: 0 0; }
+    from {
+      background-position: 1rem 0;
+    }
+
+    to {
+      background-position: 0 0;
+    }
   }
 
   .animate-progress-stripe {
@@ -201,8 +225,15 @@ html {
   }
 
   @keyframes wiggle {
-    0%, 100% { transform: rotate(-3deg); }
-    50% { transform: rotate(3deg); }
+
+    0%,
+    100% {
+      transform: rotate(-3deg);
+    }
+
+    50% {
+      transform: rotate(3deg);
+    }
   }
 
   .animate-wiggle {
@@ -210,23 +241,86 @@ html {
   }
 
   @keyframes slide-up-sm {
-    from { transform: translateY(6px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+      transform: translateY(6px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
   .animate-slide-up-sm {
     animation: slide-up-sm 0.2s ease-out forwards;
   }
+
+  @keyframes shake {
+
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    25% {
+      transform: translateX(-2px);
+    }
+
+    75% {
+      transform: translateX(2px);
+    }
+  }
+
+  .animate-shake {
+    animation: shake 0.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-soft {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 }
 
 @layer components {
   .sonatel-menu-item {
-    @apply flex items-center py-4 px-6 text-[19px] font-bold text-sonatel-text-gray hover:bg-sonatel-light-bg hover:text-sonatel-orange transition-all duration-200;
-    min-height: 52px;
+    @apply flex items-center py-3.5 px-4 text-[15px] font-semibold text-gray-600 hover:bg-sonatel-light-bg hover:text-sonatel-orange transition-all duration-200;
+    min-height: 48px;
   }
 
   .sonatel-menu-item.active {
-    @apply bg-sonatel-light-bg border-l-4 border-sonatel-orange text-sonatel-orange shadow-sm;
+    @apply bg-orange-50 text-sonatel-orange shadow-sm border-l-4 border-sonatel-orange;
+  }
+
+  .sidebar-section-title {
+    @apply px-5 py-2 mt-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest;
+  }
+
+  .sidebar-badge-dot {
+    @apply w-2 h-2 rounded-full bg-red-500 ml-auto;
+  }
+
+  .sidebar-badge-count {
+    @apply px-2 py-0.5 rounded-full bg-sonatel-orange text-white text-[11px] font-bold ml-auto;
+  }
+
+  .sidebar-profile {
+    @apply mt-auto p-4 border-t border-white/5 flex items-center gap-3 hover:bg-white/5 transition-colors cursor-pointer;
+  }
+
+  .sidebar-logout-btn {
+    @apply p-2 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors ml-auto;
   }
 
   .sonatel-submenu-item {
@@ -268,6 +362,7 @@ html {
 
 /* ♿ Respect de la préférence utilisateur pour réduire les animations */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -291,6 +386,7 @@ html {
 
 /* 📥 Optimisation Impression */
 @media print {
+
   nav,
   .fixed,
   .no-print,
@@ -323,8 +419,13 @@ html {
     box-shadow: none !important;
   }
 
-  h1 { font-size: 24pt !important; }
-  h3 { font-size: 18pt !important; }
+  h1 {
+    font-size: 24pt !important;
+  }
+
+  h3 {
+    font-size: 18pt !important;
+  }
 
   * {
     -webkit-print-color-adjust: exact !important;

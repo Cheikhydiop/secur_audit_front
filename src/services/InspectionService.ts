@@ -53,6 +53,7 @@ export interface InspectionQuestion {
   recommendation?: string | null;
   photoUrl?: string | null;
   porteurEmail?: string | null;
+  idPlanAction?: string | null;
   question?: {
     id: string;
     texte: string;

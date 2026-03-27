@@ -19,13 +19,16 @@ import {
   Calendar,
   History,
   Users,
-  ClipboardList,
   Building,
   RefreshCw,
   X,
+  AlertCircle,
+  AlertTriangle,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { dashboardService, DashboardKpis } from "@/services/DashboardService";
 import { CommandPalette } from "./CommandPalette";
 import { Breadcrumbs } from "./Breadcrumbs";
 import {
@@ -36,19 +39,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useSocket } from "@/contexts/SocketContext";
 import { NotificationDropdown } from "./NotificationDropdown";
-
-const navItems = [
-  { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard, mobileLabel: "Accueil" },
-  { to: "/sites", label: "Sites", icon: Building, mobileLabel: "Sites" },
-  { to: "/inspection", label: "Nouvelle Inspection", icon: ClipboardCheck, mobileLabel: "Inspection" },
-  { to: "/actions", label: "Plans d'Actions", icon: ListChecks, mobileLabel: "Actions" },
-  { to: "/planning", label: "Planning", icon: Calendar, mobileLabel: "Planning" },
-  { to: "/logs", label: "Journal Logs", icon: History, role: "ADMIN", mobileLabel: "Logs" },
-  { to: "/questionnaire", label: "Questionnaire", icon: ClipboardList, role: "INSPECTEUR", mobileLabel: "Questions" },
-  { to: "/historique", label: "Historique", icon: Archive, mobileLabel: "Historique" },
-  { to: "/users", label: "Utilisateurs", icon: Users, role: "ADMIN", mobileLabel: "Utilisateurs" },
-  { to: "/admin-inspections", label: "Inspections", icon: ClipboardList, role: "ADMIN", mobileLabel: "Inspections" },
-];
 
 // Items visibles dans la bottom nav mobile (max 5 pour confort)
 const mobileBottomItems = [
@@ -62,11 +52,36 @@ const mobileBottomItems = [
 export default function AppLayout({ children }: { children?: React.ReactNode }) {
   const { user, logout } = useAuth();
   const { unreadCount } = useSocket();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    const saved = localStorage.getItem("sidebar-collapsed");
+    // Par défaut réduit si l'écran est petit (inférieur à 1280px)
+    if (saved === null) return window.innerWidth < 1280;
+    return JSON.parse(saved);
+  });
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [kpis, setKpis] = useState<DashboardKpis | null>(null);
   const location = useLocation();
   const scrollRef = useRef<HTMLElement>(null);
   const { isOnline, isReachable } = useOnlineStatus();
+
+  // Sauvegarder l'état dans le localStorage
+  useEffect(() => {
+    localStorage.setItem("sidebar-collapsed", JSON.stringify(collapsed));
+  }, [collapsed]);
+
+  // Gestion intelligente de la taille au redimensionnement
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setCollapsed(false); // Mode mobile : on remet à false pour que le drawer soit plein
+      } else if (window.innerWidth < 1280) {
+        setCollapsed(true); // Auto-réduction sur tablettes/petits laptops
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -105,9 +120,63 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
     checkAndSync();
   }, [isReachable]);
 
-  const filteredNavItems = navItems.filter(
-    item => !item.role || (user && (item.role === user.role || (item.role === "ADMIN" && user.role === "SUPER_ADMIN")))
-  );
+  useEffect(() => {
+    const fetchKpis = async () => {
+      try {
+        const response = await dashboardService.getEnhancedKpis();
+        if (response.data && !response.error) {
+          setKpis(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch sidebar KPIs", error);
+      }
+    };
+    fetchKpis();
+  }, []);
+
+  interface NavItem {
+    to: string;
+    label: string;
+    icon: any;
+    role?: string;
+    badge?: "dot" | "count";
+    value?: number;
+  }
+
+  const navSections: { title: string; items: NavItem[] }[] = [
+    {
+      title: "PRINCIPAL",
+      items: [
+        { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
+        { to: "/sites", label: "Sites", icon: Building },
+        { to: "/non-conformites-critiques", label: "NC Critiques", icon: AlertCircle, badge: "dot", value: kpis?.nbNonConformitesCritiques || 0 },
+      ]
+    },
+    {
+      title: "ACTIVITÉ",
+      items: [
+        { to: "/inspection", label: "Nouvelle inspection", icon: ClipboardCheck },
+        { to: "/actions", label: "Plans d'actions", icon: ListChecks, badge: "count", value: kpis?.nbPlanActionsTotal || 0 },
+        { to: "/planning", label: "Planning", icon: Calendar },
+        { to: "/historique", label: "Historique", icon: History },
+      ]
+    },
+    {
+      title: "SYSTÈME",
+      items: [
+        { to: "/parametres", label: "Paramètres", icon: Settings },
+        { to: "/users", label: "Utilisateurs", icon: Users, role: "ADMIN" },
+        { to: "/logs", label: "Journal Logs", icon: History, role: "ADMIN" },
+      ]
+    }
+  ];
+
+  const filteredNavSections = navSections.map(section => ({
+    ...section,
+    items: section.items.filter(
+      item => !item.role || (user && (item.role === user.role || (item.role === "ADMIN" && user.role === "SUPER_ADMIN")))
+    )
+  })).filter(section => section.items.length > 0);
 
   return (
     <div className="flex h-screen overflow-hidden bg-sonatel-light-bg/30">
@@ -120,107 +189,133 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
       <aside
         aria-label="Navigation principale"
         className={`${collapsed ? "w-20" : "w-64"
-          } hidden md:flex flex-col border-r border-gray-200 bg-white transition-all duration-300 z-30 shadow-sm`}
+          } hidden md:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 z-30 shadow-sm relative`}
       >
-        {/* Logo */}
-        <div className="py-10 px-6 border-b border-gray-100 flex items-center justify-center bg-white">
+        {/* Floating Toggle Button (Smarter & More Accessible) */}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="absolute -right-3 top-20 z-50 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-md hover:border-sonatel-orange hover:text-sonatel-orange transition-all cursor-pointer group hover:scale-110 active:scale-95"
+          aria-label={collapsed ? "Développer le menu" : "Réduire le menu"}
+        >
+          <ChevronLeft className={`w-3.5 h-3.5 transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`} />
+        </button>
+
+        {/* Official Logo Section */}
+        <div className="py-8 px-6 border-b border-gray-50 flex items-center justify-center bg-white">
           <Link to="/dashboard" className="flex items-center justify-center w-full" aria-label="Accueil - SmartAudit">
             <img
               src="/logo-sonatel.png"
               alt="Sonatel Logo"
-              className={collapsed ? "h-11 w-auto" : "h-20 w-auto object-contain scale-110 transition-transform hover:scale-125"}
+              className={collapsed ? "h-10 w-auto" : "h-16 w-auto object-contain transition-transform hover:scale-105"}
             />
           </Link>
         </div>
 
         {!collapsed && (
-          <div className="px-4 py-8">
-            <div className="px-5 py-4 bg-gradient-to-r from-orange-50 to-white border-2 border-sonatel-orange/30 rounded-2xl text-[18px] font-black text-sonatel-orange flex items-center justify-between group cursor-pointer hover:border-sonatel-orange/60 transition-all shadow-sm">
-              <span>SmartAudit DG-SECU/Sonatel</span>
-              <ChevronDown className="w-5 h-5 text-sonatel-orange" aria-hidden="true" />
+          <div className="px-4 pt-6">
+            <div className="px-5 py-3.5 bg-gradient-to-r from-orange-50/50 to-white border border-sonatel-orange/10 rounded-2xl text-[14px] font-black text-sonatel-orange flex items-center justify-between group cursor-pointer hover:border-sonatel-orange/30 transition-all shadow-sm">
+              <span className="truncate">SmartAudit DG-SECU/Sonatel</span>
+              <ChevronDown className="w-4 h-4 text-sonatel-orange" aria-hidden="true" />
             </div>
           </div>
         )}
 
-        {/* Nav Items */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" aria-label="Menu de navigation">
-          {filteredNavItems.map((item) => {
-            const isActive = location.pathname.startsWith(item.to);
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                aria-current={isActive ? "page" : undefined}
-                className={`sonatel-menu-item rounded-xl ${isActive ? "active" : ""}`}
-              >
-                <item.icon className={`h-6 w-6 shrink-0 ${collapsed ? "" : "mr-4"}`} aria-hidden="true" />
-                {!collapsed && <span>{item.label}</span>}
-              </NavLink>
-            );
-          })}
+        <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto scrollbar-hide" aria-label="Menu de navigation">
+          {filteredNavSections.map((section) => (
+            <div key={section.title}>
+              {!collapsed && (
+                <div className="sidebar-section-title">
+                  {section.title}
+                </div>
+              )}
+              <div className="space-y-1 mt-1">
+                {section.items.map((item) => {
+                  const isActive = location.pathname.startsWith(item.to);
+                  const content = (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`sonatel-menu-item rounded-xl transition-all group ${isActive ? "active" : ""}`}
+                    >
+                      <item.icon className={`h-5 w-5 shrink-0 transition-colors ${isActive ? "text-sonatel-orange" : "group-hover:text-sonatel-orange"} ${collapsed ? "mx-auto" : "mr-4"}`} aria-hidden="true" />
+                      {!collapsed && (
+                        <>
+                          <span className={isActive ? "text-sonatel-orange" : ""}>{item.label}</span>
+                          {item.badge === "dot" && item.value > 0 && <div className="sidebar-badge-dot" />}
+                          {item.badge === "count" && item.value > 0 && (
+                            <div className="sidebar-badge-count">
+                              {item.value}
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {collapsed && item.badge === "dot" && item.value > 0 && (
+                        <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+                      )}
+                    </NavLink>
+                  );
+
+                  if (collapsed) {
+                    return (
+                      <Tooltip key={item.to} delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <div className="relative">{content}</div>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="bg-sonatel-orange text-white border-none font-bold shadow-lg">
+                          <p>{item.label}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  }
+
+                  return content;
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className="p-4 border-t border-gray-100 space-y-1">
-          <TooltipProvider delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <NavLink
-                  to="/parametres"
-                  aria-current={location.pathname === "/parametres" ? "page" : undefined}
-                  className={`sonatel-menu-item rounded-xl ${location.pathname === "/parametres" ? "active" : ""}`}
-                >
-                  <Settings className={`h-6 w-6 shrink-0 ${collapsed ? "" : "mr-4"}`} aria-hidden="true" />
-                  {!collapsed && <span>Paramètres</span>}
-                </NavLink>
-              </TooltipTrigger>
-              {collapsed && (
-                <TooltipContent side="right" sideOffset={10} className="bg-gray-900 text-white px-4 py-2 rounded-lg shadow-xl">
-                  <p className="text-sm font-semibold">Paramètres</p>
+        {/* Sidebar Footer - Profile Section Updated for Light Theme */}
+        <div className="mt-auto border-t border-gray-100 bg-gray-50/50">
+          <div className={`p-4 flex items-center ${collapsed ? 'justify-center' : 'justify-between'} group`}>
+            {collapsed ? (
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <div className="w-10 h-10 rounded-xl bg-sonatel-orange flex-shrink-0 flex items-center justify-center text-white font-black text-sm shadow-md cursor-pointer">
+                    {getInitials(user?.name || "??")}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="bg-gray-900 text-white border-none font-bold">
+                  <div className="flex flex-col">
+                    <span>{user?.name}</span>
+                    <span className="text-[10px] text-sonatel-orange uppercase">{user?.role}</span>
+                  </div>
                 </TooltipContent>
-              )}
-            </Tooltip>
+              </Tooltip>
+            ) : (
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="w-10 h-10 rounded-xl bg-sonatel-orange flex-shrink-0 flex items-center justify-center text-white font-black text-sm shadow-md shadow-orange-500/10">
+                  {getInitials(user?.name || "??")}
+                </div>
+                <div className="flex flex-col overflow-hidden text-left">
+                  <span className="text-gray-900 font-bold text-sm truncate">{user?.name}</span>
+                  <span className="text-sonatel-orange text-[10px] font-bold uppercase tracking-wider">{user?.role}</span>
+                </div>
+              </div>
+            )}
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleLogout}
-                  aria-label="Déconnexion"
-                  className="sonatel-menu-item rounded-xl w-full text-left text-destructive hover:bg-destructive/5 hover:text-destructive"
-                >
-                  <LogOut className={`h-6 w-6 shrink-0 ${collapsed ? "" : "mr-4"}`} aria-hidden="true" />
-                  {!collapsed && <span>Déconnexion</span>}
-                </button>
-              </TooltipTrigger>
-              {collapsed && (
-                <TooltipContent side="right" sideOffset={10} className="bg-gray-900 text-white px-4 py-2 rounded-lg shadow-xl">
-                  <p className="text-sm font-semibold">Déconnexion</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
+            {!collapsed && (
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-lg hover:bg-red-50 text-red-500 transition-colors"
+                title="Déconnexion"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            )}
+          </div>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => setCollapsed(!collapsed)}
-                  aria-label={collapsed ? "Développer la barre latérale" : "Réduire la barre latérale"}
-                  aria-expanded={!collapsed}
-                  className="sonatel-menu-item rounded-xl w-full text-left"
-                >
-                  <ChevronLeft
-                    className={`h-6 w-6 shrink-0 transition-all duration-300 ${collapsed ? "rotate-180" : ""} ${collapsed ? "" : "mr-4"}`}
-                    aria-hidden="true"
-                  />
-                  {!collapsed && <span>Réduire</span>}
-                </button>
-              </TooltipTrigger>
-              {collapsed && (
-                <TooltipContent side="right" sideOffset={10} className="bg-gray-900 text-white px-4 py-2 rounded-lg shadow-xl">
-                  <p className="text-sm font-semibold">Développer</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
         </div>
       </aside>
 
@@ -354,22 +449,37 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
             </div>
           </div>
 
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto" aria-label="Menu mobile">
-            {filteredNavItems.map((item) => {
-              const isActive = location.pathname.startsWith(item.to);
-              return (
-                <NavLink
-                  key={`mobile-${item.to}`}
-                  to={item.to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`flex items-center px-4 py-3 rounded-xl font-bold transition-all min-h-[48px] ${isActive ? "bg-sonatel-orange text-white shadow-md" : "text-gray-600 hover:bg-orange-50 hover:text-sonatel-orange"}`}
-                >
-                  <item.icon className="w-5 h-5 mr-4 shrink-0" aria-hidden="true" />
-                  <span>{item.label}</span>
-                </NavLink>
-              );
-            })}
+          <nav className="flex-1 p-4 space-y-6 overflow-y-auto" aria-label="Menu mobile">
+            {filteredNavSections.map((section) => (
+              <div key={`mobile-sec-${section.title}`}>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 mb-2">
+                  {section.title}
+                </div>
+                <div className="space-y-1">
+                  {section.items.map((item) => {
+                    const isActive = location.pathname.startsWith(item.to);
+                    return (
+                      <NavLink
+                        key={`mobile-${item.to}`}
+                        to={item.to}
+                        onClick={() => setMobileMenuOpen(false)}
+                        aria-current={isActive ? "page" : undefined}
+                        className={`flex items-center px-4 py-3 rounded-xl font-bold transition-all min-h-[48px] ${isActive ? "bg-sonatel-orange text-white shadow-md" : "text-gray-600 hover:bg-orange-50 hover:text-sonatel-orange"}`}
+                      >
+                        <item.icon className="w-5 h-5 mr-4 shrink-0" aria-hidden="true" />
+                        <span>{item.label}</span>
+                        {item.badge === "dot" && item.value > 0 && <div className="w-2 h-2 rounded-full bg-red-500 ml-auto" />}
+                        {item.badge === "count" && item.value > 0 && (
+                          <div className="px-2 py-0.5 rounded-full bg-white text-sonatel-orange text-[10px] font-bold ml-auto border border-sonatel-orange/20">
+                            {item.value}
+                          </div>
+                        )}
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </nav>
 
           <div className="p-4 border-t border-gray-100 space-y-1 safe-bottom">

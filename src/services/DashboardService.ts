@@ -65,6 +65,9 @@ export interface CriticalNonConformite {
   statut: string;
   responsable: string;
   inspectionId: string;
+  idPlanAction?: string | null;
+  notes?: string;
+  evidencePhotoUrl?: string;
 }
 
 export interface ActionPlanSummary {

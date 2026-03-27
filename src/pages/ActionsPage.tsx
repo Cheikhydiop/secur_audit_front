@@ -54,51 +54,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const actions = [
-  {
-    id: "PA-2026-001",
-    titre: "Remplacer 5 extincteurs CO2 (Périmés)",
-    site: "Site Ziguinchor-A3",
-    rubrique: "Incendie",
-    porteur: "A. Sow (Prestataire EPS)",
-    echeance: "2026-03-15",
-    origine: ORIGINES_ACTION[8],
-    avancement: AVANCEMENT_ACTION[3],
-    statut: "Echu non soldé",
-    progression: 20,
-    priorite: "critique",
-    responsableId: "",
-    inspecteurId: "",
-  },
-  {
-    id: "PA-2026-002",
-    titre: "Reprise câblage caméras zone Nord-Est",
-    site: "Site SL-Nord-12",
-    rubrique: "Vidéosurveillance",
-    porteur: "Service Technique",
-    echeance: "2026-04-01",
-    origine: ORIGINES_ACTION[9],
-    avancement: AVANCEMENT_ACTION[3],
-    statut: "Non échu",
-    progression: 45,
-    priorite: "majeur",
-    responsableId: "",
-    inspecteurId: "",
-  },
-  {
-    id: "PA-2026-003",
-    titre: "Mise à jour registre de sécurité (CDP)",
-    site: "Site Dakar-A1",
-    rubrique: "Documents",
-    porteur: "Chef de Poste",
-    echeance: "2026-03-10",
-    origine: ORIGINES_ACTION[0],
-    avancement: AVANCEMENT_ACTION[1],
-    statut: "Fait",
-    progression: 100,
-    priorite: "mineur",
-    responsableId: "",
-    inspecteurId: "",
-  },
+
 ];
 
 const statutConfig: Record<string, { label: string; className: string }> = {

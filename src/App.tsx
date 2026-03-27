@@ -54,6 +54,7 @@ const ForcePasswordChange = lazyWithRetry(() => import("./pages/ForcePasswordCha
 const NotFound = lazyWithRetry(() => import("./pages/NotFound"));
 const SitesPage = lazyWithRetry(() => import("./pages/SitesPage"));
 const DetailSite = lazyWithRetry(() => import("./pages/DetailSite"));
+const NonConformitesCritiquesPage = lazyWithRetry(() => import("./pages/NonConformitesCritiquesPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -136,6 +137,7 @@ const App = () => (
                     <Route path="/sites/:siteId" element={<DetailSite />} />
                     <Route path="/sites/:siteId/Details" element={<DetailSite />} />
                     <Route path="/Services/:siteId/Details" element={<DetailSite />} />
+                    <Route path="/non-conformites-critiques" element={<NonConformitesCritiquesPage />} />
                     <Route path="/help" element={<HelpPage />} />
                     <Route path="/force-password-change" element={<ForcePasswordChange />} />
                   </Route>
