@@ -40,7 +40,7 @@ export interface UserFilters {
   isBanned?: boolean;
   search?: string;
   limit?: number;
-  offset?: number;
+  page?: number;
 }
 
 export interface CreateFighterPayload {
@@ -120,7 +120,7 @@ class AdminService extends BaseService {
     if (filters?.isActive !== undefined) params.append('isActive', filters.isActive.toString());
     if (filters?.search) params.append('search', filters.search);
     if (filters?.limit) params.append('limit', filters.limit.toString());
-    if (filters?.offset) params.append('offset', filters.offset.toString());
+    if (filters?.page) params.append('page', filters.page.toString());
 
     const queryString = params.toString();
     return this.get<User[]>(`/users${queryString ? `?${queryString}` : ''}`);
