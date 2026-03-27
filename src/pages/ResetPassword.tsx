@@ -41,10 +41,10 @@ const ResetPassword = () => {
     }, []);
 
     const getPasswordRequirements = (password: string) => [
-        { label: "8 caractères minimum", met: password.length >= 8 },
-        { label: "Une majuscule & minuscule", met: /[A-Z]/.test(password) && /[a-z]/.test(password) },
-        { label: "Un chiffre requis", met: /[0-9]/.test(password) },
-        { label: "Caractère spécial", met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password) }
+        { id: 'length', label: "12 caractères minimum", met: password.length >= 12 },
+        { id: 'upper_lower', label: "Majuscule & minuscule", met: /[A-Z]/.test(password) && /[a-z]/.test(password) },
+        { id: 'digit', label: "Un chiffre requis", met: /[0-9]/.test(password) },
+        { id: 'special', label: "Caractère spécial", met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password) }
     ];
 
     const requirements = getPasswordRequirements(newPassword);
@@ -209,7 +209,7 @@ const ResetPassword = () => {
                                         {req.met ? <CheckCircleIcon className="w-3.5 h-3.5" /> : <div className="w-1.5 h-1.5 bg-gray-300 rounded-full text-transparent" />}
                                     </div>
                                     <span className={`text-[10px] font-black uppercase tracking-wider ${req.met ? "text-emerald-600" : "text-gray-400"}`}>
-                                        {req.label}
+                                        {req.label} {req.id === 'length' && `(${newPassword.length}/12)`}
                                     </span>
                                 </div>
                             ))}

@@ -5,7 +5,7 @@ import { authService } from "@/services/AuthService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ShieldCheck, User, Lock, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { ShieldCheck, User, Lock, ArrowRight, CheckCircle2, Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function ActivateAccountPage() {
     const { token } = useParams<{ token: string }>();
@@ -13,6 +13,8 @@ export default function ActivateAccountPage() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
@@ -43,16 +45,22 @@ export default function ActivateAccountPage() {
     };
 
     const passwordRequirements = [
-        { label: "8 caractères minimum", regex: /.{8,}/ },
-        { label: "Au moins un chiffre", regex: /[0-9]/ },
-        { label: "Une majuscule", regex: /[A-Z]/ },
+        { id: 'length', label: "12 caractères minimum", regex: /.{12,}/ },
+        { id: 'upper', label: "Une majuscule", regex: /[A-Z]/ },
+        { id: 'lower', label: "Une minuscule", regex: /[a-z]/ },
+        { id: 'digit', label: "Un chiffre", regex: /[0-9]/ },
+        { id: 'special', label: "Caractère spécial", regex: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/ },
     ];
+
+    const getStrength = () => {
+        return passwordRequirements.filter(req => req.regex.test(password)).length;
+    };
 
     const isPasswordValid = (req: typeof passwordRequirements[0]) => req.regex.test(password);
 
     if (isSuccess) {
         return (
-            <div className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden">
+            <div className="relative h-screen flex items-center justify-center p-6 overflow-hidden">
                 <div className="absolute inset-0 bg-verification z-0 opacity-100 transition-opacity duration-1000"></div>
                 <Card className="max-w-md w-full relative z-10 border-[3px] border-white/80 shadow-[0_32px_64px_-16px_rgba(16,185,129,0.2)] rounded-[3rem] p-10 text-center animate-in zoom-in duration-700 bg-white/60 backdrop-blur-2xl">
                     <div className="flex justify-center mb-8">
@@ -84,7 +92,7 @@ export default function ActivateAccountPage() {
     }
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center p-4 md:p-8 bg-[#FDFDFD] overflow-hidden font-sans">
+        <div className="relative h-screen flex items-center justify-center p-4 md:p-6 bg-[#FDFDFD] overflow-hidden font-sans">
             {/* Background decorative wave */}
             <div className="absolute -bottom-20 -right-20 w-full h-full opacity-20 pointer-events-none z-0">
                 <div className="absolute bottom-0 right-0 w-[120%] h-[120%] bg-verification bg-no-repeat bg-bottom bg-right transition-all duration-1000"></div>
@@ -93,7 +101,7 @@ export default function ActivateAccountPage() {
             <div className="max-w-[1100px] w-full grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[4rem] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.15)] border border-gray-100/50 overflow-hidden relative z-10 animate-in fade-in zoom-in-95 duration-1000">
 
                 {/* Visual Side (LHS) */}
-                <div className="hidden lg:flex flex-col justify-between p-20 bg-gradient-to-br from-[#f5821f] via-[#f5821f] to-[#e67300] text-white relative overflow-hidden">
+                <div className="hidden lg:flex flex-col justify-between p-16 bg-gradient-to-br from-[#f5821f] via-[#f5821f] to-[#e67300] text-white relative overflow-hidden">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.4),transparent_60%)]"></div>
 
                     <div className="relative z-10">
@@ -125,8 +133,8 @@ export default function ActivateAccountPage() {
                 </div>
 
                 {/* Form Side (RHS) */}
-                <div className="p-10 lg:p-24 flex flex-col justify-center bg-white">
-                    <div className="text-center lg:text-left mb-16 space-y-5">
+                <div className="p-8 lg:p-16 flex flex-col justify-center bg-white h-full overflow-y-auto lg:overflow-visible">
+                    <div className="text-center lg:text-left mb-8 space-y-3">
                         <div className="lg:hidden flex justify-center mb-8">
                             <img src="/logo-sonatel.png" alt="Sonatel" className="h-16" />
                         </div>
@@ -136,7 +144,7 @@ export default function ActivateAccountPage() {
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-10">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-3 group">
                             <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-sonatel-orange">Nom Complet</label>
                             <div className="relative">
@@ -151,40 +159,81 @@ export default function ActivateAccountPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-5">
-                            <div className="space-y-3 group">
-                                <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-sonatel-orange">Nouveau Mot de passe</label>
-                                <div className="relative">
-                                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sonatel-orange transition-colors" />
-                                    <Input
-                                        type="password"
-                                        placeholder="••••••••"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="pl-16 h-16 rounded-2xl border-2 border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-sonatel-orange/10 transition-all font-black text-lg placeholder:text-gray-300"
-                                        required
-                                    />
-                                </div>
+                        <div className="space-y-3 group">
+                            <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-sonatel-orange">Nouveau Mot de passe</label>
+                            <div className="relative">
+                                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sonatel-orange transition-colors" />
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="pl-16 pr-12 h-16 rounded-2xl border-2 border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-sonatel-orange/10 transition-all font-black text-lg placeholder:text-gray-300"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 hover:text-sonatel-orange transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
                             </div>
+                        </div>
 
-                            {/* Enhanced Password Tracker */}
-                            <div className="flex flex-wrap gap-2 pt-2">
-                                {passwordRequirements.map((req, idx) => {
-                                    const valid = isPasswordValid(req);
-                                    return (
-                                        <div
-                                            key={idx}
-                                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-tight transition-all duration-300 shadow-sm border-2 ${valid
-                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                                    : 'bg-gray-50 text-gray-500 border-gray-100'
-                                                }`}
-                                        >
-                                            <CheckCircle2 className={`w-4 h-4 ${valid ? 'opacity-100' : 'opacity-40'}`} />
-                                            {req.label}
-                                        </div>
-                                    );
-                                })}
+                        {/* Password Strength Meter */}
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center px-1">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Force du mot de passe</span>
+                                <span className={`text-[10px] font-black uppercase tracking-widest ${getStrength() === 0 ? 'text-gray-400' :
+                                    getStrength() <= 2 ? 'text-red-500' :
+                                        getStrength() <= 4 ? 'text-amber-500' :
+                                            'text-emerald-500'
+                                    }`}>
+                                    {getStrength() === 0 ? 'À définir' :
+                                        getStrength() <= 2 ? 'Faible' :
+                                            getStrength() <= 4 ? 'Moyen' : 'Fort'}
+                                </span>
                             </div>
+                            <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden flex gap-1 p-0.5">
+                                {[1, 2, 3, 4, 5].map((step) => (
+                                    <div
+                                        key={step}
+                                        className={`h-full flex-1 rounded-full transition-all duration-500 ${getStrength() >= step
+                                            ? (getStrength() <= 2 ? 'bg-red-500' : getStrength() <= 4 ? 'bg-amber-500' : 'bg-emerald-500')
+                                            : 'bg-gray-200'
+                                            }`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Enhanced Password Tracker */}
+                        <div className="flex flex-wrap gap-2 pt-2">
+                            {passwordRequirements.map((req, idx) => {
+                                const valid = isPasswordValid(req);
+                                return (
+                                    <div
+                                        key={idx}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-tight transition-all duration-300 shadow-sm border-2 ${valid
+                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 scale-105'
+                                            : 'bg-gray-50 text-gray-500 border-gray-100 opacity-60'
+                                            }`}
+                                    >
+                                        <div className={`w-4 h-4 rounded-full flex items-center justify-center transition-all ${valid ? 'bg-emerald-500 text-white' : 'bg-gray-200'}`}>
+                                            {valid ? <CheckCircle2 className="w-3 h-3" /> : <div className="w-1 h-1 bg-gray-400 rounded-full" />}
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            {req.label}
+                                            {req.id === 'length' && (
+                                                <span className={`px-1.5 py-0.5 rounded-lg text-[9px] ${valid ? 'bg-emerald-200/50' : 'bg-gray-200/50'}`}>
+                                                    {password.length}/12
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
 
                         <div className="space-y-3 group">
@@ -192,13 +241,20 @@ export default function ActivateAccountPage() {
                             <div className="relative">
                                 <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sonatel-orange transition-colors" />
                                 <Input
-                                    type="password"
+                                    type={showConfirm ? "text" : "password"}
                                     placeholder="Réécrire le mot de passe"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="pl-16 h-16 rounded-2xl border-2 border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-sonatel-orange/10 transition-all font-black text-lg placeholder:text-gray-300"
+                                    className="pl-16 pr-12 h-16 rounded-2xl border-2 border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-sonatel-orange/10 transition-all font-black text-lg placeholder:text-gray-300"
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirm(!showConfirm)}
+                                    className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 hover:text-sonatel-orange transition-colors"
+                                >
+                                    {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
                             </div>
                             {password && confirmPassword && password !== confirmPassword && (
                                 <p className="text-xs text-red-600 font-black uppercase tracking-widest ml-1 mt-3 animate-pulse">Les mots de passe ne correspondent pas</p>
@@ -221,7 +277,7 @@ export default function ActivateAccountPage() {
                     </form>
 
                     {/* Footer branding */}
-                    <div className="mt-20 text-center lg:text-left">
+                    <div className="mt-8 text-center lg:text-left">
                         <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] leading-relaxed">
                             Direction de la Sécurité | SONATEL<br />
                             <span className="text-sonatel-orange/50 italic capitalize font-bold">SmartAudit Digitalisation 360</span>

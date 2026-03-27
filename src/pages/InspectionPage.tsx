@@ -1035,7 +1035,7 @@ export default function InspectionPage() {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 md:gap-8">
           <div className="space-y-2 md:space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl md:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight">
@@ -1561,10 +1561,10 @@ export default function InspectionPage() {
                 {/* Right Column: Active Content */}
                 <div className="flex-1 space-y-8 md:space-y-12 min-w-0 pb-32" >
                   {/* Mobile-optimized Question Header - Hidden on Tablet/Desktop as Sidebar is visible */}
-                  <div className="sticky top-16 md:static z-10 bg-gray-50/95 backdrop-blur-sm -mx-4 px-4 py-3 border-b border-gray-200 md:bg-transparent md:border-none md:p-0 md:m-0 md:hidden">
+                  <div className="sticky top-16 md:static z-10 bg-gray-50/95 backdrop-blur-sm -mx-3 md:-mx-4 px-3 md:px-4 py-3 border-b border-gray-200 md:bg-transparent md:border-none md:p-0 md:m-0 md:hidden">
                     <div className="flex items-center justify-between mb-2 lg:mb-8">
                       <div className="flex items-center gap-2 md:gap-4 min-w-0">
-                        <div className={`p-2 md:p-4 rounded-xl md:rounded-[1.5rem] bg-white shadow-sm md:shadow-lg md:ring-1 ring-gray-100 ${currentRubrique.color}`}>
+                        <div className={`p-2 md:p-4 rounded-xl md:rounded-[1.5rem] bg-white shadow-sm md:shadow-lg md:ring-1 ring-gray-100 shrink-0 ${currentRubrique.color}`}>
                           <currentRubrique.icon className="h-4 w-4 md:h-8 md:w-8" />
                         </div>
                         <div className="min-w-0">
@@ -1599,13 +1599,13 @@ export default function InspectionPage() {
                   </div>
 
                   {/* Questions list with Vertical Path */}
-                  <div className="space-y-6 md:space-y-10 relative pl-8 md:pl-12 lg:pl-16" >
+                  <div className="space-y-6 md:space-y-10 relative pl-7 md:pl-12 lg:pl-16" >
                     {/* Internal Path Line */}
-                    <div className="absolute left-[14px] md:left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full" />
+                    <div className="absolute left-[12px] md:left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full" />
 
                     {/* Active Path Filler */}
                     <div
-                      className="absolute left-[14px] md:left-[20px] lg:left-[27px] top-10 w-1 rounded-full bg-sonatel-orange transition-all duration-700 md:block origin-top"
+                      className="absolute left-[12px] md:left-[20px] lg:left-[27px] top-10 w-1 rounded-full bg-sonatel-orange transition-all duration-700 md:block origin-top"
                       style={{ height: `${(questions.filter((_, idx) => answers[`${currentRubrique.id}-${idx}`]?.status).length / questions.length) * 100}%` }
                       }
                     />
@@ -1624,7 +1624,7 @@ export default function InspectionPage() {
                         return (
                           <div key={key} className={`relative group/q animate-in fade-in slide-in-from-left-4 duration-500`} style={{ animationDelay: `${i * 70}ms` }}>
                             {/* Timeline Node - Positioned on Path */}
-                            <div className={`absolute left-[-32px] md:left-[-50px] lg:left-[-59px] top-4 md:top-6 w-8 h-8 md:w-11 md:h-11 rounded-xl md:rounded-2xl flex items-center justify-center transition-all duration-500 z-20 shadow-xl border-4 border-[#FDFDFD] ${isAnswered
+                            <div className={`absolute left-[-28px] md:left-[-50px] lg:left-[-59px] top-4 md:top-6 w-7 h-7 md:w-11 md:h-11 rounded-lg md:rounded-2xl flex items-center justify-center transition-all duration-500 z-20 shadow-xl border-4 border-[#FDFDFD] ${isAnswered
                               ? ans.status === "conforme"
                                 ? "bg-emerald-500 text-white"
                                 : ans.status === "non-conforme"
@@ -1633,11 +1633,11 @@ export default function InspectionPage() {
                               : "bg-white text-gray-300 group-hover/q:bg-sonatel-orange/10 group-hover/q:text-sonatel-orange group-hover/q:scale-110 active:scale-95"
                               }`}>
                               {ans.status === "conforme" ? (
-                                <Check className="w-4 h-4 md:w-5 md:h-5 transition-all animate-in zoom-in" />
+                                <Check className="w-3 h-3 md:w-5 md:h-5 transition-all animate-in zoom-in" />
                               ) : ans.status === "non-conforme" ? (
-                                <AlertCircle className="w-4 h-4 md:w-5 md:h-5 transition-all animate-in zoom-in" />
+                                <AlertCircle className="w-3 h-3 md:w-5 md:h-5 transition-all animate-in zoom-in" />
                               ) : (
-                                <span className="text-[10px] md:text-[11px] font-black">{String(i + 1).padStart(2, '0')}</span>
+                                <span className="text-[9px] md:text-[11px] font-black">{String(i + 1).padStart(2, '0')}</span>
                               )}
                             </div>
 
@@ -1653,7 +1653,7 @@ export default function InspectionPage() {
                             >
 
                               <CardContent className="p-4 md:p-8">
-                                <div className="flex flex-col lg:flex-row gap-10">
+                                <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
                                   {/* Left: Question Header */}
                                   <div className="flex-1 space-y-5">
                                     <div className="flex items-center justify-between">
@@ -1698,9 +1698,9 @@ export default function InspectionPage() {
                                   </div>
 
                                   {/* Right: Actions & Status Selection */}
-                                  <div className="lg:w-[420px] shrink-0 space-y-4 md:space-y-8">
+                                  <div className="w-full lg:w-[420px] shrink-0 space-y-4 md:space-y-8">
                                     {/* Choice Buttons */}
-                                    <div className="grid grid-cols-3 gap-2 md:gap-4 p-2 bg-gray-50 rounded-2xl md:rounded-[2rem] border border-gray-100/50 shadow-inner">
+                                    <div className="grid grid-cols-3 gap-2 md:gap-4 p-2 md:p-3 bg-gray-50 rounded-2xl md:rounded-[2rem] border border-gray-100/50 shadow-inner">
                                       {[
                                         { id: "conforme", label: "OUI", color: "bg-emerald-500", icon: Check },
                                         { id: "non-conforme", label: "NON", color: "bg-destructive", icon: AlertCircle },
@@ -1709,25 +1709,25 @@ export default function InspectionPage() {
                                         <button
                                           key={opt.id}
                                           onClick={() => updateAnswer(key, { status: opt.id as any })}
-                                          className={`flex flex-col items-center justify-center gap-1 md:gap-2 py-3 md:py-5 rounded-xl md:rounded-[1.5rem] transition-all duration-300 border-2 ${ans.status === opt.id
+                                          className={`flex flex-col items-center justify-center gap-1 md:gap-2 py-3 md:py-5 rounded-xl md:rounded-[1.5rem] transition-all duration-300 border-2 min-h-[60px] md:min-h-[80px] ${ans.status === opt.id
                                             ? `${opt.color} border-transparent text-white shadow-xl scale-[1.03] z-10`
                                             : "bg-white border-transparent text-gray-400 hover:border-sonatel-orange/20 hover:text-sonatel-orange hover:shadow-md"
                                             }`}
                                         >
                                           <opt.icon className={`w-5 h-5 md:w-6 md:h-6 transition-transform ${ans.status === opt.id ? "scale-110" : "scale-100"}`} />
-                                          <span className="text-[9px] md:text-[10px] font-black tracking-tight md:tracking-[0.2em]">{opt.label}</span>
+                                          <span className="text-[9px] md:text-[10px] font-black tracking-tight md:tracking-[0.2em] whitespace-nowrap">{opt.label}</span>
                                         </button>
                                       ))}
                                     </div>
 
                                     {/* Observations Area */}
                                     <div className="space-y-4">
-                                      <div className="relative group/obs transition-all duration-300 md:focus-within:-mx-10 md:focus-within:px-10">
+                                      <div className="relative group/obs transition-all duration-300">
                                         <Textarea
                                           placeholder="Notes et observations d'audit..."
                                           value={ans.observation}
                                           onChange={(e) => updateAnswer(key, { observation: e.target.value })}
-                                          className="w-full min-h-[80px] md:focus:min-h-[160px] rounded-[1.5rem] border-gray-100 bg-white focus:ring-sonatel-orange/10 focus:border-sonatel-orange transition-all duration-300 placeholder:text-gray-400 font-medium text-sm pt-5 px-6 shadow-sm resize-none"
+                                          className="w-full min-h-[80px] md:min-h-[120px] rounded-[1.5rem] border-gray-100 bg-white focus:ring-sonatel-orange/10 focus:border-sonatel-orange transition-all duration-300 placeholder:text-gray-400 font-medium text-sm pt-5 px-6 shadow-sm resize-none"
                                         />
                                         <div className="absolute top-4 right-4 opacity-20 group-focus-within/obs:opacity-0 transition-opacity">
                                           <FileText className="w-5 h-5" />
@@ -1736,7 +1736,7 @@ export default function InspectionPage() {
 
                                       {/* Dynamic Action Plan */}
                                       {(ans.status === "non-conforme" || ans.showActionPlan) && (
-                                        <div className="p-6 bg-gradient-to-br from-gray-50/50 to-white border border-sonatel-orange/10 rounded-[2rem] space-y-6 shadow-inner animate-in zoom-in-95 duration-300">
+                                        <div className="p-4 md:p-6 bg-gradient-to-br from-gray-50/50 to-white border border-sonatel-orange/10 rounded-2xl md:rounded-[2rem] space-y-4 md:space-y-6 shadow-inner animate-in zoom-in-95 duration-300">
                                           <header className="flex justify-between items-center border-b border-sonatel-orange/5 pb-4">
                                             <span className="text-[10px] font-black text-sonatel-orange uppercase tracking-[0.2em] flex items-center gap-2">
                                               <AlertTriangle className="w-4 h-4" /> Plan d'Action Correctif
@@ -1759,7 +1759,7 @@ export default function InspectionPage() {
                                               />
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                               <div className="space-y-2">
                                                 <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Responsable</label>
                                                 <div className="relative">
@@ -1786,7 +1786,7 @@ export default function InspectionPage() {
                                                   />
                                                 </div>
                                               </div>
-                                              <div className="col-span-2 md:col-span-1 space-y-2">
+                                              <div className="space-y-2">
                                                 <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Echéance</label>
                                                 <input
                                                   type="date"
@@ -1810,7 +1810,7 @@ export default function InspectionPage() {
                                               </select>
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                               <div className="space-y-2">
                                                 <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Avancement</label>
                                                 <select
