@@ -50,6 +50,9 @@
     --sidebar-accent-foreground: 34 90% 30%;
     --sidebar-border: 30 15% 92%;
     --sidebar-ring: 34 90% 52%;
+
+    /* Mobile bottom nav height */
+    --mobile-nav-height: 64px;
   }
 
   .dark {
@@ -85,6 +88,7 @@
 
 html {
   font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 @layer base {
@@ -96,34 +100,43 @@ html {
     @apply bg-background text-foreground font-sans antialiased text-body1;
     font-family: 'Poppins', 'Inter', 'Helvetica', 'Arial', sans-serif;
     scrollbar-gutter: stable;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
-  h1 {
-    @apply text-h1;
+  h1 { @apply text-h1; }
+  h2 { @apply text-h2; }
+  h3 { @apply text-h3; }
+  h4 { @apply text-h4; }
+  h5 { @apply text-h5; }
+  h6 { @apply text-h6; }
+
+  button { @apply font-button; }
+
+  /* ♿ Focus visible systématique pour navigation clavier */
+  *:focus-visible {
+    outline: 3px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 
-  h2 {
-    @apply text-h2;
+  /* ♿ Touch targets minimum 44px (WCAG 2.5.5) */
+  button,
+  a,
+  [role="button"],
+  [role="link"],
+  select {
+    min-height: 44px;
   }
 
-  h3 {
-    @apply text-h3;
+  /* Sélection texte accessible */
+  ::selection {
+    background-color: hsl(34 90% 52% / 0.25);
+    color: inherit;
   }
 
-  h4 {
-    @apply text-h4;
-  }
-
-  h5 {
-    @apply text-h5;
-  }
-
-  h6 {
-    @apply text-h6;
-  }
-
-  button {
-    @apply font-button;
+  label {
+    cursor: pointer;
+    touch-action: manipulation;
   }
 }
 
@@ -144,14 +157,43 @@ html {
     scrollbar-gutter: stable;
   }
 
-  @keyframes progress-stripe {
-    from {
-      background-position: 1rem 0;
-    }
+  /* ♿ Skip navigation link */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 9999;
+    padding: 0.75rem 1.5rem;
+    background: hsl(34 90% 52%);
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: 0 0 0.5rem 0.5rem;
+    transition: top 0.2s ease;
+    text-decoration: none;
+  }
 
-    to {
-      background-position: 0 0;
+  .skip-link:focus {
+    top: 0;
+    outline: 3px solid white;
+    outline-offset: 2px;
+  }
+
+  /* Safe area for notched devices */
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  /* Page content compensates for mobile bottom nav */
+  @media (max-width: 767px) {
+    .main-content-mobile {
+      padding-bottom: calc(var(--mobile-nav-height) + 0.5rem);
     }
+  }
+
+  @keyframes progress-stripe {
+    from { background-position: 1rem 0; }
+    to { background-position: 0 0; }
   }
 
   .animate-progress-stripe {
@@ -159,25 +201,28 @@ html {
   }
 
   @keyframes wiggle {
-
-    0%,
-    100% {
-      transform: rotate(-3deg);
-    }
-
-    50% {
-      transform: rotate(3deg);
-    }
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
   }
 
   .animate-wiggle {
     animation: wiggle 0.3s ease-in-out infinite;
+  }
+
+  @keyframes slide-up-sm {
+    from { transform: translateY(6px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .animate-slide-up-sm {
+    animation: slide-up-sm 0.2s ease-out forwards;
   }
 }
 
 @layer components {
   .sonatel-menu-item {
     @apply flex items-center py-4 px-6 text-[19px] font-bold text-sonatel-text-gray hover:bg-sonatel-light-bg hover:text-sonatel-orange transition-all duration-200;
+    min-height: 52px;
   }
 
   .sonatel-menu-item.active {
@@ -186,12 +231,66 @@ html {
 
   .sonatel-submenu-item {
     @apply flex items-center py-2.5 px-12 text-base font-bold text-sonatel-text-gray hover:text-sonatel-orange transition-colors;
+    min-height: 44px;
+  }
+
+  /* ♿ Carte interactive — focus visible au clavier */
+  .interactive-card {
+    @apply cursor-pointer transition-all duration-200 hover:shadow-lg;
+    border-radius: var(--radius);
+  }
+
+  .interactive-card:focus-visible {
+    outline: 3px solid hsl(var(--ring));
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px hsl(34 90% 52% / 0.15);
+  }
+
+  /* Mobile bottom navigation bar */
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: white;
+    border-top: 1px solid hsl(var(--border));
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -4px 20px -4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Réponse touch sur les éléments de formulaire */
+  .table-responsive {
+    @apply w-full overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
-/* 📥 Optimisation Impression Rapports PDF */
-@media print {
+/* ♿ Respect de la préférence utilisateur pour réduire les animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
+/* ♿ Mode contraste élevé */
+@media (forced-colors: active) {
+  .sonatel-menu-item.active {
+    border-left-color: Highlight;
+  }
+
+  *:focus-visible {
+    outline: 3px solid Highlight;
+  }
+}
+
+/* 📥 Optimisation Impression */
+@media print {
   nav,
   .fixed,
   .no-print,
@@ -224,15 +323,9 @@ html {
     box-shadow: none !important;
   }
 
-  h1 {
-    font-size: 24pt !important;
-  }
+  h1 { font-size: 24pt !important; }
+  h3 { font-size: 18pt !important; }
 
-  h3 {
-    font-size: 18pt !important;
-  }
-
-  /* Forcer l'impression des couleurs de fond (badges/scores) */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { MobileQuestionView } from "@/components/MobileQuestionView";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -49,6 +50,8 @@ import {
   Download,
   CheckCircle2,
   Mail,
+  X,
+  ChevronDown,
 } from "lucide-react";
 import { PdfInspectionGenerator } from "@/pdf-generators/PdfInspectionGenerator";
 import { InspectionReportData } from "@/pdf-generators/PdfTypes";
@@ -145,10 +148,15 @@ export default function InspectionPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
+  // Mobile-only tab state: "questionnaire" | "rubriques" (handled inside MobileQuestionView)
+  const [mobileQuestionnaireSubTab, setMobileQuestionnaireSubTab] = useState<"questionnaire" | "rubriques">("questionnaire");
   const [gpsStatus, setGpsStatus] = useState<'checking' | 'granted' | 'denied' | 'prompt'>('checking');
   const [dbRubriques, setDbRubriques] = useState<any[]>([]);
   const [dbQuestionsData, setDbQuestionsData] = useState<Record<string, any[]>>({});
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
+  // Mobile guide state
+  const [showMobileGuide, setShowMobileGuide] = useState(false);
+  const questionsContainerRef = React.useRef<HTMLDivElement>(null);
   const [currentRubriqueIdx, setCurrentRubriqueIdx] = useLocalStorage("inspection_current_rubrique", 0);
   const [openSiteSelect, setOpenSiteSelect] = useState(false);
 
@@ -986,7 +994,7 @@ export default function InspectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] pb-32 relative font-sans">
+    <div className="min-h-screen bg-[#FDFDFD] pb-32 relative font-sans overflow-x-hidden">
       {/* Refined Executive Background */}
       <div className="fixed top-0 left-0 w-full h-[800px] bg-[radial-gradient(circle_at_top_right,rgba(255,102,0,0.02),transparent_70%)] -z-10 pointer-events-none" />
       <div className="fixed top-0 left-0 w-full h-full bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_0%,#FDFDFD_100%)] -z-10 pointer-events-none" />
@@ -1102,24 +1110,94 @@ export default function InspectionPage() {
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-3 md:px-8 mt-5 md:mt-8">
+      {/* ═══ MOBILE: Full-screen questionnaire (1 question/écran) ═══ */}
+      <div className="md:hidden">
+        {activeTab === "questionnaire" && activeRubriques.length > 0 ? (
+          <MobileQuestionView
+            rubriques={activeRubriques}
+            currentRubriqueIdx={currentRubriqueIdx}
+            questions={(activeQuestionsData[activeRubriques[currentRubriqueIdx]?.id] || []).map((q: any) => ({
+              text: q.text,
+              helper: q.helper,
+              criticality: q.criticality,
+              rubriqueId: activeRubriques[currentRubriqueIdx]?.id,
+              rubriqueLabel: activeRubriques[currentRubriqueIdx]?.label,
+            }))}
+            answers={answers as any}
+            isLoadingQuestions={isLoadingQuestions}
+            stats={stats}
+            originesAction={ORIGINES_ACTION}
+            avancementAction={AVANCEMENT_ACTION}
+            statutAction={STATUT_ACTION}
+            onRubriqueChange={(idx) => setCurrentRubriqueIdx(idx)}
+            onAnswerUpdate={(key, patch) => updateAnswer(key, patch as any)}
+            onPhotoUpload={handlePhotoUpload}
+            onPhotoDelete={(url) => {
+              setAnswers((prev: any) => {
+                const next = { ...prev };
+                Object.keys(next).forEach((k) => {
+                  if (next[k]?.photos?.includes(url)) {
+                    next[k] = { ...next[k], photos: next[k].photos.filter((p: string) => p !== url) };
+                  }
+                });
+                return next;
+              });
+            }}
+            onCloseSummary={() => setShowSummary(true)}
+            activeTab={mobileQuestionnaireSubTab}
+            onTabChange={(t) => setMobileQuestionnaireSubTab(t as any)}
+          />
+        ) : (
+          /* Mobile: onglets Audit / Actions / Photos / Résumé
+             Le contenu réel est rendu par le bloc commun (Tabs partagé) ci-dessous */
+          <div className="px-3 mt-3 overflow-x-hidden">
+            <div className="flex items-center gap-1 bg-gray-100/60 p-1 rounded-xl mb-4 overflow-x-auto no-scrollbar">
+              {[
+                { id: "overview", label: "Audit", icon: LayoutDashboard },
+                { id: "questionnaire", label: "Questions", icon: BookOpen },
+                { id: "actions", label: "Actions", icon: CheckSquare, badge: nonConformites.length },
+                { id: "photos", label: "Photos", icon: FileImage },
+                { id: "resumee", label: "Résumé", icon: ClipboardCheck },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setActiveTab(t.id)}
+                  className={`flex-none flex items-center gap-1.5 px-3 h-9 rounded-lg text-[10px] font-black uppercase tracking-tight whitespace-nowrap transition-all ${activeTab === t.id ? "bg-sonatel-orange text-white shadow-sm" : "text-gray-500"
+                    }`}
+                >
+                  <t.icon className="w-3 h-3 shrink-0" />
+                  {t.label}
+                  {(t.badge ?? 0) > 0 && (
+                    <span className="ml-0.5 bg-red-500 text-white rounded-full px-1 text-[8px] font-black">{t.badge}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      {/* ═══ TABS: Partagé mobile + desktop ═══
+           – Sur mobile: TabsList masquée, questionnaire géré par MobileQuestionView
+           – Sur desktop: TabsList visible, tous les contenus rendus normalement */}
+      <div className="max-w-[1600px] mx-auto px-3 md:px-8 mt-3 md:mt-8 overflow-x-hidden">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="bg-white border border-gray-200 p-1 rounded-xl md:rounded-2xl h-11 md:h-14 flex items-center justify-start gap-1 md:gap-2 w-full overflow-x-auto overflow-y-hidden no-scrollbar">
-            <TabsTrigger value="overview" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
-              <LayoutDashboard className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden xs:inline">Information générale</span><span className="xs:hidden">Infos</span>
+          {/* TabsList masquée sur mobile (le switcher est dans le bloc md:hidden ci-dessus) */}
+          <TabsList className="hidden md:flex bg-white border border-gray-200 p-1 rounded-2xl h-14 items-center justify-start gap-2 w-full overflow-x-auto overflow-y-hidden no-scrollbar">
+            <TabsTrigger value="overview" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-sm">
+              <LayoutDashboard className="w-4 h-4" /> Information générale
             </TabsTrigger>
-            <TabsTrigger value="questionnaire" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
-              <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" /> Questionnaire
+            <TabsTrigger value="questionnaire" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-sm">
+              <BookOpen className="w-4 h-4" /> Questionnaire
             </TabsTrigger>
-            <TabsTrigger value="actions" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
-              <CheckSquare className="w-3.5 h-3.5 md:w-4 md:h-4" /> Actions
-              {nonConformites.length > 0 && <Badge className="ml-1 md:ml-2 bg-red-100 text-red-600 border-none font-black px-1.5 h-4 text-[9px]">{nonConformites.length}</Badge>}
+            <TabsTrigger value="actions" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-sm">
+              <CheckSquare className="w-4 h-4" /> Actions
+              {nonConformites.length > 0 && <Badge className="ml-2 bg-red-100 text-red-600 border-none font-black px-1.5 h-4 text-[9px]">{nonConformites.length}</Badge>}
             </TabsTrigger>
-            <TabsTrigger value="photos" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
-              <FileImage className="w-3.5 h-3.5 md:w-4 md:h-4" /> Photos
+            <TabsTrigger value="photos" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-sm">
+              <FileImage className="w-4 h-4" /> Photos
             </TabsTrigger>
-            <TabsTrigger value="resumee" className="rounded-lg md:rounded-xl px-4 md:px-6 h-9 md:h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-[10px] md:text-sm">
-              <ClipboardCheck className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden xs:inline">Résumé Global</span><span className="xs:hidden">Résumé</span>
+            <TabsTrigger value="resumee" className="rounded-xl px-6 h-11 font-bold flex items-center gap-2 data-[state=active]:bg-sonatel-orange data-[state=active]:text-white transition-all text-sm">
+              <ClipboardCheck className="w-4 h-4" /> Résumé Global
             </TabsTrigger>
           </TabsList>
 
@@ -1449,7 +1527,8 @@ export default function InspectionPage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="questionnaire" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {/* Questionnaire desktop — masqué sur mobile (MobileQuestionView s'en charge) */}
+          <TabsContent value="questionnaire" className="hidden md:block animate-in fade-in slide-in-from-bottom-4 duration-500">
             {activeRubriques.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-40 gap-6 bg-white/50 backdrop-blur-xl rounded-[3rem] border border-white/50 shadow-xl">
                 <div className="w-16 h-16 border-4 border-sonatel-orange border-t-transparent rounded-full animate-spin"></div>
@@ -1458,11 +1537,11 @@ export default function InspectionPage() {
                   <p className="text-gray-400 font-bold animate-pulse uppercase text-xs tracking-widest">Récupération des rubriques dynamiques...</p>
                 </div>
               </div>
-            ) : (
-              <div className="flex flex-col md:flex-row gap-6 lg:gap-12 items-start px-1 md:px-0">
+            ) : ( /* Desktop layout only — mobile handled above */
+              <div className="flex flex-col md:flex-row gap-6 lg:gap-12 items-start max-w-full overflow-x-hidden">
 
-                {/* Left Column: Vertical Timeline Navigation (Sticky) - Visible on Tablet & Desktop */}
-                <div className="hidden md:block md:w-[260px] lg:w-[320px] shrink-0 sticky top-[4.5rem] self-start space-y-6 lg:space-y-8 max-h-[calc(100vh-5rem)] overflow-y-auto no-scrollbar" >
+                {/* ═══ DESKTOP: Left Column Sidebar Navigation (Sticky) ═══ */}
+                <div className="hidden md:block md:w-[260px] lg:w-[320px] shrink-0 sticky top-[4.5rem] self-start space-y-6 lg:space-y-8 max-h-[calc(100vh-5rem)] overflow-y-auto no-scrollbar">
                   <div className="bg-white/80 backdrop-blur-xl border border-gray-100 rounded-3xl lg:rounded-[3rem] p-5 lg:p-8 shadow-[0_40px_100px_rgba(0,0,0,0.02)] space-y-6 lg:space-y-8">
                     <div className="space-y-1">
                       <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest px-2 group flex items-center gap-2">
@@ -1473,67 +1552,34 @@ export default function InspectionPage() {
                     </div>
 
                     <div className="relative space-y-1">
-                      {/* Vertical Line Background */}
                       <div className="absolute left-[27px] top-6 bottom-6 w-0.5 bg-gray-100 rounded-full" />
-
-                      {/* Active Progress Line */}
                       <div
                         className="absolute left-[27px] top-6 w-0.5 bg-sonatel-orange rounded-full transition-all duration-1000 origin-top"
-                        style={{
-                          height: `${(currentRubriqueIdx / (activeRubriques.length - 1)) * 100}%`,
-                          maxHeight: 'calc(100% - 48px)'
-                        }}
+                        style={{ height: `${(currentRubriqueIdx / (activeRubriques.length - 1)) * 100}%`, maxHeight: 'calc(100% - 48px)' }}
                       />
-
                       <div className="space-y-3 relative z-10">
                         {activeRubriques.map((r, i) => {
                           const isActive = i === currentRubriqueIdx;
-                          const isCompleted = i < currentRubriqueIdx;
                           const qCount = activeQuestionsData[r.id]?.length || 0;
                           const aCount = activeQuestionsData[r.id]?.filter((_, idx) => answers[`${r.id}-${idx}`]?.status).length || 0;
-                          const iFinished = aCount === qCount;
-                          const prog = (aCount / qCount) * 100;
-
+                          const iFinished = aCount === qCount && qCount > 0;
+                          const prog = qCount > 0 ? (aCount / qCount) * 100 : 0;
                           return (
                             <button
                               key={r.id}
-                              onClick={() => {
-                                setCurrentRubriqueIdx(i);
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                              }}
-                              className={`w-full group text-left p-3 rounded-2xl transition-all duration-300 flex items-center gap-4 ${isActive
-                                ? "bg-sonatel-orange/5 ring-1 ring-sonatel-orange/20"
-                                : "hover:bg-gray-50"
-                                }`}
+                              onClick={() => { setCurrentRubriqueIdx(i); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                              className={`w-full group text-left p-3 rounded-2xl transition-all duration-300 flex items-center gap-4 ${isActive ? "bg-sonatel-orange/5 ring-1 ring-sonatel-orange/20" : "hover:bg-gray-50"}`}
                             >
-                              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm shrink-0 border-2 ${isActive
-                                ? "bg-sonatel-orange border-sonatel-orange text-white scale-110"
-                                : iFinished
-                                  ? "bg-emerald-500 border-emerald-500 text-white"
-                                  : "bg-white border-gray-100 text-gray-300 group-hover:border-sonatel-orange/30 group-hover:text-sonatel-orange/50"
-                                }`}>
-                                {iFinished && !isActive ? (
-                                  <Check className="w-4 h-4" />
-                                ) : (
-                                  <r.icon className="w-4 h-4" />
-                                )}
+                              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm shrink-0 border-2 ${isActive ? "bg-sonatel-orange border-sonatel-orange text-white scale-110" : iFinished ? "bg-emerald-500 border-emerald-500 text-white" : "bg-white border-gray-100 text-gray-300 group-hover:border-sonatel-orange/30 group-hover:text-sonatel-orange/50"}`}>
+                                {iFinished && !isActive ? <Check className="w-4 h-4" /> : <r.icon className="w-4 h-4" />}
                               </div>
-
                               <div className="flex-1 min-w-0">
-                                <div className={`text-[10px] font-black uppercase tracking-widest truncate ${isActive ? "text-sonatel-orange" : iFinished ? "text-emerald-600" : "text-gray-400"
-                                  }`}>
-                                  {r.label}
-                                </div>
+                                <div className={`text-[10px] font-black uppercase tracking-widest truncate ${isActive ? "text-sonatel-orange" : iFinished ? "text-emerald-600" : "text-gray-400"}`}>{r.label}</div>
                                 <div className="mt-1.5 flex items-center gap-2">
                                   <div className="flex-1 h-0.5 bg-gray-100 rounded-full overflow-hidden">
-                                    <div
-                                      className={`h-full transition-all duration-700 ${iFinished ? "bg-emerald-500" : "bg-sonatel-orange"}`}
-                                      style={{ width: `${prog}%` }}
-                                    />
+                                    <div className={`h-full transition-all duration-700 ${iFinished ? "bg-emerald-500" : "bg-sonatel-orange"}`} style={{ width: `${prog}%` }} />
                                   </div>
-                                  <span className="text-[9px] font-bold tabular-nums text-gray-400">
-                                    {aCount}/{qCount}
-                                  </span>
+                                  <span className="text-[9px] font-bold tabular-nums text-gray-400">{aCount}/{qCount}</span>
                                 </div>
                               </div>
                             </button>
@@ -1542,72 +1588,119 @@ export default function InspectionPage() {
                       </div>
                     </div>
 
-                    {/* Summary Stats */}
                     <div className="pt-6 border-t border-gray-100 space-y-4">
                       <div className="flex justify-between items-center px-2">
                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Maturité Site</span>
                         <span className={`text-lg font-black ${stats.percent >= 80 ? 'text-emerald-500' : 'text-sonatel-orange'}`}>{stats.percent}%</span>
                       </div>
-                      <Button
-                        onClick={() => setShowSummary(true)}
-                        className="w-full bg-gray-900 hover:bg-black text-white rounded-2xl py-6 font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-gray-200"
-                      >
+                      <Button onClick={() => setShowSummary(true)} className="w-full bg-gray-900 hover:bg-black text-white rounded-2xl py-6 font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-gray-200">
                         <Save className="w-4 h-4 mr-2" /> Clôturer l'Inspection
                       </Button>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Column: Active Content */}
-                <div className="flex-1 space-y-8 md:space-y-12 min-w-0 pb-32" >
-                  {/* Mobile-optimized Question Header - Hidden on Tablet/Desktop as Sidebar is visible */}
-                  <div className="sticky top-16 md:static z-10 bg-gray-50/95 backdrop-blur-sm -mx-3 md:-mx-4 px-3 md:px-4 py-3 border-b border-gray-200 md:bg-transparent md:border-none md:p-0 md:m-0 md:hidden">
-                    <div className="flex items-center justify-between mb-2 lg:mb-8">
-                      <div className="flex items-center gap-2 md:gap-4 min-w-0">
-                        <div className={`p-2 md:p-4 rounded-xl md:rounded-[1.5rem] bg-white shadow-sm md:shadow-lg md:ring-1 ring-gray-100 shrink-0 ${currentRubrique.color}`}>
-                          <currentRubrique.icon className="h-4 w-4 md:h-8 md:w-8" />
-                        </div>
-                        <div className="min-w-0">
-                          <h2 className="text-sm md:text-3xl font-black text-gray-900 uppercase tracking-tight truncate">
-                            {currentRubrique.label}
-                          </h2>
-                          <p className="hidden md:block text-[12px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Section {currentRubriqueIdx + 1} sur {activeRubriques.length}</p>
-                        </div>
-                      </div>
-                      <Badge className="lg:hidden bg-orange-50 text-sonatel-orange border-orange-100 font-bold text-[10px] shrink-0">
-                        {currentRubriqueIdx + 1}/{activeRubriques.length}
-                      </Badge>
+                {/* ═══ MOBILE: Sticky header avec progression + navigation ═══ */}
+                <div className="flex-1 space-y-4 md:space-y-12 min-w-0 pb-36 md:pb-32">
+                  {/* MOBILE ONLY: Barre de progression sticky + guide navigation */}
+                  <div className="md:hidden fixed top-14 left-0 right-0 z-30 bg-white border-b border-gray-100 shadow-sm">
+                    {/* Barre de complétion */}
+                    <div className="h-1 w-full bg-gray-100">
+                      <div
+                        className="h-full bg-gradient-to-r from-sonatel-orange to-orange-400 transition-all duration-700"
+                        style={{ width: `${stats.completion}%` }}
+                      />
                     </div>
 
-                    <div className="flex overflow-x-auto gap-2 pb-1 no-scrollbar">
-                      {activeRubriques.map((rubrique, idx) => (
-                        <button
-                          key={rubrique.id}
-                          onClick={() => {
-                            setCurrentRubriqueIdx(idx);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className={`flex-none px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border-2 ${currentRubriqueIdx === idx
-                            ? "bg-sonatel-orange text-white border-sonatel-orange shadow-md"
-                            : "bg-white text-gray-400 border-gray-100"
-                            }`}
-                        >
-                          {rubrique.label}
-                        </button>
-                      ))}
+                    {/* Rubrique active + actions */}
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      {/* Prev button */}
+                      <button
+                        onClick={() => { if (currentRubriqueIdx > 0) { setCurrentRubriqueIdx(currentRubriqueIdx - 1); questionsContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); } }}
+                        disabled={currentRubriqueIdx === 0}
+                        aria-label="Rubrique précédente"
+                        className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 disabled:opacity-30 active:scale-95 transition-all shrink-0"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+
+                      {/* Rubrique info */}
+                      <button
+                        onClick={() => setShowMobileGuide(true)}
+                        aria-label="Voir toutes les rubriques"
+                        className="flex-1 flex items-center gap-2.5 min-w-0 bg-orange-50/50 rounded-xl px-3 py-2 active:bg-orange-100/50 transition-colors"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-sonatel-orange flex items-center justify-center shrink-0">
+                          <currentRubrique.icon className="w-3.5 h-3.5 text-white" />
+                        </div>
+                        <div className="flex-1 text-left min-w-0">
+                          <div className="text-[10px] font-black text-sonatel-orange uppercase tracking-widest leading-none">
+                            {currentRubriqueIdx + 1} / {activeRubriques.length}
+                          </div>
+                          <div className="text-xs font-black text-gray-900 truncate leading-tight mt-0.5">
+                            {currentRubrique.label}
+                          </div>
+                        </div>
+                        <ChevronDown className="w-4 h-4 text-sonatel-orange shrink-0" />
+                      </button>
+
+                      {/* Answered count badge */}
+                      <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-xl px-2.5 py-2 shrink-0">
+                        <span className="text-[11px] font-black text-emerald-600">
+                          {questions.filter((_, idx) => answers[`${currentRubrique.id}-${idx}`]?.status).length}
+                        </span>
+                        <span className="text-[11px] font-black text-gray-300">/</span>
+                        <span className="text-[11px] font-black text-gray-400">{questions.length}</span>
+                      </div>
+
+                      {/* Next button */}
+                      <button
+                        onClick={() => { if (currentRubriqueIdx < activeRubriques.length - 1) { setCurrentRubriqueIdx(currentRubriqueIdx + 1); questionsContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); } }}
+                        disabled={currentRubriqueIdx === activeRubriques.length - 1}
+                        aria-label="Rubrique suivante"
+                        className="w-9 h-9 rounded-xl bg-sonatel-orange text-white flex items-center justify-center disabled:opacity-30 active:scale-95 transition-all shrink-0"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Mini rubrique scroll horizontal (5 visible) */}
+                    <div className="flex overflow-x-auto gap-1.5 px-4 pb-3 no-scrollbar">
+                      {activeRubriques.map((rubrique, idx) => {
+                        const qCount = activeQuestionsData[rubrique.id]?.length || 0;
+                        const aCount = activeQuestionsData[rubrique.id]?.filter((_, qi) => answers[`${rubrique.id}-${qi}`]?.status).length || 0;
+                        const done = aCount === qCount && qCount > 0;
+                        return (
+                          <button
+                            key={rubrique.id}
+                            onClick={() => { setCurrentRubriqueIdx(idx); questionsContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                            aria-current={currentRubriqueIdx === idx ? 'true' : undefined}
+                            className={`flex-none flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-all ${currentRubriqueIdx === idx
+                              ? 'bg-sonatel-orange text-white'
+                              : done
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : 'bg-gray-100 text-gray-500'
+                              }`}
+                          >
+                            {done && currentRubriqueIdx !== idx && <Check className="w-2.5 h-2.5" />}
+                            <rubrique.icon className="w-3 h-3 shrink-0" />
+                            <span className="text-[9px] font-black uppercase tracking-tight whitespace-nowrap max-w-[80px] truncate">{rubrique.label}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  {/* Questions list with Vertical Path */}
-                  <div className="space-y-6 md:space-y-10 relative pl-7 md:pl-12 lg:pl-16" >
-                    {/* Internal Path Line */}
-                    <div className="absolute left-[12px] md:left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full" />
+                  {/* Spacer pour compenser le fixed header mobile */}
+                  <div className="md:hidden h-[108px]" aria-hidden="true" />
 
-                    {/* Active Path Filler */}
+                  {/* Questions list — scrollable container */}
+                  <div ref={questionsContainerRef} className="space-y-3 md:space-y-8 w-full">
+                    {/* Path line — desktop only */}
+                    <div className="hidden md:block absolute left-[20px] lg:left-[27px] top-10 bottom-10 w-1 bg-gray-100/50 rounded-full" />
                     <div
-                      className="absolute left-[12px] md:left-[20px] lg:left-[27px] top-10 w-1 rounded-full bg-sonatel-orange transition-all duration-700 md:block origin-top"
-                      style={{ height: `${(questions.filter((_, idx) => answers[`${currentRubrique.id}-${idx}`]?.status).length / questions.length) * 100}%` }
-                      }
+                      className="hidden md:block absolute left-[20px] lg:left-[27px] top-10 w-1 rounded-full bg-sonatel-orange transition-all duration-700 origin-top"
+                      style={{ height: `${(questions.filter((_, idx) => answers[`${currentRubrique.id}-${idx}`]?.status).length / Math.max(questions.length, 1)) * 100}%` }}
                     />
 
                     {isLoadingQuestions ? (
@@ -1622,257 +1715,380 @@ export default function InspectionPage() {
                         const isAnswered = !!ans.status;
 
                         return (
-                          <div key={key} className={`relative group/q animate-in fade-in slide-in-from-left-4 duration-500`} style={{ animationDelay: `${i * 70}ms` }}>
-                            {/* Timeline Node - Positioned on Path */}
-                            <div className={`absolute left-[-28px] md:left-[-50px] lg:left-[-59px] top-4 md:top-6 w-7 h-7 md:w-11 md:h-11 rounded-lg md:rounded-2xl flex items-center justify-center transition-all duration-500 z-20 shadow-xl border-4 border-[#FDFDFD] ${isAnswered
-                              ? ans.status === "conforme"
-                                ? "bg-emerald-500 text-white"
-                                : ans.status === "non-conforme"
-                                  ? "bg-destructive text-white"
-                                  : "bg-gray-400 text-white"
-                              : "bg-white text-gray-300 group-hover/q:bg-sonatel-orange/10 group-hover/q:text-sonatel-orange group-hover/q:scale-110 active:scale-95"
+                          <div
+                            key={key}
+                            className={`relative animate-in fade-in slide-in-from-bottom-2 duration-400`}
+                            style={{ animationDelay: `${i * 50}ms` }}
+                          >
+                            {/* ═══ DESKTOP: Timeline node absolu ═══ */}
+                            <div className={`hidden md:flex absolute left-[-50px] lg:left-[-59px] top-6 w-11 h-11 rounded-2xl items-center justify-center z-20 shadow-xl border-4 border-[#FDFDFD] transition-all duration-500 ${isAnswered
+                              ? ans.status === 'conforme' ? 'bg-emerald-500 text-white'
+                                : ans.status === 'non-conforme' ? 'bg-destructive text-white'
+                                  : 'bg-gray-400 text-white'
+                              : 'bg-white text-gray-300'
                               }`}>
-                              {ans.status === "conforme" ? (
-                                <Check className="w-3 h-3 md:w-5 md:h-5 transition-all animate-in zoom-in" />
-                              ) : ans.status === "non-conforme" ? (
-                                <AlertCircle className="w-3 h-3 md:w-5 md:h-5 transition-all animate-in zoom-in" />
-                              ) : (
-                                <span className="text-[9px] md:text-[11px] font-black">{String(i + 1).padStart(2, '0')}</span>
-                              )}
+                              {ans.status === 'conforme' ? <Check className="w-5 h-5" />
+                                : ans.status === 'non-conforme' ? <AlertCircle className="w-5 h-5" />
+                                  : <span className="text-[11px] font-black">{String(i + 1).padStart(2, '0')}</span>}
                             </div>
 
-                            <Card
-                              className={`overflow-hidden border-none transition-all duration-500 group relative ${isAnswered
-                                ? ans.status === "conforme"
-                                  ? "bg-emerald-50/20 shadow-[0_10px_30px_-10px_rgba(16,185,129,0.1)] ring-1 ring-emerald-100/50"
-                                  : ans.status === "non-conforme"
-                                    ? "bg-red-50/20 shadow-[0_10px_30px_-10px_rgba(239,68,68,0.1)] ring-1 ring-red-100/50"
-                                    : "bg-gray-50/40 shadow-sm ring-1 ring-gray-100"
-                                : "bg-white shadow-sm hover:shadow-xl hover:ring-1 hover:ring-sonatel-orange/20"
-                                }`}
-                            >
+                            {/* ═══ CARTE QUESTION ═══ */}
+                            <div className={`rounded-2xl md:rounded-3xl border-2 overflow-hidden transition-all duration-300 w-full max-w-full ${isAnswered
+                              ? ans.status === 'conforme'
+                                ? 'border-emerald-200 bg-emerald-50/40'
+                                : ans.status === 'non-conforme'
+                                  ? 'border-red-200 bg-red-50/30'
+                                  : 'border-gray-200 bg-gray-50/40'
+                              : 'border-gray-100 bg-white shadow-sm hover:shadow-md hover:border-orange-100'
+                              }`}>
 
-                              <CardContent className="p-4 md:p-8">
-                                <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
-                                  {/* Left: Question Header */}
-                                  <div className="flex-1 space-y-5">
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-3">
-                                        <Badge variant="outline" className={`text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border-none shadow-sm ${q.criticality === "Critique"
-                                          ? "bg-destructive text-white animate-pulse"
-                                          : q.criticality === "Majeur"
-                                            ? "bg-sonatel-orange text-white"
-                                            : "bg-gray-400 text-white"
-                                          }`}>
-                                          {q.criticality}
-                                        </Badge>
-                                      </div>
+                              {/* ═══ HEADER MOBILE: numéro + criticité + statut coloré ═══ */}
+                              <div className={`flex items-center gap-2 px-3 py-2 border-b border-inherit ${isAnswered
+                                ? ans.status === 'conforme' ? 'bg-emerald-100/60'
+                                  : ans.status === 'non-conforme' ? 'bg-red-100/60'
+                                    : 'bg-gray-100/60'
+                                : 'bg-gray-50'
+                                }`}>
+                                {/* Numéro */}
+                                <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black shrink-0 ${isAnswered
+                                  ? ans.status === 'conforme' ? 'bg-emerald-500 text-white'
+                                    : ans.status === 'non-conforme' ? 'bg-red-500 text-white'
+                                      : 'bg-gray-400 text-white'
+                                  : 'bg-gray-200 text-gray-600'
+                                  }`}>
+                                  {ans.status === 'conforme' ? <Check className="w-3.5 h-3.5" />
+                                    : ans.status === 'non-conforme' ? <AlertCircle className="w-3.5 h-3.5" />
+                                      : String(i + 1).padStart(2, '0')}
+                                </div>
 
-                                      {q.helper && (
-                                        <TooltipProvider>
-                                          <Tooltip>
-                                            <TooltipTrigger asChild>
-                                              <button className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-sonatel-orange/10 hover:text-sonatel-orange transition-all">
-                                                <Info className="w-4 h-4" />
-                                              </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent className="max-w-[250px] p-4 rounded-2xl bg-gray-900 text-white border-none shadow-2xl">
-                                              <p className="text-xs font-bold leading-relaxed">{q.helper}</p>
-                                            </TooltipContent>
-                                          </Tooltip>
-                                        </TooltipProvider>
-                                      )}
-                                    </div>
+                                {/* Badge criticité */}
+                                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 ${q.criticality === 'Critique' ? 'bg-red-100 text-red-700'
+                                  : q.criticality === 'Majeur' ? 'bg-orange-100 text-orange-700'
+                                    : 'bg-gray-100 text-gray-500'
+                                  }`}>{q.criticality}</span>
 
-                                    <div className="space-y-4">
-                                      <h3 className="text-xl font-black text-gray-900 leading-[1.4] tracking-tight">
-                                        {q.text}
-                                      </h3>
-                                      {q.helper && (
-                                        <div className="flex gap-2 p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 lg:hidden">
-                                          <Info className="w-4 h-4 text-sonatel-orange shrink-0 mt-0.5" />
-                                          <p className="text-xs font-bold text-muted-foreground leading-relaxed">{q.helper}</p>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
+                                {/* Statut label */}
+                                {isAnswered && (
+                                  <span className={`ml-auto text-[9px] font-black uppercase tracking-wider shrink-0 ${ans.status === 'conforme' ? 'text-emerald-600'
+                                    : ans.status === 'non-conforme' ? 'text-red-600'
+                                      : 'text-gray-400'
+                                    }`}>
+                                    {ans.status === 'conforme' ? '✓ Conforme' : ans.status === 'non-conforme' ? '✗ Non conforme' : '— N/A'}
+                                  </span>
+                                )}
 
-                                  {/* Right: Actions & Status Selection */}
-                                  <div className="w-full lg:w-[420px] shrink-0 space-y-4 md:space-y-8">
-                                    {/* Choice Buttons */}
-                                    <div className="grid grid-cols-3 gap-2 md:gap-4 p-2 md:p-3 bg-gray-50 rounded-2xl md:rounded-[2rem] border border-gray-100/50 shadow-inner">
-                                      {[
-                                        { id: "conforme", label: "OUI", color: "bg-emerald-500", icon: Check },
-                                        { id: "non-conforme", label: "NON", color: "bg-destructive", icon: AlertCircle },
-                                        { id: "na", label: "N/A", color: "bg-gray-400", icon: Info },
-                                      ].map((opt) => (
-                                        <button
-                                          key={opt.id}
-                                          onClick={() => updateAnswer(key, { status: opt.id as any })}
-                                          className={`flex flex-col items-center justify-center gap-1 md:gap-2 py-3 md:py-5 rounded-xl md:rounded-[1.5rem] transition-all duration-300 border-2 min-h-[60px] md:min-h-[80px] ${ans.status === opt.id
-                                            ? `${opt.color} border-transparent text-white shadow-xl scale-[1.03] z-10`
-                                            : "bg-white border-transparent text-gray-400 hover:border-sonatel-orange/20 hover:text-sonatel-orange hover:shadow-md"
-                                            }`}
-                                        >
-                                          <opt.icon className={`w-5 h-5 md:w-6 md:h-6 transition-transform ${ans.status === opt.id ? "scale-110" : "scale-100"}`} />
-                                          <span className="text-[9px] md:text-[10px] font-black tracking-tight md:tracking-[0.2em] whitespace-nowrap">{opt.label}</span>
+                                {/* Helper tooltip (desktop) */}
+                                {q.helper && (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <button className="ml-auto md:ml-1 w-6 h-6 rounded-full bg-white/60 flex items-center justify-center text-gray-400 hover:text-sonatel-orange transition-all shrink-0">
+                                          <Info className="w-3 h-3" />
                                         </button>
-                                      ))}
+                                      </TooltipTrigger>
+                                      <TooltipContent className="max-w-[220px] p-3 rounded-xl bg-gray-900 text-white border-none shadow-2xl">
+                                        <p className="text-[11px] font-bold leading-relaxed">{q.helper}</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+                              </div>
+
+                              {/* ═══ BODY ══ */}
+                              <div className="p-3 md:p-6 space-y-3 md:space-y-5">
+
+                                {/* Texte de la question */}
+                                <p className="text-sm md:text-base font-bold text-gray-900 leading-snug md:leading-[1.5] tracking-tight">
+                                  {q.text}
+                                </p>
+
+                                {/* Helper inline sur mobile */}
+                                {q.helper && (
+                                  <div className="flex gap-2 p-2.5 bg-blue-50/60 rounded-xl border border-blue-100/50">
+                                    <Info className="w-3 h-3 text-blue-400 shrink-0 mt-0.5" />
+                                    <p className="text-[11px] font-medium text-blue-700 leading-relaxed">{q.helper}</p>
+                                  </div>
+                                )}
+
+                                {/* ═══ BOUTONS OUI / NON / N/A ═══ */}
+                                <div className="grid grid-cols-3 gap-2 p-1.5 bg-gray-100/60 rounded-2xl">
+                                  {[
+                                    { id: 'conforme', label: 'OUI', activeClass: 'bg-emerald-500 text-white shadow-lg shadow-emerald-200', icon: Check },
+                                    { id: 'non-conforme', label: 'NON', activeClass: 'bg-red-500 text-white shadow-lg shadow-red-200', icon: AlertCircle },
+                                    { id: 'na', label: 'N/A', activeClass: 'bg-gray-500 text-white shadow-md', icon: Info },
+                                  ].map((opt) => (
+                                    <button
+                                      key={opt.id}
+                                      onClick={() => updateAnswer(key, { status: opt.id as any })}
+                                      aria-pressed={ans.status === opt.id}
+                                      aria-label={opt.id === 'conforme' ? 'Marquer conforme' : opt.id === 'non-conforme' ? 'Marquer non conforme' : 'Marquer non applicable'}
+                                      className={`flex flex-col items-center justify-center gap-1 py-3.5 md:py-4 rounded-xl transition-all duration-200 active:scale-95 touch-manipulation ${ans.status === opt.id
+                                        ? opt.activeClass + ' scale-[1.02]'
+                                        : 'bg-white text-gray-400 hover:text-gray-600'
+                                        }`}
+                                    >
+                                      <opt.icon className="w-5 h-5 md:w-5 md:h-5" />
+                                      <span className="text-[11px] md:text-xs font-black tracking-widest">{opt.label}</span>
+                                    </button>
+                                  ))}
+                                </div>
+
+                                {/* ═══ OBSERVATION ══ */}
+                                <Textarea
+                                  placeholder="Observations d'audit..."
+                                  value={ans.observation ?? ''}
+                                  onChange={(e) => updateAnswer(key, { observation: e.target.value })}
+                                  className="w-full min-h-[64px] md:min-h-[100px] rounded-xl border-gray-200 bg-gray-50 focus:bg-white focus:ring-sonatel-orange/20 focus:border-sonatel-orange text-sm font-medium resize-none placeholder:text-gray-300 transition-all"
+                                />
+
+                                {/* ═══ PLAN D'ACTION (non-conforme) ══ */}
+                                {(ans.status === 'non-conforme' || ans.showActionPlan) && (
+                                  <div className="rounded-xl md:rounded-2xl border border-red-100 bg-red-50/30 overflow-hidden animate-in zoom-in-95 duration-200">
+                                    <div className="flex items-center gap-2 px-3 py-2.5 bg-red-100/50 border-b border-red-100">
+                                      <AlertTriangle className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                                      <span className="text-[10px] font-black text-red-700 uppercase tracking-widest">Plan d'Action Correctif</span>
+                                      {ans.status !== 'non-conforme' && (
+                                        <button onClick={() => updateAnswer(key, { showActionPlan: false })} className="ml-auto text-gray-400">
+                                          <X className="w-3.5 h-3.5" />
+                                        </button>
+                                      )}
                                     </div>
 
-                                    {/* Observations Area */}
-                                    <div className="space-y-4">
-                                      <div className="relative group/obs transition-all duration-300">
-                                        <Textarea
-                                          placeholder="Notes et observations d'audit..."
-                                          value={ans.observation}
-                                          onChange={(e) => updateAnswer(key, { observation: e.target.value })}
-                                          className="w-full min-h-[80px] md:min-h-[120px] rounded-[1.5rem] border-gray-100 bg-white focus:ring-sonatel-orange/10 focus:border-sonatel-orange transition-all duration-300 placeholder:text-gray-400 font-medium text-sm pt-5 px-6 shadow-sm resize-none"
-                                        />
-                                        <div className="absolute top-4 right-4 opacity-20 group-focus-within/obs:opacity-0 transition-opacity">
-                                          <FileText className="w-5 h-5" />
-                                        </div>
-                                      </div>
+                                    <div className="p-3 space-y-3">
+                                      <Textarea
+                                        placeholder="Action corrective à mener..."
+                                        value={ans.recommendation ?? ''}
+                                        onChange={(e) => updateAnswer(key, { recommendation: e.target.value })}
+                                        className="w-full min-h-[60px] rounded-lg border-gray-200 text-sm font-medium resize-none"
+                                      />
 
-                                      {/* Dynamic Action Plan */}
-                                      {(ans.status === "non-conforme" || ans.showActionPlan) && (
-                                        <div className="p-4 md:p-6 bg-gradient-to-br from-gray-50/50 to-white border border-sonatel-orange/10 rounded-2xl md:rounded-[2rem] space-y-4 md:space-y-6 shadow-inner animate-in zoom-in-95 duration-300">
-                                          <header className="flex justify-between items-center border-b border-sonatel-orange/5 pb-4">
-                                            <span className="text-[10px] font-black text-sonatel-orange uppercase tracking-[0.2em] flex items-center gap-2">
-                                              <AlertTriangle className="w-4 h-4" /> Plan d'Action Correctif
-                                            </span>
-                                            {ans.status === "conforme" && (
-                                              <button onClick={() => updateAnswer(key, { showActionPlan: false })} className="text-gray-400 hover:text-sonatel-orange">
-                                                <Plus className="w-4 h-4 rotate-45" />
-                                              </button>
-                                            )}
-                                          </header>
-
-                                          <div className="space-y-4">
-                                            <div className="space-y-2">
-                                              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Action Recommandée</label>
-                                              <Textarea
-                                                placeholder="Décrivez l'action à mener..."
-                                                value={ans.recommendation}
-                                                onChange={(e) => updateAnswer(key, { recommendation: e.target.value })}
-                                                className="min-h-[80px] rounded-xl border-gray-100 shadow-sm text-sm"
-                                              />
-                                            </div>
-
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                              <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Responsable</label>
-                                                <div className="relative">
-                                                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-                                                  <input
-                                                    type="text"
-                                                    placeholder="Porteur..."
-                                                    value={ans.assignee}
-                                                    onChange={(e) => updateAnswer(key, { assignee: e.target.value })}
-                                                    className="w-full pl-9 pr-3 h-10 text-xs font-bold rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-sonatel-orange/10 transition-all shadow-sm"
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Email Porteur</label>
-                                                <div className="relative">
-                                                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-                                                  <input
-                                                    type="email"
-                                                    placeholder="Email..."
-                                                    value={ans.porteurEmail}
-                                                    onChange={(e) => updateAnswer(key, { porteurEmail: e.target.value })}
-                                                    className="w-full pl-9 pr-3 h-10 text-xs font-bold rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-sonatel-orange/10 transition-all shadow-sm"
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Echéance</label>
-                                                <input
-                                                  type="date"
-                                                  value={ans.dueDate}
-                                                  onChange={(e) => updateAnswer(key, { dueDate: e.target.value })}
-                                                  className="w-full px-3 h-10 text-xs font-bold rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-sonatel-orange/10 transition-all shadow-sm"
-                                                />
-                                              </div>
-                                            </div>
-
-                                            <div className="space-y-2">
-                                              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Origine de la recommandation</label>
-                                              <select
-                                                value={ans.origine || ORIGINES_ACTION[8]}
-                                                onChange={(e) => updateAnswer(key, { origine: e.target.value })}
-                                                className="w-full h-10 px-3 text-xs font-bold rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-sonatel-orange/10 transition-all shadow-sm bg-white"
-                                              >
-                                                {ORIGINES_ACTION.map((o) => (
-                                                  <option key={o} value={o}>{o}</option>
-                                                ))}
-                                              </select>
-                                            </div>
-
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                              <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Avancement</label>
-                                                <select
-                                                  value={ans.avancement || AVANCEMENT_ACTION[3]}
-                                                  onChange={(e) => updateAnswer(key, { avancement: e.target.value })}
-                                                  className="w-full h-10 px-3 text-xs font-bold rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-sonatel-orange/10 transition-all shadow-sm bg-white"
-                                                >
-                                                  {AVANCEMENT_ACTION.map((a) => (
-                                                    <option key={a} value={a}>{a}</option>
-                                                  ))}
-                                                </select>
-                                              </div>
-                                              <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest pl-1">Statut Suivi</label>
-                                                <select
-                                                  value={ans.statut_suivi || STATUT_ACTION[3]}
-                                                  onChange={(e) => updateAnswer(key, { statut_suivi: e.target.value })}
-                                                  className="w-full h-10 px-3 text-xs font-bold rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-sonatel-orange/10 transition-all shadow-sm bg-white"
-                                                >
-                                                  {STATUT_ACTION.map((s) => (
-                                                    <option key={s} value={s}>{s}</option>
-                                                  ))}
-                                                </select>
-                                              </div>
-                                            </div>
+                                      {/* Responsable + Email */}
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        <div className="relative">
+                                          <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Responsable</label>
+                                          <div className="relative">
+                                            <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
+                                            <input
+                                              type="text"
+                                              placeholder="Porteur..."
+                                              value={ans.assignee ?? ''}
+                                              onChange={(e) => updateAnswer(key, { assignee: e.target.value })}
+                                              className="w-full pl-7 pr-2 h-9 text-xs font-bold rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-orange-100 bg-white"
+                                            />
                                           </div>
                                         </div>
-                                      )}
+                                        <div className="relative">
+                                          <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Email</label>
+                                          <div className="relative">
+                                            <Mail className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400" />
+                                            <input
+                                              type="email"
+                                              placeholder="email@..."
+                                              value={ans.porteurEmail ?? ''}
+                                              onChange={(e) => updateAnswer(key, { porteurEmail: e.target.value })}
+                                              className="w-full pl-7 pr-2 h-9 text-xs font-bold rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-orange-100 bg-white"
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
 
-                                      {ans.status === "conforme" && !ans.showActionPlan && (
-                                        <button
-                                          onClick={() => updateAnswer(key, { showActionPlan: true })}
-                                          className="w-full py-3 rounded-xl border-2 border-dashed border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest hover:border-sonatel-orange/30 hover:text-sonatel-orange transition-all flex items-center justify-center gap-2 group"
-                                        >
-                                          <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" /> Ajouter une recommandation préventive
-                                        </button>
-                                      )}
-                                    </div>
+                                      {/* Échéance + Origine */}
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        <div>
+                                          <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Échéance</label>
+                                          <input
+                                            type="date"
+                                            value={ans.dueDate ?? ''}
+                                            onChange={(e) => updateAnswer(key, { dueDate: e.target.value })}
+                                            className="w-full px-2.5 h-9 text-xs font-bold rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-orange-100 bg-white"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Origine</label>
+                                          <select
+                                            value={ans.origine || ORIGINES_ACTION[8]}
+                                            onChange={(e) => updateAnswer(key, { origine: e.target.value })}
+                                            className="w-full h-9 px-2 text-xs font-bold rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-orange-100 bg-white"
+                                          >
+                                            {ORIGINES_ACTION.map(o => <option key={o} value={o}>{o}</option>)}
+                                          </select>
+                                        </div>
+                                      </div>
 
-                                    {/* Evidence & Documents */}
-                                    <div className="pt-2">
-                                      <CameraCapture
-                                        photos={ans.photos || []}
-                                        onPhotosChange={(photos) => {
-                                          updateAnswer(key, { photos });
-                                          handlePhotoUpload(key, photos);
-                                        }}
-                                        onPhotoDelete={(photoUrl) => {
-                                          if (photoUrl.startsWith('http') && photoUrl.includes('cloudinary')) {
-                                            photoService.deleteByUrl(photoUrl);
-                                          }
-                                        }}
-                                      />
+                                      {/* Avancement + Statut */}
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Avancement</label>
+                                          <select
+                                            value={ans.avancement || AVANCEMENT_ACTION[3]}
+                                            onChange={(e) => updateAnswer(key, { avancement: e.target.value })}
+                                            className="w-full h-9 px-2 text-xs font-bold rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-orange-100 bg-white"
+                                          >
+                                            {AVANCEMENT_ACTION.map(a => <option key={a} value={a}>{a}</option>)}
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Statut</label>
+                                          <select
+                                            value={ans.statut_suivi || STATUT_ACTION[3]}
+                                            onChange={(e) => updateAnswer(key, { statut_suivi: e.target.value })}
+                                            className="w-full h-9 px-2 text-xs font-bold rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-orange-100 bg-white"
+                                          >
+                                            {STATUT_ACTION.map(s => <option key={s} value={s}>{s}</option>)}
+                                          </select>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
+                                )}
+
+                                {/* Bouton recommandation préventive (conforme) */}
+                                {ans.status === 'conforme' && !ans.showActionPlan && (
+                                  <button
+                                    onClick={() => updateAnswer(key, { showActionPlan: true })}
+                                    className="w-full py-2.5 rounded-xl border-2 border-dashed border-gray-200 text-[10px] font-black text-gray-400 uppercase tracking-widest hover:border-orange-300 hover:text-orange-500 transition-all flex items-center justify-center gap-2"
+                                  >
+                                    <Plus className="w-3 h-3" /> Ajouter une recommandation
+                                  </button>
+                                )}
+
+                                {/* Photos */}
+                                <div className="pt-1">
+                                  <CameraCapture
+                                    photos={ans.photos || []}
+                                    onPhotosChange={(photos) => {
+                                      updateAnswer(key, { photos });
+                                      handlePhotoUpload(key, photos);
+                                    }}
+                                    onPhotoDelete={(photoUrl) => {
+                                      if (photoUrl.startsWith('http') && photoUrl.includes('cloudinary')) {
+                                        photoService.deleteByUrl(photoUrl);
+                                      }
+                                    }}
+                                  />
                                 </div>
-                              </CardContent>
-                            </Card>
+
+                              </div>{/* /body */}
+                            </div>{/* /carte */}
                           </div>
                         );
                       })
                     )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ MOBILE: Bottom Sheet Guide des Rubriques ═══ */}
+            {showMobileGuide && (
+              <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true" aria-label="Guide des rubriques">
+                {/* Backdrop */}
+                <div
+                  className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                  onClick={() => setShowMobileGuide(false)}
+                  aria-hidden="true"
+                />
+                {/* Sheet */}
+                <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl flex flex-col max-h-[85vh]">
+                  {/* Handle */}
+                  <div className="flex justify-center pt-3 pb-2">
+                    <div className="w-12 h-1 bg-gray-200 rounded-full" />
+                  </div>
+
+                  {/* Header */}
+                  <div className="flex items-center justify-between px-5 pb-4 border-b border-gray-100">
+                    <div>
+                      <h2 className="text-base font-black text-gray-900 uppercase tracking-tight">Guide d'Inspection</h2>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
+                        {stats.answered} / {stats.total} points — {stats.completion}% complété
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setShowMobileGuide(false)}
+                      aria-label="Fermer le guide"
+                      className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Global progress bar */}
+                  <div className="px-5 py-3">
+                    <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase mb-1.5">
+                      <span>Progression globale</span>
+                      <span className="text-sonatel-orange">{stats.completion}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-sonatel-orange to-orange-400 transition-all duration-700 rounded-full"
+                        style={{ width: `${stats.completion}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Rubrique list — scrollable */}
+                  <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2 pb-safe">
+                    {activeRubriques.map((r, i) => {
+                      const isActive = i === currentRubriqueIdx;
+                      const qCount = activeQuestionsData[r.id]?.length || 0;
+                      const aCount = activeQuestionsData[r.id]?.filter((_, idx) => answers[`${r.id}-${idx}`]?.status).length || 0;
+                      const iFinished = aCount === qCount && qCount > 0;
+                      const prog = qCount > 0 ? (aCount / qCount) * 100 : 0;
+                      return (
+                        <button
+                          key={r.id}
+                          onClick={() => { setCurrentRubriqueIdx(i); setShowMobileGuide(false); questionsContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                          aria-current={isActive ? 'true' : undefined}
+                          className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${isActive
+                            ? 'bg-sonatel-orange/5 ring-2 ring-sonatel-orange/20'
+                            : 'bg-gray-50 hover:bg-gray-100'
+                            }`}
+                        >
+                          {/* Icon */}
+                          <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${isActive ? 'bg-sonatel-orange text-white' : iFinished ? 'bg-emerald-500 text-white' : 'bg-white border-2 border-gray-100 text-gray-300'
+                            }`}>
+                            {iFinished && !isActive ? <Check className="w-5 h-5" /> : <r.icon className="w-5 h-5" />}
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0 text-left">
+                            <div className={`text-sm font-black uppercase tracking-tight truncate ${isActive ? 'text-sonatel-orange' : iFinished ? 'text-emerald-700' : 'text-gray-700'
+                              }`}>{r.label}</div>
+                            <div className="mt-1.5 flex items-center gap-2">
+                              <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full transition-all duration-700 ${iFinished ? 'bg-emerald-500' : 'bg-sonatel-orange'
+                                    }`}
+                                  style={{ width: `${prog}%` }}
+                                />
+                              </div>
+                              <span className={`text-[11px] font-black tabular-nums shrink-0 ${iFinished ? 'text-emerald-600' : isActive ? 'text-sonatel-orange' : 'text-gray-400'
+                                }`}>{aCount}/{qCount}</span>
+                            </div>
+                          </div>
+
+                          {/* Status indicator */}
+                          {iFinished && (
+                            <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                              <Check className="w-3 h-3 text-emerald-600" />
+                            </div>
+                          )}
+                          {isActive && !iFinished && (
+                            <ChevronRight className="w-4 h-4 text-sonatel-orange shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Footer CTA */}
+                  <div className="p-4 border-t border-gray-100 bg-white safe-bottom">
+                    <Button
+                      onClick={() => { setShowMobileGuide(false); setShowSummary(true); }}
+                      className="w-full bg-gray-900 hover:bg-black text-white rounded-2xl h-14 font-black uppercase text-xs tracking-widest gap-2"
+                    >
+                      <Save className="w-4 h-4" /> Clôturer l'Inspection
+                    </Button>
                   </div>
                 </div>
               </div>

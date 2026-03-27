@@ -465,18 +465,18 @@ const SiteComplianceChart = React.memo(({
   return (
     <div className="w-full bg-white rounded-3xl border-2 border-gray-100 shadow-xl overflow-hidden flex flex-col">
       {/* Smart Filters Header */}
-      <div className="bg-gray-50/80 p-4 border-b-2 border-gray-100 space-y-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <div className="p-2 bg-sonatel-orange text-white rounded-xl shadow-lg shadow-orange-100">
+      <div className="bg-gray-50/80 p-4 border-b-2 border-gray-100 space-y-3">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-sonatel-orange text-white rounded-xl shadow-lg shadow-orange-100 shrink-0">
               <BarChart3 className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-base font-black text-gray-900 uppercase tracking-tighter block leading-none">
+              <span className="text-sm font-black text-gray-900 uppercase tracking-tighter block leading-none">
                 {filteredData.length} site{filteredData.length > 1 ? 's' : ''} filtré{filteredData.length > 1 ? 's' : ''}
               </span>
-              <span className="text-[14px] font-black text-gray-400 uppercase tracking-widest">
-                Sur un total de {data.length}
+              <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
+                Sur {data.length} au total
               </span>
             </div>
           </div>
@@ -486,7 +486,7 @@ const SiteComplianceChart = React.memo(({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Chercher dans ce classement..."
+              placeholder="Chercher un site..."
               className="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-gray-200 bg-white text-sm font-black focus:border-sonatel-orange focus:ring-0 transition-all outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -494,48 +494,102 @@ const SiteComplianceChart = React.memo(({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[14px] font-black text-gray-400 uppercase tracking-widest mr-2">Filtrer par score :</span>
-          {[
-            { id: 'all', label: 'Tous', color: 'gray' },
-            { id: 'critical', label: '< 60% (Critique)', color: '#EF4444' },
-            { id: 'warning', label: '60-89% (Alerte)', color: '#F59E0B' },
-            { id: 'good', label: '89-90% (Bon)', color: '#10B981' },
-            { id: 'excellent', label: '>= 90% (Excellent)', color: '#059669' }
-          ].map(btn => (
-            <button
-              key={btn.id}
-              onClick={() => setScoreFilter(btn.id as any)}
-              className={`px-3 py-1.5 rounded-xl text-[14px] font-black uppercase transition-all border-2
-                 ${scoreFilter === btn.id
-                  ? 'bg-sonatel-orange text-white border-sonatel-orange shadow-md scale-105'
-                  : 'bg-white text-gray-500 border-gray-100 hover:border-gray-300'}`}
-            >
-              {btn.label}
-            </button>
-          ))}
+        {/* Score filters — grille 2×2 sur mobile, ligne sur desktop */}
+        <div className="space-y-2">
+          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Filtrer par score :</span>
+          <div className="grid grid-cols-2 md:flex md:flex-wrap gap-1.5 md:gap-2">
+            {[
+              { id: 'all', label: 'Tous', },
+              { id: 'critical', label: '< 60% (Critique)', },
+              { id: 'warning', label: '60-89% (Alerte)', },
+              { id: 'good', label: '89-90% (Bon)', },
+              { id: 'excellent', label: '>= 90% (Excellent)', },
+            ].map(btn => (
+              <button
+                key={btn.id}
+                onClick={() => setScoreFilter(btn.id as any)}
+                className={`px-2.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all border-2 text-center
+                   ${scoreFilter === btn.id
+                    ? 'bg-sonatel-orange text-white border-sonatel-orange shadow-md'
+                    : 'bg-white text-gray-500 border-gray-100 hover:border-gray-300'}`}
+              >
+                {btn.label}
+              </button>
+            ))}
 
-          <div className="flex-1" />
-
-          <div className="flex items-center gap-2 ml-auto">
-            <span className="text-[14px] font-black text-gray-400 uppercase tracking-widest">Tri :</span>
-            <Select value={tri} onValueChange={(v) => onTriChange?.(v as any)}>
-              <SelectTrigger className="w-[180px] h-9 rounded-xl border-2 font-black text-xs uppercase">
-                <SelectValue placeholder="Trier par" />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl border-2">
-                <SelectItem value="score_asc">Score croissant</SelectItem>
-                <SelectItem value="score_desc">Score décroissant</SelectItem>
-                <SelectItem value="nom">Nom A-Z</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="col-span-2 md:col-auto md:ml-auto flex items-center gap-2 mt-1 md:mt-0">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest shrink-0">Tri :</span>
+              <Select value={tri} onValueChange={(v) => onTriChange?.(v as any)}>
+                <SelectTrigger className="flex-1 md:w-[160px] h-9 rounded-xl border-2 font-black text-xs uppercase">
+                  <SelectValue placeholder="Trier par" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-2">
+                  <SelectItem value="score_asc">Score croissant</SelectItem>
+                  <SelectItem value="score_desc">Score décroissant</SelectItem>
+                  <SelectItem value="nom">Nom A-Z</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Scrollable chart container */}
+      {/* ══ MOBILE: Liste de cards lisibles ══ */}
+      <div className="md:hidden flex-1 overflow-y-auto max-h-[65vh] divide-y divide-gray-50">
+        {filteredData.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-12 gap-3">
+            <Search className="w-10 h-10 text-gray-200 animate-pulse" />
+            <p className="text-sm font-black uppercase tracking-widest text-gray-300 text-center">Aucun résultat</p>
+            <button
+              onClick={() => { setSearchTerm(""); setScoreFilter("all"); }}
+              className="text-sonatel-orange font-black text-xs uppercase border-2 border-orange-100 px-5 py-2 rounded-2xl hover:bg-orange-50 transition-all"
+            >
+              Réinitialiser
+            </button>
+          </div>
+        ) : filteredData.map((site, index) => {
+          const color = getComplianceColor(site.score);
+          const label = getComplianceLabel(site.score);
+          return (
+            <div
+              key={site.siteId || index}
+              onClick={() => navigate(`/sites/${site.siteId}`)}
+              className="flex items-center gap-3 px-4 py-3.5 active:bg-gray-50 cursor-pointer transition-colors"
+            >
+              {/* Rank */}
+              <span className="text-[11px] font-black text-gray-300 w-5 text-center shrink-0">{index + 1}</span>
+
+              {/* Site info + progress */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-black text-gray-900 truncate leading-tight">{site.siteNom}</p>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${site.score}%`, backgroundColor: color }}
+                    />
+                  </div>
+                  <span className="text-[11px] font-black tabular-nums shrink-0" style={{ color }}>
+                    {site.score}%
+                  </span>
+                </div>
+              </div>
+
+              {/* Badge */}
+              <span
+                className="text-[9px] font-black uppercase tracking-tight px-2 py-1 rounded-lg shrink-0"
+                style={{ backgroundColor: `${color}18`, color }}
+              >
+                {label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ══ DESKTOP: Recharts horizontal bar chart ══ */}
       <div
-        className="flex-1 custom-scrollbar overflow-y-auto overflow-x-hidden min-h-[450px] bg-white scroll-smooth"
+        className="hidden md:block flex-1 custom-scrollbar overflow-y-auto overflow-x-hidden min-h-[450px] bg-white scroll-smooth"
         style={{ height: `${containerHeight}px`, maxHeight: '700px' }}
       >
         {filteredData.length > 0 ? (
@@ -608,7 +662,7 @@ const SiteComplianceChart = React.memo(({
           <div className="flex flex-col items-center justify-center p-20 text-gray-400 gap-2">
             <Search className="w-16 h-16 opacity-10 animate-pulse" />
             <div className="text-center">
-              <p className="text-base font-black uppercase tracking-widest text-gray-300">Aucun résultat trouvé</p>
+              <p className="text-base font-black uppercase tracking-widest text-gray-300">Aucun résultat</p>
               <button
                 onClick={() => { setSearchTerm(""); setScoreFilter("all"); }}
                 className="mt-6 text-sonatel-orange font-black text-xs uppercase border-2 border-orange-100 px-6 py-2 rounded-2xl hover:bg-orange-50 transition-all"
@@ -622,12 +676,12 @@ const SiteComplianceChart = React.memo(({
 
       {/* Footer info bar */}
       <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-        <span className="text-[14px] font-black text-gray-400 uppercase tracking-widest">
-          {filteredData.length} / {data.length} sites affichés
+        <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
+          {filteredData.length} / {data.length} sites
         </span>
         {filteredData.length > 10 && (
-          <span className="text-[14px] font-black text-sonatel-orange flex items-center gap-2 animate-pulse">
-            <ArrowRight className="w-3 h-3 rotate-90" /> DÉFILEZ POUR TOUT VOIR
+          <span className="text-[11px] font-black text-sonatel-orange flex items-center gap-1.5 animate-pulse">
+            <ArrowRight className="w-3 h-3 rotate-90" /> Défiler
           </span>
         )}
       </div>

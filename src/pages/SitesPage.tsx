@@ -430,212 +430,221 @@ const SitesPage: React.FC = () => {
         {statusFilter && statusFilter !== "all" && <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 font-black uppercase text-[10px]">{statusFilter}</Badge>}
       </div>
 
-      {/* Sites List - Grid view always rendered, map hidden/shown via CSS */}
-      <div className={`flex-1 overflow-y-auto px-1 pb-16 ${viewMode === 'map' ? 'overflow-hidden' : ''}`}>
-        {/* Grid View - always rendered, hidden when in map mode */}
+      {/* Sites List */}
+      <div className={`flex-1 overflow-y-auto px-1 pb-24 md:pb-16 ${viewMode === 'map' ? 'overflow-hidden' : ''}`}>
+
+        {/* ═══ GRID VIEW ═══ */}
         <div style={{ display: viewMode === 'grid' ? 'block' : 'none' }}>
           {initialLoading ? (
             renderSkeletons()
-          ) : (
-            <>
-              {Object.entries(groupedSites).length > 0 ? (
-                Object.entries(groupedSites).map(([regionName, regionSites]) => (
-                  <div key={regionName} className="mb-8">
-                    {/* Region Header */}
-                    <div className="flex items-center gap-4 mb-4">
-                      <h2 className="text-2xl font-bold text-gray-900">{regionName}</h2>
-                      <Badge variant="secondary" className="bg-orange-50 text-orange-600 text-[12px] px-2 py-1">
-                        {regionSites.length} SITES
-                      </Badge>
-                      <div className="flex-1 h-px bg-gray-200"></div>
-                    </div>
-
-                    {/* Sites Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {regionSites.map((site) => (
-                        <Card
-                          key={site.id}
-                          className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                          onClick={() => navigateToSiteDetail(site.id)}
-                        >
-                          <CardHeader className="pb-2 flex flex-row items-start justify-between space-y-0">
-                            <div className="bg-orange-50 p-2 rounded-lg">
-                              <Building className="h-5 w-5 text-orange-500" />
-                            </div>
-                            <div className="relative">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  openEditModal(site);
-                                }}
-                              >
-                                <Edit className="h-4 w-4 text-gray-400" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteSite(site.id);
-                                }}
-                              >
-                                <Trash className="h-4 w-4 text-red-500" />
-                              </Button>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            <CardTitle className="text-2xl font-black truncate mb-1">
-                              {site.nom_site || site.nom}
-                            </CardTitle>
-                            <div className="flex items-center gap-1 text-base text-gray-500 mb-3">
-                              <MapPin className="h-3 w-3" />
-                              {site.regionName}
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <div className={`h-2 w-2 rounded-full ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                                <span className="text-[11px] font-medium text-gray-400 uppercase">
-                                  {site.status || 'actif'}
-                                </span>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-orange-500 hover:text-orange-600 h-auto p-0"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigateToSiteDetail(site.id);
-                                }}
-                              >
-                                Détails
-                                <ChevronRight className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                  <Search className="h-16 w-16 mb-4 opacity-20" />
-                  <p className="text-2xl font-semibold">Aucun résultat</p>
-                  <p className="text-base">Essayez avec d'autres critères de recherche</p>
+          ) : Object.entries(groupedSites).length > 0 ? (
+            Object.entries(groupedSites).map(([regionName, regionSites]) => (
+              <div key={regionName} className="mb-6 md:mb-8">
+                {/* Region Header */}
+                <div className="flex items-center gap-3 mb-3 md:mb-4">
+                  <h2 className="text-lg md:text-2xl font-black text-gray-900">{regionName}</h2>
+                  <Badge variant="secondary" className="bg-orange-50 text-orange-600 text-[10px] px-2 py-0.5 font-black">
+                    {regionSites.length}
+                  </Badge>
+                  <div className="flex-1 h-px bg-gray-200" />
                 </div>
-              )}
-            </>
+
+                {/* ── Mobile: Liste compacte ── */}
+                <div className="md:hidden bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+                  {regionSites.map((site) => (
+                    <div
+                      key={site.id}
+                      onClick={() => navigateToSiteDetail(site.id)}
+                      className="flex items-center gap-3 px-4 py-3.5 active:bg-orange-50/60 cursor-pointer transition-colors"
+                    >
+                      <div className="bg-orange-50 p-2 rounded-xl shrink-0">
+                        <Building className="h-4 w-4 text-orange-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-black text-gray-900 truncate leading-tight">{site.nom_site || site.nom}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <div className={`h-1.5 w-1.5 rounded-full shrink-0 ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`} />
+                          <span className="text-[10px] font-bold text-gray-400 uppercase truncate">{site.regionName}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          className="p-2 rounded-xl text-gray-300 active:text-orange-500 touch-target"
+                          onClick={(e) => { e.stopPropagation(); openEditModal(site); }}
+                        >
+                          <Edit className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          className="p-2 rounded-xl text-gray-300 active:text-red-500 touch-target"
+                          onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id); }}
+                        >
+                          <Trash className="h-3.5 w-3.5" />
+                        </button>
+                        <ChevronRight className="h-4 w-4 text-gray-300" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* ── Desktop: Cards ── */}
+                <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {regionSites.map((site) => (
+                    <Card
+                      key={site.id}
+                      className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                      onClick={() => navigateToSiteDetail(site.id)}
+                    >
+                      <CardHeader className="pb-2 flex flex-row items-start justify-between space-y-0">
+                        <div className="bg-orange-50 p-2 rounded-lg">
+                          <Building className="h-5 w-5 text-orange-500" />
+                        </div>
+                        <div className="flex">
+                          <Button variant="ghost" size="icon" className="h-8 w-8"
+                            onClick={(e) => { e.stopPropagation(); openEditModal(site); }}>
+                            <Edit className="h-4 w-4 text-gray-400" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8"
+                            onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id); }}>
+                            <Trash className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <CardTitle className="text-xl font-black truncate mb-1">{site.nom_site || site.nom}</CardTitle>
+                        <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
+                          <MapPin className="h-3 w-3" />
+                          {site.regionName}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className={`h-2 w-2 rounded-full ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`} />
+                            <span className="text-[11px] font-medium text-gray-400 uppercase">{site.status || 'actif'}</span>
+                          </div>
+                          <Button variant="ghost" size="sm" className="text-orange-500 hover:text-orange-600 h-auto p-0"
+                            onClick={(e) => { e.stopPropagation(); navigateToSiteDetail(site.id); }}>
+                            Détails <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+              <Search className="h-16 w-16 mb-4 opacity-20" />
+              <p className="text-xl md:text-2xl font-semibold">Aucun résultat</p>
+              <p className="text-sm md:text-base">Essayez avec d'autres critères de recherche</p>
+            </div>
           )}
         </div>
 
-        {/* List/Table View */}
+        {/* ═══ LIST VIEW ═══ */}
         <div style={{ display: viewMode === 'list' ? 'block' : 'none' }}>
           {initialLoading ? (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-4">
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <Skeleton key={index} className="h-16 w-full mb-2" />
-                ))}
-              </div>
+              <div className="p-4">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-16 w-full mb-2" />)}</div>
             </div>
           ) : sites.length > 0 ? (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
-                    <tr>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Site</th>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest md:table-cell">Code</th>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest md:table-cell">Région</th>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest md:table-cell">Bâtiments</th>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest md:table-cell">Statut</th>
-                      <th className="text-right px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {sites.map((site) => (
-                      <tr
-                        key={site.id}
-                        className="hover:bg-orange-50/50 cursor-pointer transition-colors"
-                        onClick={() => navigateToSiteDetail(site.id)}
-                      >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-orange-50 p-2 rounded-lg">
-                              <Building className="h-5 w-5 text-orange-500" />
-                            </div>
-                            <span className="font-black text-lg text-gray-900 leading-tight">{site.nom_site || site.nom}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 hidden md:table-cell">
-                          <span className="text-sm font-medium text-gray-600">{site.code || '-'}</span>
-                        </td>
-                        <td className="px-6 py-4 hidden md:table-cell">
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <MapPin className="h-4 w-4 text-gray-400" />
-                            <span className="text-sm">{site.regionName}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 hidden md:table-cell">
-                          <span className="text-sm text-gray-600">{site.batiments?.length || 0}</span>
-                        </td>
-                        <td className="px-6 py-4 hidden md:table-cell">
-                          <div className="flex items-center gap-2">
-                            <div className={`h-2.5 w-2.5 rounded-full ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                            <span className={`text-[11px] font-black uppercase ${site.status === 'actif' ? 'text-green-600' : 'text-red-600'}`}>
-                              {site.status || 'actif'}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 rounded-lg text-gray-400 hover:text-sonatel-orange"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openEditModal(site);
-                              }}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 rounded-lg text-gray-400 hover:text-red-500"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteSite(site.id);
-                              }}
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-orange-500 hover:text-orange-600 h-auto p-2"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigateToSiteDetail(site.id);
-                              }}
-                            >
-                              Détails
-                              <ChevronRight className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <>
+              {/* ── Mobile: Cards compactes ── */}
+              <div className="md:hidden bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+                {sites.map((site) => (
+                  <div
+                    key={site.id}
+                    onClick={() => navigateToSiteDetail(site.id)}
+                    className="flex items-center gap-3 px-4 py-3.5 active:bg-orange-50/60 cursor-pointer transition-colors"
+                  >
+                    <div className="bg-orange-50 p-2 rounded-xl shrink-0">
+                      <Building className="h-4 w-4 text-orange-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-black text-gray-900 truncate leading-tight">{site.nom_site || site.nom}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <div className={`h-1.5 w-1.5 rounded-full shrink-0 ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`} />
+                        <span className="text-[10px] font-bold text-gray-400 uppercase truncate">{site.regionName}</span>
+                        {site.code && <span className="text-[10px] font-black text-gray-300 tabular-nums">{site.code}</span>}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button className="p-2 rounded-xl text-gray-300 active:text-orange-500"
+                        onClick={(e) => { e.stopPropagation(); openEditModal(site); }}>
+                        <Edit className="h-3.5 w-3.5" />
+                      </button>
+                      <button className="p-2 rounded-xl text-gray-300 active:text-red-500"
+                        onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id); }}>
+                        <Trash className="h-3.5 w-3.5" />
+                      </button>
+                      <ChevronRight className="h-4 w-4 text-gray-300" />
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+
+              {/* ── Desktop: Table ── */}
+              <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-100">
+                      <tr>
+                        <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Site</th>
+                        <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Code</th>
+                        <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Région</th>
+                        <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Bâtiments</th>
+                        <th className="text-left px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Statut</th>
+                        <th className="text-right px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {sites.map((site) => (
+                        <tr key={site.id} className="hover:bg-orange-50/50 cursor-pointer transition-colors"
+                          onClick={() => navigateToSiteDetail(site.id)}>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="bg-orange-50 p-2 rounded-lg"><Building className="h-5 w-5 text-orange-500" /></div>
+                              <span className="font-black text-base text-gray-900 leading-tight">{site.nom_site || site.nom}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4"><span className="text-sm font-medium text-gray-600">{site.code || '-'}</span></td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <MapPin className="h-4 w-4 text-gray-400" />
+                              <span className="text-sm">{site.regionName}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4"><span className="text-sm text-gray-600">{site.batiments?.length || 0}</span></td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <div className={`h-2.5 w-2.5 rounded-full ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`} />
+                              <span className={`text-[11px] font-black uppercase ${site.status === 'actif' ? 'text-green-600' : 'text-red-600'}`}>
+                                {site.status || 'actif'}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-gray-400 hover:text-sonatel-orange"
+                                onClick={(e) => { e.stopPropagation(); openEditModal(site); }}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-gray-400 hover:text-red-500"
+                                onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id); }}>
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-orange-500 hover:text-orange-600 h-auto p-2"
+                                onClick={(e) => { e.stopPropagation(); navigateToSiteDetail(site.id); }}>
+                                Détails <ChevronRight className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-gray-400">
               <Search className="h-16 w-16 mb-4 opacity-20" />
@@ -663,18 +672,18 @@ const SitesPage: React.FC = () => {
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3 flex-wrap justify-end">
                     <div className="text-center">
-                      <p className="text-2xl font-black text-white">{sites.length}</p>
-                      <p className="text-[11px] font-bold text-orange-100 uppercase tracking-widest">Total Sites</p>
+                      <p className="text-xl md:text-2xl font-black text-white">{sites.length}</p>
+                      <p className="text-[10px] font-bold text-orange-100 uppercase tracking-widest">Sites</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-black text-green-300">{sites.filter(s => s.status === 'actif').length}</p>
-                      <p className="text-[11px] font-bold text-green-100 uppercase tracking-widest">Actifs</p>
+                      <p className="text-xl md:text-2xl font-black text-green-300">{sites.filter(s => s.status === 'actif').length}</p>
+                      <p className="text-[10px] font-bold text-green-100 uppercase tracking-widest">Actifs</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-black text-red-300">{sites.filter(s => s.status !== 'actif').length}</p>
-                      <p className="text-[11px] font-bold text-red-100 uppercase tracking-widest">Inactifs</p>
+                      <p className="text-xl md:text-2xl font-black text-red-300">{sites.filter(s => s.status !== 'actif').length}</p>
+                      <p className="text-[10px] font-bold text-red-100 uppercase tracking-widest">Inactifs</p>
                     </div>
                   </div>
                 </div>
