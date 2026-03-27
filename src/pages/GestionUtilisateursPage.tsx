@@ -16,9 +16,13 @@ import {
     Send,
     Bell,
     CheckCircle,
+    Megaphone,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
     Info,
-    AlertTriangle,
-    Megaphone
+    AlertTriangle
 } from "lucide-react";
 import { adminService } from "@/services/AdminService";
 import { authService, User } from "@/services/AuthService";
@@ -66,12 +70,27 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export default function GestionUtilisateursPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
     const [roleFilter, setRoleFilter] = useState("ALL");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [paginationMetadata, setPaginationMetadata] = useState<{
+        total: number;
+        pages: number;
+    } | null>(null);
 
     // Create Modal State
     const [isInviteOpen, setIsInviteOpen] = useState(false);
@@ -97,10 +116,18 @@ export default function GestionUtilisateursPage() {
         try {
             const res = await adminService.getUsers({
                 search: searchTerm,
-                role: roleFilter === "ALL" ? undefined : roleFilter
+                role: roleFilter === "ALL" ? undefined : roleFilter,
+                limit: limit,
+                page: page
             });
             if (res.data) {
                 setUsers(res.data);
+                if (res.pagination) {
+                    setPaginationMetadata({
+                        total: res.pagination.total,
+                        pages: res.pagination.pages || Math.ceil(res.pagination.total / limit)
+                    });
+                }
             }
         } catch (error) {
             toast.error("Erreur lors du chargement des utilisateurs");
@@ -111,10 +138,11 @@ export default function GestionUtilisateursPage() {
 
     useEffect(() => {
         fetchUsers();
-    }, [roleFilter]);
+    }, [roleFilter, page, limit]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
+        setPage(1); // Retour à la première page lors d'une nouvelle recherche
         fetchUsers();
     };
 
@@ -590,6 +618,103 @@ export default function GestionUtilisateursPage() {
                     </TableBody>
                 </Table>
             </Card>
+
+            {/* Pagination controls */}
+            {paginationMetadata && paginationMetadata.pages > 1 && (
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-4 py-8 bg-white border-2 border-gray-100 rounded-[2.5rem] shadow-sm">
+                    <div className="flex items-center gap-4">
+                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">Afficher</p>
+                        <Select
+                            value={limit.toString()}
+                            onValueChange={(val) => {
+                                setLimit(Number(val));
+                                setPage(1);
+                            }}
+                        >
+                            <SelectTrigger className="w-20 h-10 rounded-xl border-gray-200 font-black text-xs">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl border-2">
+                                <SelectItem value="5">5</SelectItem>
+                                <SelectItem value="10">10</SelectItem>
+                                <SelectItem value="20">20</SelectItem>
+                                <SelectItem value="50">50</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs font-black text-gray-500 uppercase tracking-tight">
+                            Résultats sur <span className="text-sonatel-orange">{paginationMetadata.total}</span> collaborateurs
+                        </p>
+                    </div>
+
+                    <Pagination>
+                        <PaginationContent className="gap-2">
+                            <PaginationItem>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-10 w-10 rounded-xl border-2 border-transparent hover:border-gray-100 hover:bg-orange-50 hover:text-sonatel-orange disabled:opacity-30"
+                                    onClick={() => setPage(1)}
+                                    disabled={page === 1}
+                                >
+                                    <ChevronsLeft className="h-4 w-4" />
+                                </Button>
+                            </PaginationItem>
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    onClick={() => setPage(prev => Math.max(1, prev - 1))}
+                                    className={`h-10 px-4 rounded-xl border-2 border-transparent hover:border-gray-100 hover:bg-orange-50 hover:text-sonatel-orange cursor-pointer transition-all ${page === 1 ? 'opacity-30 pointer-events-none' : ''}`}
+                                />
+                            </PaginationItem>
+
+                            {/* Show a few pages around current */}
+                            {Array.from({ length: Math.min(5, paginationMetadata.pages) }).map((_, i) => {
+                                // Simplified logic to show pages around current
+                                let pageNum = page;
+                                if (paginationMetadata.pages <= 5) {
+                                    pageNum = i + 1;
+                                } else {
+                                    if (page <= 3) pageNum = i + 1;
+                                    else if (page >= paginationMetadata.pages - 2) pageNum = paginationMetadata.pages - 4 + i;
+                                    else pageNum = page - 2 + i;
+                                }
+
+                                return (
+                                    <PaginationItem key={pageNum}>
+                                        <PaginationLink
+                                            onClick={() => setPage(pageNum)}
+                                            isActive={page === pageNum}
+                                            className={`h-10 w-10 rounded-xl border-2 cursor-pointer transition-all font-black text-xs ${page === pageNum
+                                                ? "bg-sonatel-orange border-sonatel-orange text-white shadow-lg shadow-orange-500/20"
+                                                : "border-transparent hover:border-gray-100 hover:bg-orange-50 hover:text-sonatel-orange"
+                                                }`}
+                                        >
+                                            {pageNum}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                );
+                            })}
+
+                            <PaginationItem>
+                                <PaginationNext
+                                    onClick={() => setPage(prev => Math.min(paginationMetadata.pages, prev + 1))}
+                                    className={`h-10 px-4 rounded-xl border-2 border-transparent hover:border-gray-100 hover:bg-orange-50 hover:text-sonatel-orange cursor-pointer transition-all ${page === paginationMetadata.pages ? 'opacity-30 pointer-events-none' : ''}`}
+                                />
+                            </PaginationItem>
+                            <PaginationItem>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-10 w-10 rounded-xl border-2 border-transparent hover:border-gray-100 hover:bg-orange-50 hover:text-sonatel-orange disabled:opacity-30"
+                                    onClick={() => setPage(paginationMetadata.pages)}
+                                    disabled={page === paginationMetadata.pages}
+                                >
+                                    <ChevronsRight className="h-4 w-4" />
+                                </Button>
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+                </div>
+            )}
         </div>
     );
 }
