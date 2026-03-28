@@ -281,19 +281,19 @@ export const RubriqueHistogram: React.FC<RubriqueHistogramProps> = ({ siteId, in
     <Card className="w-full">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <CardTitle className="flex flex-col gap-1">
+          <CardTitle className="flex flex-col gap-1 w-full md:w-auto">
             <div className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-sonatel-orange" />
-              <span>Analyse de Conformité</span>
+              <span className="text-base md:text-xl">Analyse de Conformité</span>
             </div>
             {periode === 'predefined' && selectedPeriodIds.length > 0 && (
-              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+              <span className="text-[9px] md:text-[10px] font-black text-muted-foreground uppercase tracking-wider">
                 Période: {selectedPeriodIds.map(id => PREDEFINED_PERIODS.find(p => p.id === id)?.label).join(', ')}
                 {stats && ` | ${stats.totalInspections} audits`}
               </span>
             )}
             {periode === 'individual' && (
-              <span className="text-xs font-black text-muted-foreground uppercase tracking-wider">
+              <span className="text-[10px] md:text-xs font-black text-muted-foreground uppercase tracking-wider">
                 Audit individuel du {stats?.lastInspectionDate ? new Date(stats.lastInspectionDate).toLocaleDateString('fr-FR') : '...'}
               </span>
             )}
@@ -330,8 +330,8 @@ export const RubriqueHistogram: React.FC<RubriqueHistogramProps> = ({ siteId, in
             )}
 
             {periode === 'predefined' && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-xl border border-gray-100">
-                {PREDEFINED_PERIODS.map(p => (
+              <div className="flex flex-wrap items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1.5 md:py-1 bg-gray-50 rounded-xl border border-gray-100 w-full md:w-auto mt-2 md:mt-0">
+                {PREDEFINED_PERIODS.slice(0, 4).map(p => (
                   <label key={p.id} className="flex items-center gap-1.5 cursor-pointer group">
                     <input
                       type="checkbox"
@@ -345,7 +345,7 @@ export const RubriqueHistogram: React.FC<RubriqueHistogramProps> = ({ siteId, in
                         }
                       }}
                     />
-                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-gray-900 transition-colors">{p.label}</span>
+                    <span className="text-[9px] md:text-[10px] font-bold text-gray-500 group-hover:text-gray-900 transition-colors">{p.label}</span>
                   </label>
                 ))}
               </div>
@@ -390,7 +390,7 @@ export const RubriqueHistogram: React.FC<RubriqueHistogramProps> = ({ siteId, in
         )}
 
         {/* Visits info */}
-        <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[9px] md:text-xs text-gray-500 mt-3 md:mt-2">
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
             <span>Visites {periode === 'custom' ? 'sur la période' : '(3 derniers mois)'}: <strong className="text-gray-900">{stats.visitsLast3Months}</strong></span>
@@ -404,43 +404,51 @@ export const RubriqueHistogram: React.FC<RubriqueHistogramProps> = ({ siteId, in
 
       <CardContent>
         {/* Global score */}
-        <div className={`mb-6 p-4 rounded-xl border-2 ${getStatusColorClass(stats.global.tauxConformite)}`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {(stats.global.couleur === 'green' || stats.global.couleur === 'emerald') && <CheckCircle className="h-5 w-5" />}
-              {(stats.global.couleur === 'orange' || stats.global.couleur === 'amber') && <AlertTriangle className="h-5 w-5" />}
-              {stats.global.couleur === 'red' && <XCircle className="h-5 w-5" />}
+        <div className={`mb-6 p-4 md:p-5 rounded-2xl border-2 ${getStatusColorClass(stats.global.tauxConformite)}`}>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-xl scale-110 md:scale-125 ${getStatusColorClass(stats.global.tauxConformite)} border-none bg-white/40`}>
+                {(stats.global.couleur === 'green' || stats.global.couleur === 'emerald') && <CheckCircle className="h-5 w-5" />}
+                {(stats.global.couleur === 'orange' || stats.global.couleur === 'amber') && <AlertTriangle className="h-5 w-5" />}
+                {stats.global.couleur === 'red' && <XCircle className="h-5 w-5" />}
+              </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider">Taux Global de Conformité</p>
+                <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.15em] opacity-80 mb-0.5">Taux Global de Conformité</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-lg font-bold">{stats.global.tauxConformite}%</p>
+                  <p className="text-2xl md:text-4xl font-black">{stats.global.tauxConformite}%</p>
                   {variation !== null && variation !== 0 && (
-                    <div className={`flex items-center text-xs font-bold ${variation > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {variation > 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                    <div className={`flex items-center text-xs md:text-base font-black ${variation > 0 ? 'text-green-600' : 'text-red-600'} bg-white/50 px-2 py-0.5 rounded-lg shadow-sm`}>
+                      {variation > 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
                       {Math.abs(variation)}%
-                    </div>
-                  )}
-                  {variation === 0 && (
-                    <div className="flex items-center text-xs font-bold text-gray-500">
-                      <Minus size={14} />
-                      0%
                     </div>
                   )}
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-xs">Status</p>
-              <p className="text-sm font-bold">{getStatusLabel(stats.global.tauxConformite)}</p>
+            <div className="text-left md:text-right border-t md:border-none pt-3 md:pt-0 border-current border-opacity-10">
+              <p className="text-[10px] md:text-xs uppercase font-black tracking-widest opacity-60">Statut Global</p>
+              <p className="text-base md:text-xl font-black uppercase tracking-tight">{getStatusLabel(stats.global.tauxConformite)}</p>
             </div>
           </div>
-          <div className="flex gap-4 mt-2 text-sm">
-            <span>Conformes: <strong>{stats.global.conforme}</strong></span>
-            <span>Non-conformes: <strong>{stats.global.nonConforme}</strong></span>
-            <span>Audits: <strong>{stats.totalInspections}</strong></span>
-            {stats.lastInspectionDate && (
-              <span>Dernier audit: <strong>{new Date(stats.lastInspectionDate).toLocaleDateString('fr-FR')}</strong></span>
-            )}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 mt-5 pt-4 border-t border-current border-opacity-10">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Conformes</span>
+              <strong className="text-base font-black">{stats.global.conforme}</strong>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Non-conformes</span>
+              <strong className="text-base font-black text-red-600">{stats.global.nonConforme}</strong>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Total Audits</span>
+              <strong className="text-base font-black">{stats.totalInspections}</strong>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Dernier audit</span>
+              <strong className="text-base font-black">
+                {stats.lastInspectionDate ? new Date(stats.lastInspectionDate).toLocaleDateString('fr-FR') : 'N/A'}
+              </strong>
+            </div>
           </div>
         </div>
 

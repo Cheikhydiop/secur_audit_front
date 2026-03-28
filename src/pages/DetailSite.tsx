@@ -665,15 +665,15 @@ const DetailSite: React.FC = () => {
             <Button variant="ghost" size="icon" onClick={() => navigate('/sites')} className="shrink-0 h-9 w-9">
               <ChevronLeft className="h-5 w-5" />
             </Button>
-            <div className="min-w-0">
-              <h1 className="text-xl md:text-3xl font-black text-gray-900 leading-tight truncate">{currentSite.nom}</h1>
-              <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-base text-gray-500 mt-1 md:mt-2">
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" />{currentSite.zone}
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl md:text-3xl font-black text-gray-900 leading-[1.1] truncate">{currentSite.nom}</h1>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] md:text-base text-gray-500 mt-1.5 md:mt-2">
+                <span className="flex items-center gap-1 font-bold">
+                  <MapPin className="h-3 w-3 md:h-3.5 md:w-3.5 text-sonatel-orange" />{currentSite.zone}
                 </span>
-                <span className="hidden md:inline">•</span>
-                <span className="font-bold">{currentSite.code}</span>
-                <Badge variant="outline" className="text-[10px] md:text-xs">{currentSite.type}</Badge>
+                <span className="hidden md:inline text-gray-300">•</span>
+                <span className="font-black text-gray-400 tracking-wider bg-gray-100 px-1.5 py-0.5 rounded text-[9px] md:text-xs">{currentSite.code}</span>
+                <Badge variant="outline" className="text-[8px] md:text-xs font-black uppercase tracking-tighter border-2 border-gray-100">{currentSite.type}</Badge>
               </div>
             </div>
           </div>
@@ -751,12 +751,15 @@ const DetailSite: React.FC = () => {
               Score de conformité
             </CardTitle>
           </CardHeader>
-          <CardContent className="py-6">
-            <div className="flex items-center gap-8">
-              <div className="flex-1">
-                <Progress value={averageScore} className="h-6 rounded-full" />
+          <CardContent className="py-6 md:py-8 px-5 md:px-8">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+              <div className="w-full flex-1">
+                <div className="flex justify-between items-end mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Progression globale</span>
+                  <span className={`text-2xl md:text-5xl font-black ${getScoreColor(averageScore)} leading-none`}>{averageScore}%</span>
+                </div>
+                <Progress value={averageScore} className="h-4 md:h-6 rounded-full bg-gray-100" />
               </div>
-              <span className={`text-5xl font-black ${getScoreColor(averageScore)}`}>{averageScore}%</span>
             </div>
           </CardContent>
         </Card>
