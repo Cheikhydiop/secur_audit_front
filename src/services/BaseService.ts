@@ -23,7 +23,9 @@ export class BaseService {
     private static cachePrefix = 'smart_audit_cache_';
 
     constructor(basePath: string = '') {
-        const base = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const base = import.meta.env.VITE_API_URL || 'https://thundering-laura-ndigueul-80527457.koyeb.app';
+                // const base = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
         this.baseURL = base.endsWith('/api') ? base : `${base}/api`;
         this.basePath = basePath;
     }

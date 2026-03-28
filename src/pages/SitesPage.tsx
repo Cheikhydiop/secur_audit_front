@@ -131,56 +131,73 @@ const SitesPage: React.FC = () => {
     }
   }, [viewMode, mapMounted]);
 
-  // Fetch sites
-  useEffect(() => {
-    const fetchSites = async () => {
-      // Don't show loading if we have cache
+  // Fetch sites and handle pagination
+  const fetchSites = async (pageToLoad: number, isInitial: boolean = false) => {
+    if (isInitial) setInitialLoading(true);
+    setLoading(true);
+
+    try {
       const filters: any = {};
       if (searchTerm) filters.nom_site = searchTerm;
       if (regionFilter && regionFilter !== "all") filters.nom_region = regionFilter;
       if (statusFilter && statusFilter !== "all") filters.status = statusFilter;
 
-      const cacheKey = `?page=${page}&limit=${perPage}${regionFilter !== 'all' ? `&regionId=${regionFilter}` : ''}&tri=desc&search=${searchTerm}`;
-      const cached = siteService.getCachedResponse<any>(cacheKey);
-
-      if (cached?.data) {
-        const sitesWithRegion: SiteWithRegion[] = (cached.data || []).map((site: any) => ({
+      const response = await siteService.getAllSites(pageToLoad, perPage, filters);
+      if (response.data) {
+        const sitesWithRegion: SiteWithRegion[] = (response.data.data || []).map(site => ({
           ...site,
           regionName: site.zone || (site as any).nom_region || "Sans région",
           batimentCount: site.batiments?.length || 0
         }));
-        setSites(sitesWithRegion);
-        setTotalPages(cached.pagination?.pages || 1);
-        setTotalItems(cached.pagination?.total || 0);
-        setLoading(false);
-        setInitialLoading(false);
-      } else {
-        setLoading(true);
-      }
 
-      try {
-        const response = await siteService.getAllSites(page, perPage, filters);
-        if (response.data) {
-          // Add region info to each site
-          const sitesWithRegion: SiteWithRegion[] = (response.data.data || []).map(site => ({
-            ...site,
-            regionName: site.zone || (site as any).nom_region || "Sans région",
-            batimentCount: site.batiments?.length || 0
-          }));
+        if (pageToLoad === 1) {
           setSites(sitesWithRegion);
-          setTotalPages(response.data.lastPage || 1);
-          setTotalItems(response.data.total || 0);
+        } else {
+          setSites(prev => [...prev, ...sitesWithRegion]);
         }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des sites", error);
-        if (!cached) toast.error("Erreur lors du chargement des sites");
-      } finally {
-        setLoading(false);
-        setInitialLoading(false);
+
+        setTotalPages(response.data.lastPage || 1);
+        setTotalItems(response.data.total || 0);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des sites", error);
+      toast.error("Erreur lors du chargement des sites");
+    } finally {
+      setLoading(false);
+      setInitialLoading(false);
+    }
+  };
+
+  // Trigger load on filter change
+  useEffect(() => {
+    setPage(1);
+    fetchSites(1, true);
+  }, [searchTerm, statusFilter, regionFilter, periodFilter, refreshTrigger]);
+
+  // Trigger load on page change (Infinite Scroll)
+  useEffect(() => {
+    if (page > 1) {
+      fetchSites(page, false);
+    }
+  }, [page]);
+
+  // Infinite Scroll listener
+  useEffect(() => {
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLDivElement;
+      const isNearBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 150;
+
+      if (isNearBottom && !loading && page < totalPages) {
+        setPage(prev => prev + 1);
       }
     };
-    fetchSites();
-  }, [page, perPage, searchTerm, regionFilter, statusFilter, periodFilter, refreshTrigger]);
+
+    const container = document.getElementById('sites-scroll-container');
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [loading, page, totalPages]);
 
   // Refresh the sites list
   const refreshList = () => {
@@ -314,8 +331,62 @@ const SitesPage: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col space-y-6 p-4 md:p-6 bg-gray-50/30 overflow-hidden">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* 📱 En-tête Mobile - Visible uniquement sur mobile/tablette */}
+      <div className="md:hidden flex flex-col gap-5 mb-2 px-1">
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-black tracking-tighter text-[#1F2937] flex items-center gap-2">
+              <span className="w-1.5 h-10 bg-[#F28E16] rounded-full shrink-0 shadow-sm"></span>
+              Sites <Badge className="bg-orange-50 text-sonatel-orange px-2 py-0 font-black rounded-lg border-none text-xs">{totalItems}</Badge>
+            </h1>
+            <p className="text-gray-400 font-bold text-[10px] tracking-widest uppercase mt-0.5 ml-4">Réseau Sonatel — DG/SECU</p>
+          </div>
+          <div className="flex items-center gap-2.5">
+            {/* Le sélecteur de vue est masqué sur mobile car seule la liste est maintenue */}
+            {/* Bouton masqué sur mobile car redondant avec le FAB */}
+          </div>
+        </div>
+
+        {/* Search & Filter Mobile */}
+        <div className="flex items-center gap-2 animate-in fade-in slide-in-from-top-4">
+          <div className="relative flex-1 group">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-sonatel-orange transition-colors" />
+            <Input
+              className="h-14 bg-gray-100 border-none rounded-[20px] pl-14 font-black text-gray-700 placeholder:text-gray-400 shadow-inner transition-all focus:bg-white focus:ring-2 focus:ring-orange-500/20"
+              placeholder="Rechercher un site..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <button className="h-14 w-14 bg-gray-100 text-gray-400 rounded-[20px] flex items-center justify-center border border-gray-200 active:bg-gray-200 transition-colors">
+            <Filter size={20} />
+          </button>
+        </div>
+
+        {/* Region Pills - Scrolling horizontal */}
+        <div className="-mx-4 px-4 overflow-x-auto scrollbar-hide flex items-center gap-2.5 py-1">
+          <button
+            onClick={() => setRegionFilter("")}
+            className={`whitespace-nowrap px-6 h-10 rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-sm ${!regionFilter ? 'bg-sonatel-orange text-white' : 'bg-white border border-gray-100 text-gray-500'}`}
+          >
+            Toutes régions
+          </button>
+          {REGIONS.map(r => (
+            <button
+              key={r.id}
+              onClick={() => setRegionFilter(r.nom_region)}
+              className={`whitespace-nowrap px-6 h-10 rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-sm ${regionFilter === r.nom_region ? 'bg-sonatel-orange text-white' : 'bg-white border border-gray-100 text-gray-500'}`}
+            >
+              {r.nom_region}
+            </button>
+          ))}
+        </div>
+
+        {/* Statistiques masquées sur mobile pour prioriser la liste */}
+      </div>
+
+      {/* 💻 Header Desktop */}
+      <div className="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-4xl font-black tracking-tight text-gray-900 flex items-center gap-3 leading-tight">
             <span className="w-1.5 md:w-2 h-6 md:h-8 bg-orange-500 rounded-full shrink-0"></span>
@@ -335,8 +406,8 @@ const SitesPage: React.FC = () => {
         </Button>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl p-3 md:p-4 flex items-center justify-between gap-3 md:gap-4 flex-wrap shadow-sm">
+      {/* Filters - Masqués sur mobile pour prioriser la liste */}
+      <div className="hidden md:flex bg-white rounded-xl p-3 md:p-4 items-center justify-between gap-3 md:gap-4 flex-wrap shadow-sm">
         <div className="flex items-center gap-3 md:gap-4 flex-1 flex-wrap w-full">
           {/* Search */}
           <div className="relative w-full md:flex-1 md:min-w-[200px]">
@@ -431,10 +502,13 @@ const SitesPage: React.FC = () => {
       </div>
 
       {/* Sites List */}
-      <div className={`flex-1 overflow-y-auto px-1 pb-24 md:pb-16 ${viewMode === 'map' ? 'overflow-hidden' : ''}`}>
+      <div
+        id="sites-scroll-container"
+        className={`flex-1 overflow-y-auto px-1 pb-24 md:pb-16 ${viewMode === 'map' ? 'overflow-hidden' : ''}`}
+      >
 
-        {/* ═══ GRID VIEW ═══ */}
-        <div style={{ display: viewMode === 'grid' ? 'block' : 'none' }}>
+        {/* ═══ GRID VIEW ═══ (Masqué sur mobile) */}
+        <div className="hidden md:block" style={{ display: viewMode === 'grid' ? 'block' : 'none' }}>
           {initialLoading ? (
             renderSkeletons()
           ) : Object.entries(groupedSites).length > 0 ? (
@@ -449,38 +523,34 @@ const SitesPage: React.FC = () => {
                   <div className="flex-1 h-px bg-gray-200" />
                 </div>
 
-                {/* ── Mobile: Liste compacte ── */}
-                <div className="md:hidden bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+                {/* ── Mobile: Liste stylisée par cartes ── */}
+                <div className="md:hidden space-y-4 px-1">
                   {regionSites.map((site) => (
                     <div
                       key={site.id}
                       onClick={() => navigateToSiteDetail(site.id)}
-                      className="flex items-center gap-3 px-4 py-3.5 active:bg-orange-50/60 cursor-pointer transition-colors"
+                      className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden group active:scale-[0.98] transition-all p-4 flex items-center gap-5 relative"
                     >
-                      <div className="bg-orange-50 p-2 rounded-xl shrink-0">
-                        <Building className="h-4 w-4 text-orange-500" />
+                      <div className="bg-orange-50 w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform shrink-0">
+                        <Building className="h-6 w-6 text-sonatel-orange" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-black text-gray-900 truncate leading-tight">{site.nom_site || site.nom}</p>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <div className={`h-1.5 w-1.5 rounded-full shrink-0 ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`} />
-                          <span className="text-[10px] font-bold text-gray-400 uppercase truncate">{site.regionName}</span>
+
+                      <div className="flex-1 min-w-0 pr-10">
+                        <h3 className="text-base font-black text-gray-900 truncate tracking-tight">{site.nom_site || site.nom}</h3>
+                        <div className="flex flex-col gap-0.5 mt-1">
+                          <div className="flex items-center gap-2">
+                            <div className={`h-2 w-2 rounded-full shadow-sm animate-pulse ${site.status === 'actif' ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest truncate">{site.regionName}</span>
+                          </div>
+                          <span className="text-[10px] font-bold text-gray-300 tracking-wider tabular-nums uppercase">{site.code || site.id.substring(0, 8)}</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          className="p-2 rounded-xl text-gray-300 active:text-orange-500 touch-target"
-                          onClick={(e) => { e.stopPropagation(); openEditModal(site); }}
-                        >
-                          <Edit className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          className="p-2 rounded-xl text-gray-300 active:text-red-500 touch-target"
-                          onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id); }}
-                        >
-                          <Trash className="h-3.5 w-3.5" />
-                        </button>
-                        <ChevronRight className="h-4 w-4 text-gray-300" />
+
+                      <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                        <Badge className={`border-none font-black text-[9px] px-2 py-0.5 rounded-lg shadow-sm ${site.status === 'actif' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                          {site.status === 'actif' ? '✓ OK' : 'ERR'}
+                        </Badge>
+                        <ChevronRight className="h-5 w-5 text-gray-200 group-hover:text-sonatel-orange transition-colors" />
                       </div>
                     </div>
                   ))}
@@ -540,43 +610,42 @@ const SitesPage: React.FC = () => {
           )}
         </div>
 
-        {/* ═══ LIST VIEW ═══ */}
-        <div style={{ display: viewMode === 'list' ? 'block' : 'none' }}>
+        {/* ═══ LIST VIEW ═══ (Vue unique sur mobile) */}
+        <div className={viewMode === 'list' ? 'block' : 'md:hidden block'} style={{ display: viewMode === 'list' ? 'block' : undefined }}>
           {initialLoading ? (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-4">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-16 w-full mb-2" />)}</div>
             </div>
           ) : sites.length > 0 ? (
             <>
-              {/* ── Mobile: Cards compactes ── */}
-              <div className="md:hidden bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+              {/* ── Mobile: Liste compacte ── */}
+              <div className="md:hidden space-y-4 px-1">
                 {sites.map((site) => (
                   <div
                     key={site.id}
                     onClick={() => navigateToSiteDetail(site.id)}
-                    className="flex items-center gap-3 px-4 py-3.5 active:bg-orange-50/60 cursor-pointer transition-colors"
+                    className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden group active:scale-[0.98] transition-all p-4 flex items-center gap-5 relative"
                   >
-                    <div className="bg-orange-50 p-2 rounded-xl shrink-0">
-                      <Building className="h-4 w-4 text-orange-500" />
+                    <div className="bg-orange-50 w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner shrink-0">
+                      <Building className="h-6 w-6 text-sonatel-orange" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-black text-gray-900 truncate leading-tight">{site.nom_site || site.nom}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <div className={`h-1.5 w-1.5 rounded-full shrink-0 ${site.status === 'actif' ? 'bg-green-500' : 'bg-red-500'}`} />
-                        <span className="text-[10px] font-bold text-gray-400 uppercase truncate">{site.regionName}</span>
-                        {site.code && <span className="text-[10px] font-black text-gray-300 tabular-nums">{site.code}</span>}
+
+                    <div className="flex-1 min-w-0 pr-10">
+                      <h3 className="text-base font-black text-gray-900 truncate tracking-tight">{site.nom_site || site.nom}</h3>
+                      <div className="flex flex-col gap-0.5 mt-1">
+                        <div className="flex items-center gap-2">
+                          <div className={`h-2 w-2 rounded-full animate-pulse ${site.status === 'actif' ? 'bg-emerald-500' : 'bg-red-400'}`} />
+                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest truncate">{site.regionName}</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-gray-300 tracking-wider tabular-nums uppercase">{site.code}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button className="p-2 rounded-xl text-gray-300 active:text-orange-500"
-                        onClick={(e) => { e.stopPropagation(); openEditModal(site); }}>
-                        <Edit className="h-3.5 w-3.5" />
-                      </button>
-                      <button className="p-2 rounded-xl text-gray-300 active:text-red-500"
-                        onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id); }}>
-                        <Trash className="h-3.5 w-3.5" />
-                      </button>
-                      <ChevronRight className="h-4 w-4 text-gray-300" />
+
+                    <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                      <Badge className={`border-none font-black text-[9px] px-2 py-0.5 rounded-lg ${site.status === 'actif' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                        {site.status === 'actif' ? '✓ OK' : 'ERR'}
+                      </Badge>
+                      <ChevronRight className="h-5 w-5 text-gray-200" />
                     </div>
                   </div>
                 ))}
@@ -654,8 +723,8 @@ const SitesPage: React.FC = () => {
           )}
         </div>
 
-        {/* Map View - mounted once, hidden via CSS when not active */}
-        <div style={{ display: viewMode === 'map' ? 'block' : 'none' }}>
+        {/* Map View - Masqué sur mobile */}
+        <div className="hidden md:block" style={{ display: viewMode === 'map' ? 'block' : 'none' }}>
           {mapMounted ? (
             <div className="h-[calc(100vh-280px)] min-h-[500px] bg-white rounded-[1.5rem] overflow-hidden shadow-sm border border-gray-100 flex flex-col">
               {/* Surveillance Header */}
@@ -780,17 +849,13 @@ const SitesPage: React.FC = () => {
           )}
         </div>
 
-        {/* Load More */}
-        {page < totalPages && (
-          <div className="mt-8 flex justify-center">
-            <Button
-              variant="outline"
-              onClick={handleLoadMore}
-              disabled={loading}
-              className="border-orange-500 text-orange-500 hover:bg-orange-50"
-            >
-              {loading ? "Chargement..." : "Charger plus de sites"}
-            </Button>
+        {/* Indicator for loading state at the bottom */}
+        {loading && page > 1 && (
+          <div className="py-6 flex justify-center w-full">
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-5 rounded-full border-2 border-orange-500 border-t-transparent animate-spin"></div>
+              <span className="text-xs font-black text-orange-500 uppercase tracking-widest">Chargement...</span>
+            </div>
           </div>
         )}
       </div>
@@ -918,6 +983,15 @@ const SitesPage: React.FC = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FAB Mobile */}
+      <button
+        onClick={openCreateModal}
+        className="md:hidden fixed bottom-6 right-6 w-16 h-16 bg-sonatel-orange text-white rounded-full flex items-center justify-center shadow-[0_15px_30px_rgba(242,142,22,0.4)] z-50 active:scale-90 transition-transform"
+      >
+        <Plus size={32} strokeWidth={4} />
+      </button>
+
     </div>
   );
 };
